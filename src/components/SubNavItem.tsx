@@ -4,6 +4,7 @@ interface SubNavItemProps {
   link: string;
   label: string;
   active?: boolean;
+  onClick: () => void;
 }
 
 // function SubNavItem({ label }: SubNavItemProps) {
@@ -14,10 +15,10 @@ interface SubNavItemProps {
 //   );
 // }
 
-function SubNavItem({ label, active, link }: SubNavItemProps) {
+function SubNavItem({ label, active, link, onClick }: SubNavItemProps) {
   return (
     <Link to={link}>
-      <button className={`w-full text-left px-4 py-2 text-sm rounded transition-colors ${
+      <button onClick={onClick} className={`w-full text-left px-4 py-2 text-sm rounded transition-colors ${
         active 
           ? 'text-white bg-red-800/50 font-medium' 
           : 'text-red-200 hover:text-white hover:bg-red-800/30'

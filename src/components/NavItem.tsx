@@ -20,12 +20,14 @@ function NavItem({ link, icon: Icon, label, active, collapsed, children, onClick
           active
             ? "bg-red-800 text-white shadow-lg"
             : "text-red-100 hover:bg-red-800/50"
-        }`}
+        } `+` ${
+          collapsed ? 'justify-center' : 'justify-start'}`
+        }
       >
         <Icon className="w-5 h-5 flex-shrink-0" />
         {!collapsed && <span className="font-medium text-sm">{label}</span>}
       </button>
-      {active && children}
+      {children}
     </Link>
   );
 }
