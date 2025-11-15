@@ -1,21 +1,28 @@
 import { Plus } from 'lucide-react';
 import LocalItem from '../components/LocalItem';
-import { ChevronRight, MapPin } from 'lucide-react';
+import { useState } from 'react';
 
 interface Location { 
   name: string;
   address: string;
+  type: string;
 }
 
 export default function LocalList() {
-
+  
   const locations: Location[] = [
-    { name: 'Central Lima', address: 'Av. Industrial 1234' },
-    { name: 'Sucursal Norte', address: 'Calle Los Pinos 567' },
-    { name: 'Sucursal Este', address: 'Jr. Comercio 890' },
-    { name: 'Sucursal Sur', address: 'Av. Arequipa 432' },
-    { name: 'Depósito Principal', address: 'Panamericana Sur Km 12' }
+    { name: 'Central Lima', address: 'Av. Industrial 1234', type: 'central' },
+    { name: 'Sucursal Norte', address: 'Calle Los Pinos 567', type: 'sucursales' },
+    { name: 'Sucursal Este', address: 'Jr. Comercio 890', type: 'sucursales' },
+    { name: 'Sucursal Sur', address: 'Av. Arequipa 432', type: 'sucursales' },
+    { name: 'Depósito Principal', address: 'Panamericana Sur Km 12', type: 'central' }
   ];
+
+  const [selectTipoSucursal, setSelectTipoSucursal] = useState<string>("central")
+  const [selectLocal, setSelectLocal] = useState<{ type: string ; idx: number } | null>({
+    type: locations[0].type,
+    idx: 0
+  });
 
   return (
     <div className="w-80 bg-gray-800 border-l border-gray-700 flex flex-col">
@@ -25,26 +32,32 @@ export default function LocalList() {
       </div>
 
       <div className="flex gap-2 p-4 border-b border-gray-700">
-        <button className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium">
+        {/* bg-gray-700 text-gray-300 */}
+        <button 
+        onClick={() => setSelectTipoSucursal("central")}
+        className={`flex-1 px-4 py-2 ${ selectTipoSucursal === "central" ? "bg-red-600 text-white" : "bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors"} rounded-lg font-medium`}>
           Central
         </button>
-        <button className="flex-1 px-4 py-2 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded-lg font-medium transition-colors">
+        <button 
+        onClick={() => setSelectTipoSucursal("sucursales")}
+        className={`flex-1 px-4 py-2 ${ selectTipoSucursal === "sucursales" ? "bg-red-600 text-white" : "bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors"} rounded-lg font-medium`}>
           Sucursales
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {locations.map((location, idx) => (
-          <div key={idx} className="bg-gray-750 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 transition-all cursor-pointer group">
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-red-400" />
-                <span className="font-semibold text-white">{location.name}</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-red-400 transition-colors" />
-            </div>
-            <p className="text-sm text-gray-400 ml-7">{location.address}</p>
-          </div>
+        
+        {locations
+          .filter((location) => location.type === selectTipoSucursal)
+          .map((location, idx) => (
+          <LocalItem
+            name={location.name}
+            address={location.address}
+            idx={idx}
+            onSelect={setSelectLocal}
+            isSelected={selectLocal?.idx === idx && selectLocal?.type === location.type}
+            type={location.type}
+          />
         ))}
       </div>
 
