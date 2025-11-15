@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react';
 import LocalItem from '../components/LocalItem';
+import { ChevronRight, MapPin } from 'lucide-react';
 
 interface Location { 
   name: string;
@@ -19,20 +20,31 @@ export default function LocalList() {
   return (
     <div className="w-80 bg-gray-800 border-l border-gray-700 flex flex-col">
       <div className="p-6 border-b border-gray-700">
-        <h3 className="text-xl font-bold text-white mb-1">
-          Administrar Locales
-        </h3>
+        <h3 className="text-xl font-bold text-white mb-1">Adminitrar Locales</h3>
         <p className="text-sm text-gray-400">Gestiona tus sucursales</p>
+      </div>
+
+      <div className="flex gap-2 p-4 border-b border-gray-700">
+        <button className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium">
+          Central
+        </button>
+        <button className="flex-1 px-4 py-2 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded-lg font-medium transition-colors">
+          Sucursales
+        </button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {locations.map((location, idx) => (
-          <LocalItem
-            key={idx}
-            idx={idx}
-            name={location.name}
-            address={location.address}
-          />
+          <div key={idx} className="bg-gray-750 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 transition-all cursor-pointer group">
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-red-400" />
+                <span className="font-semibold text-white">{location.name}</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-red-400 transition-colors" />
+            </div>
+            <p className="text-sm text-gray-400 ml-7">{location.address}</p>
+          </div>
         ))}
       </div>
 
