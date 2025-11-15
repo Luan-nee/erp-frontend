@@ -42,12 +42,6 @@ export default function Productos() {
     }
   ];
 
-  const locations = [
-    { name: 'Central Lima', address: 'Av. Industrial 1234' },
-    { name: 'Sucursal Norte', address: 'Calle Los Pinos 567' },
-    { name: 'Sucursal Este', address: 'Jr. Comercio 890' }
-  ];
-
   const categories = ['Todos', 'Buscador', 'Suspensión', 'Frenos', 'Motor'];
 
   const activeProducts = products.filter(p => p.status === 'active');
