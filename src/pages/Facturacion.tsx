@@ -18,7 +18,7 @@ type Invoice = {
 export default function CondorMotorsBilling() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('Todos');
-  const [showNewInvoice, setShowNewInvoice] = useState(false);
+  // const [showNewInvoice, setShowNewInvoice] = useState(false);
 
   const HeaderColumns = [
     'N° Factura',
@@ -141,7 +141,7 @@ export default function CondorMotorsBilling() {
                 Exportar
               </button>
               <button 
-                onClick={() => setShowNewInvoice(true)}
+                // onClick={() => setShowNewInvoice(true)}
                 className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg text-white font-medium transition-all shadow-lg flex items-center gap-2"
               >
                 <Plus className="w-5 h-5" />
