@@ -51,6 +51,7 @@ export default function LocalList() {
           .filter((location) => location.type === selectTipoSucursal)
           .map((location, idx) => (
           <LocalItem
+            key={idx}
             name={location.name}
             address={location.address}
             idx={idx}
