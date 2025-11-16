@@ -1,11 +1,22 @@
 import { BarChart3, X, FileText, Menu, Package, Users, List } from "lucide-react";
 import NavItem from "../components/NavItem";
 import SubNavItem from "../components/SubNavItem";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const STORAGE_KEY = 'activeSection';
+
 
 export default function NavBar() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeSection, setActiveSection] = useState('inventory');
+  const [activeSection, setActiveSection] = useState(() => {
+    const savedTab = localStorage.getItem(STORAGE_KEY);
+    // Si hay un valor guardado, úsalo, si no, usa 'analysis'
+    return savedTab ? savedTab : 'analysis';
+  });
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, activeSection);
+  }, [activeSection])
 
   return (
     <div className={`${sidebarOpen ? 'w-72' : 'w-20'} bg-gradient-to-b from-red-900 to-red-950 border-r border-red-800 transition-all duration-300 flex flex-col`}>
