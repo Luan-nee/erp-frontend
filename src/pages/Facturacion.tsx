@@ -179,14 +179,6 @@ export default function CondorMotorsBilling() {
             </MetricCard>
 
             <MetricCard
-              name="Pendientes"
-              value={stats.pending}
-              color="yellow"
-            >
-              <Clock className="w-6 h-6 text-yellow-400 mb-2" />
-            </MetricCard>
-
-            <MetricCard
               name="Vencidas"
               value={stats.overdue}
               color="red"
