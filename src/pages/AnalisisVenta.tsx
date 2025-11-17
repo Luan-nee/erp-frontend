@@ -145,7 +145,7 @@ export default function AnalisisVenta() {
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             
-            <InformationCard title="Ventas Totales" description="Año 2024" totalSales={totalSales}>
+            <InformationCard title="Ventas Totales" description="Año 2024" totalSales={totalSales} color={'blue'}>
               <DollarSign className="w-6 h-6 text-blue-400 mb-1" />
               <div className="flex items-center gap-1 text-green-400 text-sm font-bold">
                 <ArrowUp className="w-3 h-3" />
@@ -153,7 +153,7 @@ export default function AnalisisVenta() {
               </div>
             </InformationCard>
 
-            <InformationCard title="Total Pedidos" description="Este año" totalSales={totalOrders}>
+            <InformationCard title="Total Pedidos" description="Este año" totalSales={totalOrders} color={'green'}>
               <ShoppingCart className="w-10 h-10 text-green-400" />
               <div className="flex items-center gap-1 text-green-400 text-sm font-bold">
                 <ArrowUp className="w-4 h-4" />
@@ -161,32 +161,22 @@ export default function AnalisisVenta() {
               </div>
             </InformationCard>
 
-
-            <div className="bg-gradient-to-br from-purple-900/50 to-purple-800/30 border border-purple-700/50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <TrendingUp className="w-10 h-10 text-purple-400" />
-                <div className="flex items-center gap-1 text-green-400 text-sm font-bold">
-                  <ArrowUp className="w-4 h-4" />
-                  8.3%
-                </div>
+            <InformationCard title="Ticket Promedio" description="Por pedido" totalSales={avgTicket} color={'purple'}>
+              <TrendingUp className="w-10 h-10 text-purple-400" />
+              <div className="flex items-center gap-1 text-green-400 text-sm font-bold">
+                <ArrowUp className="w-4 h-4" />
+                8.3%
               </div>
-              <p className="text-sm text-purple-300 mb-1">Ticket Promedio</p>
-              <p className="text-3xl font-bold text-white">S/ {avgTicket.toFixed(0)}</p>
-              <p className="text-xs text-gray-400 mt-2">Por pedido</p>
-            </div>
+            </InformationCard>
 
-            <div className="bg-gradient-to-br from-orange-900/50 to-orange-800/30 border border-orange-700/50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <Award className="w-10 h-10 text-orange-400" />
-                <div className="flex items-center gap-1 text-red-400 text-sm font-bold">
-                  <ArrowDown className="w-4 h-4" />
-                  2.1%
-                </div>
+            <InformationCard title="Tasa Conversión" description="Leads a ventas" totalSales={68.5} color={'orange'}>
+              <Award className="w-10 h-10 text-orange-400" />
+              <div className="flex items-center gap-1 text-red-400 text-sm font-bold">
+                <ArrowDown className="w-4 h-4" />
+                68.5%
               </div>
-              <p className="text-sm text-orange-300 mb-1">Tasa Conversión</p>
-              <p className="text-3xl font-bold text-white">68.5%</p>
-              <p className="text-xs text-gray-400 mt-2">Leads a ventas</p>
-            </div>
+            </InformationCard>
+
           </div>
 
           {/* Main Charts Row */}
@@ -364,9 +354,9 @@ export default function AnalisisVenta() {
   );
 }
 
-function InformationCard({title, description, children, totalSales}: {title: string, description: string, children: React.ReactNode, totalSales: number}) {
+function InformationCard({title, description, children, totalSales, color}: {title: string, description: string, children: React.ReactNode, totalSales: number, color: string}) {
   return (
-    <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 rounded-lg p-4 space-y-2">
+    <div className={`bg-gradient-to-br from-${color}-900/50 to-${color}-800/30 border border-${color}-700/50 rounded-lg p-4 space-y-2`}>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <p className="text-xs font-semibold text-blue-300">{title}</p>
