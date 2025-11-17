@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Package, Users, FileText, List, BarChart3, Menu, X, TrendingUp, TrendingDown, DollarSign, ShoppingCart, Calendar, Award, Filter, Download, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { Users, TrendingUp,DollarSign, ShoppingCart, Award, Download, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import Table from '../components/Table';
 
@@ -40,8 +40,6 @@ type YearComparisonDataType = {
 const headerTable = ['Ranking', 'Vendedor', 'Ventas Totales', 'Pedidos', 'Crecimiento'];
 
 export default function AnalisisVenta() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeSection, setActiveSection] = useState('sales-analysis');
   const [timePeriod, setTimePeriod] = useState('month');
 
   // Datos para el gráfico de ventas mensuales
@@ -236,7 +234,7 @@ export default function AnalisisVenta() {
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {topProductsData.map((entry, index) => (
+                    {topProductsData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
