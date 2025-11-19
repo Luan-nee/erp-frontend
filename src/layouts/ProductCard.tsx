@@ -40,12 +40,6 @@ export default function ProductCard(productProp: Product) {
               <span>{productProp.category}</span>
             </div>
 
-            <div className="mb-3">
-              <span className="inline-flex items-center px-3 py-1 bg-gray-700 text-gray-400 text-sm font-bold rounded-full">
-                Tipo de descuento: {productProp.discount}
-              </span>
-            </div>
-
             <button className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium transition-colors">
               Habilitar producto
             </button>
@@ -81,13 +75,6 @@ export default function ProductCard(productProp: Product) {
             <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
               <Tag className="w-4 h-4" />
               <span>{productProp.category}</span>
-            </div>
-
-            {/* Discount Badge */}
-            <div className="mb-3">
-              <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-orange-600 to-red-600 text-white text-sm font-bold rounded-full">
-                Tipo de descuento: {productProp.discount}
-              </span>
             </div>
 
             {/* Price */}
