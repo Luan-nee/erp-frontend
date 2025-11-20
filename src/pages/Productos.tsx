@@ -4,6 +4,7 @@ import MetricCard from '../components/MetricCard';
 import LocalList from '../layouts/LocalList';
 // import ProductCard from '../layouts/ProductCard';
 import ProductCardTest from '../layouts/ProductCard-test';
+import ProductDetailModal from '../modals/ProductDetailModal';
 
 interface Product {
   id: number;
@@ -44,8 +45,8 @@ const api_product: ApiProduct[] = [
     categoria_id: 3,
     marca_id: 1,
     porcentaje_ganancia: 0.30,
-    stock: 120,
-    stock_minimo: 10,
+    stock: 10,
+    stock_minimo: 20,
     estaInhabilitado: true,
     fecha_creacion: '2023-10-01T10:00:00Z',
     fecha_actualizacion: '2023-10-10T15:30:00Z',
@@ -200,6 +201,7 @@ const products: Product[] = [
 export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('Todos');
+  const [isOpen, setIsOpen] = useState(true); // Mostrar el modal del producto
   // const [showAddProduct, setShowAddProduct] = useState(false);
 
   const categories = ['Todos', 'Buscador', 'Suspensión', 'Frenos', 'Motor'];
@@ -209,6 +211,16 @@ export default function Productos() {
 
   return (
     <div className="flex-1 flex overflow-hidden">
+
+    <ProductDetailModal
+      product={api_product[0]}
+      isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+      onSave={(product) => {
+        console.log("Producto guardado:", product);
+        setIsOpen(false);
+      }}
+    />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
