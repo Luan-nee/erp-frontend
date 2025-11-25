@@ -318,57 +318,35 @@ export default function ProductDetailModal({
                 icon={<AlertCircle className="w-5 h-5 text-yellow-400" />}
               >
                 <div className="space-y-4">
-                  <div className="bg-gray-750 rounded-lg p-4 border border-gray-700">
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={!editedProduct.estaInhabilitado}
-                        onChange={(e) =>
-                          handleChange("estaInhabilitado", !e.target.checked)
-                        }
-                        disabled={!isEditing}
-                        className="w-5 h-5 rounded border-gray-600 text-green-600 focus:ring-2 focus:ring-green-500"
-                      />
-                      <div>
-                        <p className="text-white font-medium">
-                          Producto Activo
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          Disponible para venta
-                        </p>
-                      </div>
-                    </label>
-                  </div>
-
                   <div
                     className={`p-4 rounded-lg border ${
                       editedProduct.estaInhabilitado
-                        ? "bg-red-500/10 border-red-500/30"
-                        : "bg-green-500/10 border-green-500/30"
+                        ? "bg-green-500/10 border-green-500/30"
+                        : "bg-red-500/10 border-red-500/30"
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-2">
                       {editedProduct.estaInhabilitado ? (
-                        <XCircle className="w-5 h-5 text-red-400" />
-                      ) : (
                         <CheckCircle className="w-5 h-5 text-green-400" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-red-400" />
                       )}
                       <span
                         className={`font-bold ${
                           editedProduct.estaInhabilitado
-                            ? "text-red-400"
-                            : "text-green-400"
+                            ? "text-green-400"
+                            : "text-red-400"
                         }`}
                       >
                         {editedProduct.estaInhabilitado
-                          ? "Inhabilitado"
-                          : "Activo"}
+                          ? "Activo"
+                          : "Inhabilitado"}
                       </span>
                     </div>
                     <p className="text-xs text-gray-400">
                       {editedProduct.estaInhabilitado
-                        ? "Este producto no está disponible para venta"
-                        : "Este producto está disponible para venta"}
+                        ? "Este producto está disponible para venta"
+                        : "Este producto no está disponible para venta"}
                     </p>
                   </div>
                 </div>
