@@ -11,7 +11,7 @@ import PedidosExclusivos from './pages/PedidosExclusivos.tsx';
 import MovimientoInventario from './pages/MovimientoInventario.tsx';
 import ListaPedidosExclusivos from './pages/ListaPedidosExclusivos.tsx';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
-
+import Prueba from './pages/Prueba.tsx';
 import NavBar from './layouts/NavBar.tsx';
 import Marcas from './pages/Marcas.tsx';
 import Colaboradores from './pages/Colaboradores.tsx';
@@ -34,10 +34,11 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/inventory/categories" element={<Categories />} />
             <Route path="/inventory/products" element={<Products />} />
             <Route path="/inventory/movements" element={<MovimientoInventario />} />
-            <Route path="/inventory/marcas" element={<Marcas />} />
+            <Route path="/inventory/marca s" element={<Marcas />} />
             <Route path="/collaborators" element={<Colaboradores />} />
             <Route path="/exclusive-order" element={<PedidosExclusivos />} />
             <Route path="/exclusive-order/list" element={<ListaPedidosExclusivos />} />
+            <Route path="/prueba" element={<Prueba />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
