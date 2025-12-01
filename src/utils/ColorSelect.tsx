@@ -8,6 +8,7 @@ interface ColorSelectProps {
   selectedValue: string;
   onChange: (value: string) => void;
   label?: string;
+  isloading?: boolean;
 }
 
 export default function ColorSelect({
@@ -15,6 +16,7 @@ export default function ColorSelect({
   selectedValue,
   onChange,
   label = "Seleccionar Color",
+  isloading = false,
 }: ColorSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
@@ -62,17 +64,20 @@ export default function ColorSelect({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
         >
-          <span className="flex items-center space-x-2">
-            {/* Visualización del color seleccionado: Usa 'valor' (que contiene la clase TW) */}
-            <span
-              className={`w-4 h-4 rounded-full border border-gray-400 ${
-                selectedColor?.valor || "bg-transparent"
-              }`}
-              aria-hidden="true"
-            ></span>
-            {/* Muestra el 'nombre' del color */}
-            <span>{selectedColor ? selectedColor.nombre : label}</span>
-          </span>
+          {isloading ? "Cargando..." : (
+              <span className="flex items-center space-x-2">
+                {/* Visualización del color seleccionado: Usa 'valor' (que contiene la clase TW) */}
+                <span
+                  className={`w-4 h-4 rounded-full border border-gray-400 ${
+                    selectedColor?.valor || "bg-transparent"
+                  }`}
+                  aria-hidden="true"
+                ></span>
+                {/* Muestra el 'nombre' del color */}
+                <span>{selectedColor ? selectedColor.nombre : label}</span>
+              </span>
+            )
+          }
           <ChevronDown
             className={`h-5 w-5 transition-transform ${
               isOpen ? "rotate-180" : "rotate-0"

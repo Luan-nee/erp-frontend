@@ -1,39 +1,42 @@
 // src/App.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ColorSelect from '../utils/ColorSelect';
 import { getColores } from "../data/colors";
 import type { PropColor } from '../types/PropColor';
 
-getColores();
-
-const colores: PropColor[] = [
-  {
-    id: 1,
-    nombre: 'Rojo',
-    valor: 'bg-red-600',
-  },
-  {
-    id: 2,
-    nombre: 'Verde',
-    valor: 'bg-green-600',
-  },
-  {
-    id: 3,
-    nombre: 'Azul',
-    valor: 'bg-blue-600',
-  },
-];
-
 const Prueba: React.FC = () => {
   const [color, setColor] = useState('blue'); // Establece un color inicial
+  const [coloresAPI, setColoresAPI] = useState<PropColor[]>([]);
+  const [isloading, setIsloading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    getColores()
+      .then((data) => {
+        if (mounted) {
+          setColoresAPI(data);
+          setIsloading(false);
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setColoresAPI([]);
+          setIsloading(false);
+        }
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <div className="p-8 bg-gray-900 min-h-screen">
       <h1 className="text-xl font-bold text-white mb-4">Selector de Colores Personalizado</h1>
       <ColorSelect
-        options={colores}
+        options={coloresAPI}
         selectedValue={color}
         onChange={setColor}
+        isloading={isloading}
       />
       <p className="mt-4 text-white">
         Color seleccionado: <span className="font-bold">{color}</span>

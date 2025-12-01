@@ -1,5 +1,6 @@
 // src/api/coloresApi.ts
 import type { PropColor } from '../types/PropColor';
+import type { PropResponse } from '../types/PropResponse';
 
 const API_URL = "http://localhost:3000/api/colores";
 
@@ -11,11 +12,11 @@ export async function getColores(): Promise<PropColor[]> {
       throw new Error(`Failed to fetch colores: ${response.status}`);
     }
 
-    const data = (await response.json()) as PropColor[];
+    const data = (await response.json()) as PropResponse;
     console.log('getColores - status:', response.status);
     console.log('getColores - data:', data);
 
-    return data;
+    return data.info as PropColor[];
   } catch (error) {
     console.error('getColores - error:', error);
     throw error;
