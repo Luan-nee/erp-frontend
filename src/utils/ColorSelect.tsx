@@ -64,7 +64,26 @@ export default function ColorSelect({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
         >
-          {isloading ? "Cargando..." : (
+          {isloading ? 
+          (
+            <span className="flex items-center space-x-2">
+              <div className="
+                animate-spin 
+                h-4 
+                w-4 
+                border-4 
+                border-solid 
+                border-blue-500 
+                border-t-transparent 
+                rounded-full
+              "></div>
+              <span>
+                "Cargando..." 
+              </span>
+            </span>
+
+          )
+          : (
               <span className="flex items-center space-x-2">
                 {/* Visualización del color seleccionado: Usa 'valor' (que contiene la clase TW) */}
                 <span
