@@ -1,7 +1,7 @@
 // src/components/ColorSelect.tsx
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react"; // Necesitarás instalar lucide-react o usar un icono SVG similar
-import type { PropColor } from "../types/color";
+import type { PropColor } from "../types/PropColor";
 
 interface ColorSelectProps {
   options?: PropColor[];

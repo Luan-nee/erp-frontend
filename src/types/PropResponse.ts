@@ -1,4 +1,4 @@
-import type { PropColor } from './color';
+import type { PropColor } from './PropColor';
 
 export type PropResponse = {
   status: number;
