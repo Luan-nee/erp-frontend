@@ -5,7 +5,7 @@ import { getColores } from "../data/colors";
 import type { PropColor } from '../types/PropColor';
 
 const Prueba: React.FC = () => {
-  const [color, setColor] = useState('blue'); // Establece un color inicial
+  const [idColor, setIdColor] = useState(0); // Establece un color inicial
   const [coloresAPI, setColoresAPI] = useState<PropColor[]>([]);
   const [isloading, setIsloading] = useState(true);
 
@@ -34,12 +34,12 @@ const Prueba: React.FC = () => {
       <h1 className="text-xl font-bold text-white mb-4">Selector de Colores Personalizado</h1>
       <ColorSelect
         options={coloresAPI}
-        selectedValue={color}
-        onChange={setColor}
+        selectedValue={idColor}
+        onChange={setIdColor}
         isloading={isloading}
       />
       <p className="mt-4 text-white">
-        Color seleccionado: <span className="font-bold">{color}</span>
+        Color seleccionado: <span className="font-bold">{idColor}</span>
       </p>
     </div>
   );

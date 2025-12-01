@@ -5,8 +5,8 @@ import type { PropColor } from "../types/PropColor";
 
 interface ColorSelectProps {
   options?: PropColor[];
-  selectedValue: string;
-  onChange: (value: string) => void;
+  selectedValue: number;
+  onChange: (value: number) => void;
   label?: string;
   isloading?: boolean;
 }
@@ -25,7 +25,7 @@ export default function ColorSelect({
   if (!options) {
     setIsFailed(true);
   }
-  const selectedColor = options?.find((opt) => opt.nombre === selectedValue);
+  const selectedColor = options?.find((opt) => opt.id === selectedValue);
 
   // Maneja los clics fuera del componente para cerrarlo
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function ColorSelect({
 
   // La función de selección ahora usa la propiedad 'nombre' como el valor retornado
   const handleSelect = (option: PropColor) => {
-    onChange(option.nombre);
+    onChange(option.id);
     setIsOpen(false);
   };
 
@@ -131,7 +131,7 @@ export default function ColorSelect({
                 flex items-center space-x-3 p-3 text-sm text-white cursor-pointer 
                 hover:bg-blue-600 transition-colors duration-150
                 ${
-                  selectedValue === option.nombre
+                  selectedValue === option.id
                     ? "bg-blue-700 font-semibold"
                     : ""
                 }
@@ -139,7 +139,7 @@ export default function ColorSelect({
               onClick={() => handleSelect(option)}
               role="option"
               // Compara con 'nombre'
-              aria-selected={selectedValue === option.nombre}
+              aria-selected={selectedValue === option.id}
             >
               {/* Visualización del color en la lista: Usa 'valor' (clase TW) */}
               <span
