@@ -16,6 +16,7 @@ import {
   Palette,
   Building2,
 } from "lucide-react";
+// import ColorSelect from "../utils/ColorSelect";
 
 interface Product {
   id: number;
