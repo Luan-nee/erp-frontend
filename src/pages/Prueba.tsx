@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ColorSelect from '../utils/ColorSelect';
 import type { PropColor } from '../types/PropColor';
-import { useFetcher } from '../data/useFetcher';
+import  useFetcher  from '../data/useFetcher';
 
 const Prueba: React.FC = () => {
   const [idColor, setIdColor] = useState(0); // Establece un color inicial

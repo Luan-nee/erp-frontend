@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import type { PropColor } from '../types/PropColor';
 import type { PropResponse } from '../types/PropResponse';
+import type { PropCategoria, PropResumenCategoria } from '../types/categoria';
 
-export function useFetcher(url: string, customMessage?: string) {
-  const [data, setData] = useState<PropColor[]>([]);
+export default function useFetcher(url: string, customMessage?: string) {
+  const [data, setData] = useState<PropColor[] | PropCategoria[] | PropResumenCategoria>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hayError, setHayError] = useState<boolean>(false);
 
@@ -18,7 +19,7 @@ export function useFetcher(url: string, customMessage?: string) {
           // 2xx Códigos de éxito (OK, Created, No Content, etc.)
           console.log(`✅ Éxito (${status}): obteniendo ${customMessage} exitosamente.`);
           console.log(message);
-          setData(info as PropColor[]);
+          setData(info as PropColor[] | PropCategoria[] | PropResumenCategoria);
           setHayError(false);
         } else if (status >= 300 && status < 400) {
           // 3xx Códigos de redirección (Moved Permanently, Found, etc.)
