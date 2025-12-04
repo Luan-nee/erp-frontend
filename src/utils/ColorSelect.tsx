@@ -9,6 +9,7 @@ interface ColorSelectProps {
   onChange: (value: number) => void;
   label?: string;
   isloading?: boolean;
+  isError?: boolean;
 }
 
 export default function ColorSelect({
@@ -17,14 +18,11 @@ export default function ColorSelect({
   onChange,
   label = "Seleccionar Color",
   isloading = false,
+  isError,
 }: ColorSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
-  const [isFailed, setIsFailed] = useState(false);
   // Busca el objeto de color seleccionado usando 'nombre' (tu clave de valor)
-  if (!options) {
-    setIsFailed(true);
-  }
   const selectedColor = options?.find((opt) => opt.id === selectedValue);
 
   // Maneja los clics fuera del componente para cerrarlo
@@ -52,7 +50,7 @@ export default function ColorSelect({
   return (
     <div className="relative w-60" ref={selectRef}>
       {/* Botón que simula el input <select> */}
-      {!isFailed ? (
+      {!isError ? (
         <button
           type="button"
           className={`

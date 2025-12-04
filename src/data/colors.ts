@@ -18,7 +18,7 @@ export async function getColores(): Promise<PropColor[]> {
 
     return data.info as PropColor[];
   } catch (error) {
-    console.error('getColores - error:', error);
+    console.error('❌ Error al obtener datos del API de colores:', error);
     throw error;
   }
 }

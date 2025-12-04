@@ -1,5 +1,4 @@
-// src/App.tsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ColorSelect from '../utils/ColorSelect';
 import { getColores } from "../data/colors";
 import type { PropColor } from '../types/PropColor';
@@ -8,6 +7,7 @@ const Prueba: React.FC = () => {
   const [idColor, setIdColor] = useState(0); // Establece un color inicial
   const [coloresAPI, setColoresAPI] = useState<PropColor[]>([]);
   const [isloading, setIsloading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -22,6 +22,7 @@ const Prueba: React.FC = () => {
         if (mounted) {
           setColoresAPI([]);
           setIsloading(false);
+          setIsError(true);
         }
       });
     return () => {
@@ -37,6 +38,7 @@ const Prueba: React.FC = () => {
         selectedValue={idColor}
         onChange={setIdColor}
         isloading={isloading}
+        isError={isError}
       />
       <p className="mt-4 text-white">
         Color seleccionado: <span className="font-bold">{idColor}</span>
