@@ -16,7 +16,7 @@ export function useFetcher(url: string, customMessage?: string) {
         // Maneja el status de la API
         if (status >= 200 && status < 300) {
           // 2xx Códigos de éxito (OK, Created, No Content, etc.)
-          console.log(`✅ Éxito (${status}): La petición a los ${customMessage} se completó correctamente.`);
+          console.log(`✅ Éxito (${status}): obteniendo ${customMessage} exitosamente.`);
           console.log(message);
           setData(info as PropColor[]);
           setHayError(false);
@@ -42,7 +42,7 @@ export function useFetcher(url: string, customMessage?: string) {
         } else if (status >= 500 && status < 600) {
           setHayError(true);
           // 5xx Códigos de error del servidor (Internal Server Error, Service Unavailable, etc.)
-          console.log(`🚨 Error del Servidor (${status}): La API falló al intentar procesar la petición.`);
+          console.log(`❌ Error (${status}): Error al obtener ${customMessage}.`);
           console.log("Esto suele ser un problema en el lado de la API. Intenta de nuevo más tarde.");
         } else {
           setHayError(true);
@@ -52,7 +52,7 @@ export function useFetcher(url: string, customMessage?: string) {
         }
       })
       .catch((error) => {
-        console.error('Error 500 en el backend, avisado desde el frontend:', error);
+        console.error('❌ Backend inactivo:', error);
         setHayError(true);
       })
       .finally(() => {
