@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Package, BarChart3, FolderOpen, Plus, Search, Tag, Edit3, Trash2 } from 'lucide-react';
 import Table from '../components/Table';
 import MetricCard from '../components/MetricCard';
+import type { PropCategoria, PropResumenCategoria } from '../types/categoria';
+import useFetcher from '../data/useFetcher';
 
 function Categories() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -17,17 +19,12 @@ function Categories() {
     'Acciones'
   ];
 
-  const categories = [
-    { id: 1, name: 'Neumáticos Deportivos', description: 'Neumáticos de alto rendimiento para vehículos deportivos', products: 15 },
-    { id: 2, name: 'Neumáticos Todo Terreno', description: 'Neumáticos diseñados para condiciones off-road', products: 23 },
-    { id: 3, name: 'Neumáticos Comerciales', description: 'Neumáticos para vehículos de carga pesada', products: 18 },
-    { id: 4, name: 'Neumáticos Económicos', description: 'Neumáticos de buena calidad a precio accesible', products: 31 },
-    { id: 5, name: 'Neumáticos Premium', description: 'Línea premium con tecnología avanzada', products: 12 }
-  ];
+  const { data: categories, isLoading, hayError } = useFetcher("http://localhost:3000/api/categorias", "categorías");
+  const { data: resumen, isLoading: resumenLoading, hayError: resumenError } = useFetcher("http://localhost:3000/api/resumen-categorias", "resumen categorías");
 
-  const filteredCategories = categories.filter(cat => 
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    cat.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCategories = (categories as PropCategoria[]).filter(cat => 
+    cat.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    cat.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -82,19 +79,19 @@ function Categories() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div>
-                            <div className="text-white font-semibold text-lg">{category.name}</div>
+                            <div className="text-white font-semibold text-lg">{category.nombre}</div>
                             <div className="text-xs text-gray-400 mt-1">ID: CAT-{category.id.toString().padStart(3, '0')}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-gray-300 text-sm">{category.description}</p>
+                        <p className="text-gray-300 text-sm">{category.descripcion}</p>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <div className="flex items-center justify-center gap-2">
                           <Tag className="w-4 h-4 text-red-400" />
                           <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                            {category.products}
+                            {category.cantidad_productos}
                           </span>
                         </div>
                       </td>
@@ -124,7 +121,7 @@ function Categories() {
           <div className="grid grid-cols-3 gap-6 mt-8">
             <MetricCard
               name="Total Categorías"
-              value={categories.length}
+              value={(resumen as PropResumenCategoria[])[0]?.total_categorias || 0}
               color="red"
             >
               <FolderOpen className="w-6 h-6 text-white" />
@@ -133,7 +130,7 @@ function Categories() {
 
             <MetricCard
               name="Total Productos"
-              value={categories.reduce((sum, cat) => sum + cat.products, 0)}
+              value={(resumen as PropResumenCategoria[])[0]?.total_productos || 0}
               color="green"
             >
               <Package className="w-6 h-6 text-white" />
@@ -142,7 +139,7 @@ function Categories() {
 
             <MetricCard
               name="Promedio por Categoría"
-              value={Math.round(categories.reduce((sum, cat) => sum + cat.products, 0) / categories.length)}
+              value={(resumen as PropResumenCategoria[])[0]?.promedio_categoria || 0}
               color="blue"
             >
               <BarChart3 className="w-6 h-6 text-white" />

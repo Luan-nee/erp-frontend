@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react"; // Necesitarás instalar lucide-react o usar un icono SVG similar
 import type { PropColor } from "../types/PropColor";
+import Loading from "../animation/Loading";
 
 interface ColorSelectProps {
   options?: PropColor[];
@@ -65,16 +66,7 @@ export default function ColorSelect({
           {isloading ? 
           (
             <span className="flex items-center space-x-2">
-              <div className="
-                animate-spin 
-                h-4 
-                w-4 
-                border-4 
-                border-solid 
-                border-blue-500 
-                border-t-transparent 
-                rounded-full
-              "></div>
+              <Loading w={4} h={4} color="green" />
               <span>
                 "Cargando..." 
               </span>
