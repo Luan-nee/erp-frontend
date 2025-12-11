@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import Inventory from './pages/Inventario.tsx';
-import Categories from './pages/Categoria.tsx';
+import Categories from './pages/categorias/Categoria.tsx';
 import Products from './pages/Productos.tsx';
 import NotFound from './pages/NotFound.tsx';
 import AnalisisVenta from './pages/AnalisisVenta.tsx';
