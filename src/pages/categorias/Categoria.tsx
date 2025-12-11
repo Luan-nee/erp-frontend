@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Package,
   BarChart3,
@@ -30,12 +30,24 @@ function Categories() {
     null
   );
 
+  // capturar las acciones de los formularios
+  const [action, setAction] = useState(false);
+  useEffect(() => {
+    if (action) {
+      // lógica para recargar los datos, por ejemplo, volver a llamar a useFetcher o actualizar el estado
+      // ...
+      // luego de recargar los datos, restablecer action a false
+      setAction(false);
+      console.log("Recargando datos de categorías...");
+    } 
+  }, [action]);
+
   const [searchTerm, setSearchTerm] = useState("");
 
   const {
     data: categories,
-    isLoading,
-    hayError,
+    isLoading: categoriesLoading,
+    hayError: categoriesError,
   } = useFetcher("http://localhost:3000/api/categorias", "categorías");
   const {
     data: resumen,
@@ -206,10 +218,11 @@ function Categories() {
       </div>
 
       {/* Create Category Modal */}
-      {showCreateModal && <FormCreate setShowFormCreate={setShowCreateModal} />}
+      {showCreateModal && <FormCreate setShowFormCreate={setShowCreateModal} setAction={setAction} />}
 
       {showEditModal && (
         <FormEdit
+          setAction={setAction}
           setShowFormEdit={setShowFormModal}
           dataCategoria={
             (categories as PropCategoria[]).find(
@@ -221,6 +234,7 @@ function Categories() {
 
       {showDeleteModal && (
         <FormDelete
+          setAction={setAction} 
           setShowFormDelete={setShowFormDelete}
           dataCategoria={
             (categories as PropCategoria[]).find(
