@@ -5,11 +5,13 @@ import { FolderOpen, X, Save } from "lucide-react";
 interface FormCreateProps {
   setShowFormEdit: (p: boolean) => void;
   dataCategoria: Categoria;
+  setAction: (p: boolean) => void;
 }
 
 export default function FormEdit({
   setShowFormEdit,
   dataCategoria,
+  setAction,
 }: FormCreateProps) {
   const [formData, setFormData] = useState<Categoria>(dataCategoria);
 
@@ -25,6 +27,7 @@ export default function FormEdit({
   const handleSubmit = () => {
     console.log("Categoría actualizada:", formData);
     setShowFormEdit(false);
+    setAction(true);
   };
 
   return (

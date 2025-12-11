@@ -2,9 +2,10 @@ import { useState } from "react";
 
 interface FormCreateProps {
   setShowFormCreate: (p: boolean) => void;
+  setAction: (p: boolean) => void;
 }
 
-export default function FormCreate( { setShowFormCreate }: FormCreateProps) {
+export default function FormCreate( { setShowFormCreate, setAction }: FormCreateProps) {
   const [dataCategoria, setDataCategoria] = useState({
     nombre: "",
     descripcion: "",
@@ -24,6 +25,7 @@ export default function FormCreate( { setShowFormCreate }: FormCreateProps) {
     // ...
     
     console.log("Categoría actualizada:", dataCategoria);
+    setAction(true);
     setShowFormCreate(false);
   };
 

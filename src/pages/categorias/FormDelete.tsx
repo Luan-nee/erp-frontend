@@ -5,11 +5,13 @@ import type { Categoria } from "../../types/categoria";
 interface FormDeleteProps {
   setShowFormDelete: (p: boolean) => void;
   dataCategoria: Categoria;
+  setAction: (p: boolean) => void;
 }
 
 export default function FormDelete({
   setShowFormDelete,
   dataCategoria,
+  setAction,
 }: FormDeleteProps) {
   const [confirmText, setConfirmText] = useState("");
 
@@ -22,6 +24,7 @@ export default function FormDelete({
       console.log(`Categoría "${dataCategoria.nombre}" con ID: ${dataCategoria.id} eliminada`);
       setShowFormDelete(false);
       setConfirmText("");
+      setAction(true);
     }
   };
 
