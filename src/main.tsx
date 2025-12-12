@@ -34,7 +34,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/inventory/categories" element={<Categories />} />
             <Route path="/inventory/products" element={<Products />} />
             <Route path="/inventory/movements" element={<MovimientoInventario />} />
-            <Route path="/inventory/marca s" element={<Marcas />} />
+            <Route path="/inventory/marcas" element={<Marcas />} />
             <Route path="/collaborators" element={<Colaboradores />} />
             <Route path="/exclusive-order" element={<PedidosExclusivos />} />
             <Route path="/exclusive-order/list" element={<ListaPedidosExclusivos />} />
