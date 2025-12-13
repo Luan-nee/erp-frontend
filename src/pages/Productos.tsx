@@ -4,7 +4,6 @@ import MetricCard from '../components/MetricCard';
 import LocalList from '../layouts/LocalList';
 // import ProductCard from '../layouts/ProductCard';
 import ProductCardTest from '../layouts/ProductCard-test';
-import ProductDetailModal from '../modals/ProductDetailModal';
 
 interface Product {
   id: number;
@@ -201,7 +200,6 @@ const products: Product[] = [
 export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('Todos');
-  const [isOpen, setIsOpen] = useState(true); // Mostrar el modal del producto
   // const [showAddProduct, setShowAddProduct] = useState(false);
 
   const categories = ['Todos', 'Buscador', 'Suspensión', 'Frenos', 'Motor'];
@@ -211,16 +209,6 @@ export default function Productos() {
 
   return (
     <div className="flex-1 flex overflow-hidden">
-
-    <ProductDetailModal
-      product={api_product[0]}
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
-      onSave={(product) => {
-        console.log("Producto guardado:", product);
-        setIsOpen(false);
-      }}
-    />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -331,7 +319,7 @@ export default function Productos() {
                 </div>
               </button>
 
-              {activeProducts.map(product => (
+              {api_product.map(product => (
                 // <ProductCard key={product.id} {...product} />
                 <ProductCardTest key={product.id} {...product} />
               ))}
