@@ -4,12 +4,11 @@ interface LocalItemProps {
   id: number;
   nombre: string;
   direccion: string;
-  tipo_sucursal: string;
   setSelectIdSucursal: (id: number | null) => void;
   isSelected: boolean;
 }
 
-export default function LocalItem({ id, nombre, direccion, tipo_sucursal, setSelectIdSucursal, isSelected }: LocalItemProps  ) {
+export default function LocalItem({ id, nombre, direccion, setSelectIdSucursal, isSelected }: LocalItemProps  ) {
   return (
     <button
       type="button"

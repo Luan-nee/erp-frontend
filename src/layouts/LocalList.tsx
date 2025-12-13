@@ -12,14 +12,6 @@ interface Location {
 }
 
 export default function LocalList() {
-  
-  const locations: Location[] = [
-    { name: 'Central Lima', address: 'Av. Industrial 1234', type: 'central' },
-    { name: 'Sucursal Norte', address: 'Calle Los Pinos 567', type: 'sucursales' },
-    { name: 'Sucursal Este', address: 'Jr. Comercio 890', type: 'sucursales' },
-    { name: 'Sucursal Sur', address: 'Av. Arequipa 432', type: 'sucursales' },
-    { name: 'Depósito Principal', address: 'Panamericana Sur Km 12', type: 'central' }
-  ];
 
   const { data, isLoading: sucursalesLoading, hayError: sucursalesError, refetch: refetchSucursales } = useFetcher('http://localhost:3000/api/sucursales', 'sucursales');
 
@@ -78,7 +70,6 @@ export default function LocalList() {
               id={local.id}
               nombre={local.nombre}
               direccion={local.direccion}
-              tipo_sucursal={local.tipo_sucursal}
               setSelectIdSucursal={setSelectIdSucursal}
               isSelected={selectIdSucursal === local.id}
             />
