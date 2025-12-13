@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import type { PropColor } from '../types/PropColor';
 import type { PropResponse } from '../types/PropResponse';
 import type { PropCategoria, PropResumenCategoria } from '../types/categoria';
+import type { PropMarca, PropResumenMarca } from '../types/marca';
 
-type FetcherResult = PropColor[] | PropCategoria[] | PropResumenCategoria[];
+type FetcherResult =  PropColor[] | PropCategoria[] | PropResumenCategoria[] | PropMarca[] | PropResumenMarca[];
 
 interface FetcherReturn {
   data: FetcherResult;

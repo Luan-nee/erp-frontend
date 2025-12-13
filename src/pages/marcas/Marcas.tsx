@@ -2,23 +2,17 @@ import { useState } from "react";
 import {
   Package,
   Search,
-  Edit3,
-  Trash2,
   Plus,
   Award,
-  Tag,
   TrendingUp,
 } from "lucide-react";
+import type { PropMarca, PropResumenMarca } from "../../types/marca";
+import Loading from "../../animation/Loading";
 import Table from "../../components/Table";
 import MetricCard from "../../components/MetricCard";
-
-type Brand = {
-  id: number;
-  name: string;
-  description: string;
-  products: number;
-  country: string;
-};
+import useFetcher from "../../data/useFetchet";
+import CardMarca from "./CardMarca";
+import RowTable from "./RowTable";
 
 const headerTable = ["Ranking", "Marca", "Descripción", "Productos"];
 
@@ -28,58 +22,25 @@ export default function CondorMotorsBrands() {
   const [brandDesc, setBrandDesc] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const brands: Brand[] = [
-    {
-      id: 1,
-      name: "Michelin",
-      description: "Líder mundial en neumáticos premium y alta performance",
-      products: 45,
-      country: "Francia",
-    },
-    {
-      id: 2,
-      name: "Bridgestone",
-      description: "Innovación japonesa en tecnología de neumáticos",
-      products: 38,
-      country: "Japón",
-    },
-    {
-      id: 3,
-      name: "Goodyear",
-      description: "Marca americana con más de 120 años de experiencia",
-      products: 52,
-      country: "USA",
-    },
-    {
-      id: 4,
-      name: "Continental",
-      description: "Tecnología alemana de precisión y seguridad",
-      products: 41,
-      country: "Alemania",
-    },
-    {
-      id: 5,
-      name: "Pirelli",
-      description: "Excelencia italiana en neumáticos deportivos",
-      products: 29,
-      country: "Italia",
-    },
-  ];
+  const {
+    data: marcas,
+    isLoading: marcasLoading,
+    hayError: marcasError,
+    refetch: MarcasRefetch,
+  } = useFetcher("http://localhost:3000/api/marca", "marcas");
 
-  const filteredBrands = brands.filter(
-    (brand) =>
-      brand.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      brand.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      brand.country.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const {
+    data: resumenMarcas,
+    isLoading: resumenMarcasLoading,
+    hayError: resumenMarcasError,
+    refetch: resumenMarcasRefetch,
+  } = useFetcher("http://localhost:3000/api/resumen-marcas", "resumen-marcas");
 
-  const totalProducts = brands.reduce((sum, brand) => sum + brand.products, 0);
-  const avgProducts = Math.round(totalProducts / brands.length);
+  const marcasData = marcas as PropMarca[];
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
-    {/* Main Content */}
-    {/* Header */}
+      {/* Header */}
       <header className="bg-gray-800 border-b border-gray-700 px-8 py-6">
         <div className="flex items-center justify-between">
           <div>
@@ -102,27 +63,49 @@ export default function CondorMotorsBrands() {
 
       {/* Stats Cards */}
       <div className="bg-gray-800 border-b border-gray-700 p-8">
-        <div className="grid grid-cols-3 gap-6">
-          <MetricCard name="Total Marcas" value={brands.length} color="blue">
-            <Award className="w-6 h-6 text-white" />
-          </MetricCard>
+        {resumenMarcasError ? (
+          <div className="col-span-3 px-6 py-4 text-center text-red-500">
+            Error al cargar el resumen de categorías.{" "}
+            <button
+              onClick={() => resumenMarcasRefetch()}
+              className="underline text-red-400 hover:text-red-600"
+            >
+              Recargar resumen
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-6">
+            <MetricCard
+              name="Total Marcas"
+              value={(resumenMarcas as PropResumenMarca[])[0]?.total_marcas}
+              isLoading={resumenMarcasLoading}
+              isError={resumenMarcasError}
+              color="blue"
+            >
+              <Award className="w-6 h-6 text-white" />
+            </MetricCard>
 
-          <MetricCard
-            name="Total Productos"
-            value={totalProducts}
-            color="green"
-          >
-            <Package className="w-6 h-6 text-white" />
-          </MetricCard>
+            <MetricCard
+              name="Total Productos"
+              value={(resumenMarcas as PropResumenMarca[])[0]?.total_productos}
+              isLoading={resumenMarcasLoading}
+              isError={resumenMarcasError}
+              color="green"
+            >
+              <Package className="w-6 h-6 text-white" />
+            </MetricCard>
 
-          <MetricCard
-            name="Promedio por Marca"
-            value={avgProducts}
-            color="purple"
-          >
-            <TrendingUp className="w-6 h-6 text-white" />
-          </MetricCard>
-        </div>
+            <MetricCard
+              name="Promedio por Marca"
+              value={(resumenMarcas as PropResumenMarca[])[0]?.promedio_marca}
+              isLoading={resumenMarcasLoading}
+              isError={resumenMarcasError}
+              color="purple"
+            >
+              <TrendingUp className="w-6 h-6 text-white" />
+            </MetricCard>
+          </div>
+        )}
       </div>
 
       {/* Search Bar */}
@@ -142,51 +125,37 @@ export default function CondorMotorsBrands() {
       {/* Content Area */}
       <div className="flex-1 p-8">
         {/* Brands Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredBrands.map((brand) => (
-            <div
-              key={brand.id}
-              className="bg-gray-800 rounded-xl shadow-xl border border-gray-700 overflow-hidden hover:shadow-2xl hover:border-red-500/50 transition-all group"
-            >
-              {/* Brand Header */}
-              <div className="flex flex-row justify-between bg-gradient-to-br from-red-900/50 to-red-800/30 p-6 border-b border-gray-700">
-                <h3 className="text-2xl font-bold text-white mb-1">
-                  {brand.name}
-                </h3>
-                <div className="flex items-center justify-end mb-4">
-                  <div className="flex gap-2">
-                    <button className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors shadow-md">
-                      <Edit3 className="w-4 h-4" />
-                    </button>
-                    <button className="p-2 bg-red-600 hover:bg-red-700 rounded-lg text-white transition-colors shadow-md">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Brand Info */}
-              <div className="p-6">
-                <p className="text-gray-300 text-sm mb-4 line-clamp-2 min-h-[40px]">
-                  {brand.description}
-                </p>
-
-                <div className="flex items-center justify-between pt-4 border-t border-gray-700">
-                  <div className="mt-3 text-xs text-gray-500">
-                    ID: BRN-{brand.id.toString().padStart(3, "0")}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-blue-400" />
-                    <span className="text-sm text-gray-400">Productos:</span>
-                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                      {brand.products}
-                    </span>
-                  </div>
-                </div>
-              </div>
+        { marcasError ? (
+            <div className="col-span-3 px-6 py-4 text-center text-red-500">
+              Error al cargar las marcas.{" "}
+              <button
+                onClick={() => MarcasRefetch()}
+                className="underline text-red-400 hover:text-red-600"
+              >
+                Recargar marcas
+              </button>
             </div>
-          ))}
-        </div>
+          ): marcasLoading ? (
+            <div className=" flex flex-row items-center justify-center " >
+              <p className="px-6 py-4 text-center text-gray-400">
+                Cargando marcas...  
+              </p>
+              <Loading w={8} h={8} color="red" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {marcasData.map((marca) => (
+                <CardMarca
+                  key={marca.id}
+                  id={marca.id}
+                  nombre={marca.nombre}
+                  descripcion={marca.descripcion}
+                  cant_productos={marca.cantidad_productos}
+                />
+              ))}
+            </div>
+          )
+        }
 
         {/* Top Brands Table */}
         <div className="mt-8 bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-hidden">
@@ -197,51 +166,47 @@ export default function CondorMotorsBrands() {
           </div>
           <div className="overflow-x-auto">
             <Table headerTable={headerTable}>
-              {[...brands]
-                .sort((a, b) => b.products - a.products)
-                .map((brand, idx) => (
-                  <tr
-                    key={brand.id}
-                    className={`hover:bg-gray-750 transition-colors ${
-                      idx % 2 === 0 ? "bg-gray-800" : "bg-gray-825"
-                    }`}
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                            idx === 0
-                              ? "bg-yellow-500 text-gray-900"
-                              : idx === 1
-                              ? "bg-gray-400 text-gray-900"
-                              : idx === 2
-                              ? "bg-orange-600 text-white"
-                              : "bg-gray-700 text-gray-300"
-                          }`}
-                        >
-                          {idx + 1}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <span className="text-white font-semibold">
-                          {brand.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-gray-300 text-sm">
-                        {brand.description}
+                {marcasLoading ? (
+                  <tr>
+                    <td
+                      colSpan={headerTable.length}
+                      className="flex flex-row items-center justify-center py-6"
+                    >
+                      <p className="px-6 py-4 text-center text-gray-400">
+                        Cargando marcas...  
                       </p>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                        {brand.products}
-                      </span>
+                      <Loading w={8} h={8} color="red" />
                     </td>
                   </tr>
-                ))}
+                ) : marcasError ? (
+                  <tr>
+                    <td
+                      colSpan={headerTable.length}
+                      className="px-6 py-4 text-center text-red-500"
+                    >
+                      Error al cargar las marcas.{" "}
+                      <button
+                        onClick={() => MarcasRefetch()}
+                        className="underline text-red-400 hover:text-red-600"
+                      >
+                        Recargar página
+                      </button>
+                    </td>
+                    
+                  </tr>
+                ) : (
+                  [...marcasData]
+                  .sort((a, b) => b.cantidad_productos - a.cantidad_productos)
+                  .map((marca, idx) => (
+                    <RowTable
+                      key={marca.id}
+                      id={idx}
+                      nombre={marca.nombre}
+                      descripcion={marca.descripcion}
+                      cantidad_productos={marca.cantidad_productos}
+                    />
+                  ))
+                )}
             </Table>
           </div>
         </div>
