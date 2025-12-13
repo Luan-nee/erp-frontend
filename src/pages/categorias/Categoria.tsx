@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Package,
   BarChart3,
@@ -15,7 +15,8 @@ import type {
   PropCategoria,
   PropResumenCategoria,
 } from "../../types/categoria";
-import useFetcher from "../../data/useFetcher";
+// import useFetcher from "../../data/useFetcher";
+import useFetcher from "../../data/useFetchet";
 import FormCreate from "./FormCreate";
 import FormEdit from "./FormEdit";
 import FormDelete from "./FormDelete";
@@ -29,29 +30,19 @@ function Categories() {
   const [idCategoriaEdit, setIdCategoriaEdit] = useState<number | null>(null);
   const [idCategoriaDelete, setIdCategoriaDelete] = useState<number | null>(null);
 
-  // capturar las acciones de los formularios
-  const [recargarPagina, setRecargarPagina] = useState(false);
-  useEffect(() => {
-    if (recargarPagina) {
-      // lógica para recargar los datos, por ejemplo, volver a llamar a useFetcher o actualizar el estado
-      // ...
-      // luego de recargar los datos, restablecer action a false
-      setRecargarPagina(false);
-      console.log("Recargando datos de categorías...");
-    }
-  }, [recargarPagina]);
-
   const [searchTerm, setSearchTerm] = useState("");
 
   const {
     data: categories,
     isLoading: categoriesLoading,
     hayError: categoriesError,
+    refetch: refetchCategorias,
   } = useFetcher("http://localhost:3000/api/categorias", "categorías");
   const {
     data: resumen,
     isLoading: resumenLoading,
     hayError: resumenError,
+    refetch: refetchResumen,
   } = useFetcher(
     "http://localhost:3000/api/resumen-categorias",
     "resumen categorías"
@@ -132,7 +123,7 @@ function Categories() {
                     >
                       Error al cargar las categorías.{" "}
                       <button
-                        onClick={() => setRecargarPagina(true)}
+                        onClick={() => refetchCategorias()}
                         className="underline text-red-400 hover:text-red-600"
                       >
                         Recargar página
@@ -212,37 +203,51 @@ function Categories() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-3 gap-6 mt-8">
-            <MetricCard
-              name="Total Categorías"
-              isError={resumenError} 
-              isLoading={resumenLoading} 
-              value={(resumen as PropResumenCategoria[])[0]?.total_categorias}
-              color="red"
-            >
-              <FolderOpen className="w-6 h-6 text-white" />
-            </MetricCard>
+            {
+              resumenError ? (
+                <div className="col-span-3 px-6 py-4 text-center text-red-500">
+                  Error al cargar el resumen de categorías.{" "}
+                  <button
+                    onClick={() => refetchResumen()}
+                    className="underline text-red-400 hover:text-red-600"
+                  >
+                    Recargar resumen
+                  </button>
+                </div>
+              ): (
+                <div className="grid grid-cols-3 gap-6 mt-8">
+                  <MetricCard
+                    name="Total Categorías"
+                    isError={resumenError} 
+                    isLoading={resumenLoading} 
+                    value={(resumen as PropResumenCategoria[])[0]?.total_categorias}
+                    color="red"
+                  >
+                    <FolderOpen className="w-6 h-6 text-white" />
+                  </MetricCard>
 
-            <MetricCard
-              name="Total Productos"
-              isError={resumenError} 
-              isLoading={resumenLoading} 
-              value={(resumen as PropResumenCategoria[])[0]?.total_productos}
-              color="green"
-            >
-              <Package className="w-6 h-6 text-white" />
-            </MetricCard>
+                  <MetricCard
+                    name="Total Productos"
+                    isError={resumenError} 
+                    isLoading={resumenLoading} 
+                    value={(resumen as PropResumenCategoria[])[0]?.total_productos}
+                    color="green"
+                  >
+                    <Package className="w-6 h-6 text-white" />
+                  </MetricCard>
 
-            <MetricCard
-              name="Promedio por Categoría"
-              isError={resumenError} 
-              isLoading={resumenLoading} 
-              value={(resumen as PropResumenCategoria[])[0]?.promedio_categoria}
-              color="blue"
-            >
-              <BarChart3 className="w-6 h-6 text-white" />
-            </MetricCard>
-          </div>
+                  <MetricCard
+                    name="Promedio por Categoría"
+                    isError={resumenError} 
+                    isLoading={resumenLoading} 
+                    value={(resumen as PropResumenCategoria[])[0]?.promedio_categoria}
+                    color="blue"
+                  >
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </MetricCard>
+                </div>
+              )
+            }
         </div>
       </div>
 
@@ -250,13 +255,13 @@ function Categories() {
       {showCreateModal && (
         <FormCreate
           setShowFormCreate={setShowCreateModal}
-          setAction={setRecargarPagina}
+          refetch={refetchCategorias}
         />
       )}
 
       {showEditModal && (
         <FormEdit
-          setAction={setRecargarPagina}
+          refetch={refetchCategorias}
           setShowFormEdit={setShowFormModal}
           dataCategoria={
             (categories as PropCategoria[]).find(
@@ -268,7 +273,7 @@ function Categories() {
 
       {showDeleteModal && (
         <FormDelete
-          setAction={setRecargarPagina}
+          refetch={refetchCategorias}
           setShowFormDelete={setShowFormDelete}
           dataCategoria={
             (categories as PropCategoria[]).find(

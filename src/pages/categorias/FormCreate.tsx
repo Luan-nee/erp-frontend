@@ -2,10 +2,10 @@ import { useState } from "react";
 
 interface FormCreateProps {
   setShowFormCreate: (p: boolean) => void;
-  setAction: (p: boolean) => void;
+  refetch: () => void;
 }
 
-export default function FormCreate( { setShowFormCreate, setAction }: FormCreateProps) {
+export default function FormCreate( { setShowFormCreate, refetch }: FormCreateProps) {
   const [dataCategoria, setDataCategoria] = useState({
     nombre: "",
     descripcion: "",
@@ -25,7 +25,7 @@ export default function FormCreate( { setShowFormCreate, setAction }: FormCreate
     // ...
     
     console.log("Categoría actualizada:", dataCategoria);
-    setAction(true);
+    refetch(); // Llama a la función refetch para actualizar los datos
     setShowFormCreate(false);
   };
 

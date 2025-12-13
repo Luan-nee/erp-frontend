@@ -1,14 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { PropColor } from '../types/PropColor';
 import type { PropResponse } from '../types/PropResponse';
 import type { PropCategoria, PropResumenCategoria } from '../types/categoria';
 
-export default function useFetcher(url: string, customMessage?: string) {
-  const [data, setData] = useState<PropColor[] | PropCategoria[] | PropResumenCategoria[]>([]);
+type FetcherResult = PropColor[] | PropCategoria[] | PropResumenCategoria[];
+
+interface FetcherReturn {
+  data: FetcherResult;
+  isLoading: boolean;
+  hayError: boolean;
+  refetch: () => void;
+}
+
+export default function useFetcher(url: string, customMessage: string): FetcherReturn {
+  const [data, setData] = useState<FetcherResult>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hayError, setHayError] = useState<boolean>(false);
+  const [refetchTrigger, setRefetchTrigger] = useState<number>(0);
 
-  useEffect(() => {
+  const fetchData = useCallback(() => {
     setIsLoading(true);
     fetch(url)
       .then((response) => response.json())
@@ -19,7 +29,7 @@ export default function useFetcher(url: string, customMessage?: string) {
           // 2xx Códigos de éxito (OK, Created, No Content, etc.)
           console.log(`✅ Éxito (${status}): obteniendo ${customMessage} exitosamente.`);
           console.log(message);
-          setData(info as PropColor[] | PropCategoria[] | PropResumenCategoria[]);
+          setData(info as FetcherResult);
           setHayError(false);
         } else if (status >= 300 && status < 400) {
           // 3xx Códigos de redirección (Moved Permanently, Found, etc.)
@@ -59,7 +69,15 @@ export default function useFetcher(url: string, customMessage?: string) {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [refetchTrigger]);
 
-  return { data, isLoading, hayError };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const refetch = () => {
+    setRefetchTrigger(prev => prev + 1);
+  }
+
+  return { data, isLoading, hayError, refetch };
 }
