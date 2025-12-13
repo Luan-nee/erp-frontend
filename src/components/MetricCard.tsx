@@ -5,8 +5,8 @@ interface MetricCardProps {
   name: string;
   value: number;
   color: string;
-  isError: boolean;
-  isLoading: boolean;
+  isError?: boolean;
+  isLoading?: boolean;
   children?: React.ReactNode;
 }
 
