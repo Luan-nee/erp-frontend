@@ -1,6 +1,9 @@
 import { Plus } from 'lucide-react';
 import LocalItem from '../components/LocalItem';
 import { useState } from 'react';
+import useFetcher from '../data/useFetchet';
+import type { PropSucursal } from '../types/sucursal';
+import Loading from '../animation/Loading';
 
 interface Location { 
   name: string;
@@ -18,11 +21,11 @@ export default function LocalList() {
     { name: 'Depósito Principal', address: 'Panamericana Sur Km 12', type: 'central' }
   ];
 
+  const { data, isLoading: sucursalesLoading, hayError: sucursalesError, refetch: refetchSucursales } = useFetcher('http://localhost:3000/api/sucursales', 'sucursales');
+
+  const sucursales = data as PropSucursal[];
+  const [selectIdSucursal, setSelectIdSucursal] = useState<number | null>(1); // por defecto seleccionamos la primera sucursal
   const [selectTipoSucursal, setSelectTipoSucursal] = useState<string>("central")
-  const [selectLocal, setSelectLocal] = useState<{ type: string ; idx: number } | null>({
-    type: locations[0].type,
-    idx: 0
-  });
 
   return (
     <div className="w-80 bg-gray-800 border-l border-gray-700 flex flex-col">
@@ -39,27 +42,49 @@ export default function LocalList() {
           Central
         </button>
         <button 
-        onClick={() => setSelectTipoSucursal("sucursales")}
-        className={`flex-1 px-4 py-2 ${ selectTipoSucursal === "sucursales" ? "bg-red-600 text-white" : "bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors"} rounded-lg font-medium`}>
+        onClick={() => setSelectTipoSucursal("sucursal")}
+        className={`flex-1 px-4 py-2 ${ selectTipoSucursal === "sucursal" ? "bg-red-600 text-white" : "bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors"} rounded-lg font-medium`}>
           Sucursales
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        
-        {locations
-          .filter((location) => location.type === selectTipoSucursal)
-          .map((location, idx) => (
-          <LocalItem
-            key={idx}
-            name={location.name}
-            address={location.address}
-            idx={idx}
-            onSelect={setSelectLocal}
-            isSelected={selectLocal?.idx === idx && selectLocal?.type === location.type}
-            type={location.type}
-          />
-        ))}
+        {sucursalesLoading ? (
+          // diseña un apartado que diga cargando haciendo uso del componente Loading
+          <div className="flex flex-col items-center justify-center">
+            <Loading 
+              w={12} 
+              h={12}
+              color="red"
+            />
+            <p className="text-gray-400 mt-2">Cargando sucursales...</p>
+          </div>
+        ) : sucursalesError ? (
+          // crea un apartado que diga error al cargar las sucursales con un botón para recargar los datos de las sucursales
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-red-500 mb-2">Error al cargar las sucursales.</p>
+            <button
+              onClick={refetchSucursales}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : (
+          sucursales.filter((local) => local.tipo_sucursal === selectTipoSucursal)
+            .map((local, idx) => (
+            <LocalItem
+              key={idx}
+              id={local.id}
+              nombre={local.nombre}
+              direccion={local.direccion}
+              tipo_sucursal={local.tipo_sucursal}
+              setSelectIdSucursal={setSelectIdSucursal}
+              isSelected={selectIdSucursal === local.id}
+            />
+          ))
+        )
+        }
       </div>
 
       <div className="p-4 border-t border-gray-700">
