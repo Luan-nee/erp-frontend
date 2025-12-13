@@ -6,21 +6,27 @@ import {
   Award,
   TrendingUp,
 } from "lucide-react";
-import type { PropMarca, PropResumenMarca } from "../../types/marca";
+import type { Marca, PropMarca, PropResumenMarca } from "../../types/marca";
 import Loading from "../../animation/Loading";
 import Table from "../../components/Table";
 import MetricCard from "../../components/MetricCard";
 import useFetcher from "../../data/useFetchet";
 import CardMarca from "./CardMarca";
 import RowTable from "./RowTable";
+import FormCreate from "./FormCreate";
+import FormDelete from "./FormDelete";
+import FormEdit from "./FormEdit";
 
 const headerTable = ["Ranking", "Marca", "Descripción", "Productos"];
 
 export default function CondorMotorsBrands() {
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [brandName, setBrandName] = useState("");
-  const [brandDesc, setBrandDesc] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+
+  const [idMarcaDelete, setIdMarcaDelete] = useState<number | null>(null);
+  const [idMarcaEdit, setIdMarcaEdit] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const {
     data: marcas,
@@ -151,6 +157,10 @@ export default function CondorMotorsBrands() {
                   nombre={marca.nombre}
                   descripcion={marca.descripcion}
                   cant_productos={marca.cantidad_productos}
+                  showDeleteModal={setShowDeleteModal}
+                  showEditModal={setShowEditModal}
+                  setIdMarcaDelete={setIdMarcaDelete}
+                  setIdMarcaEdit={setIdMarcaEdit}
                 />
               ))}
             </div>
@@ -214,62 +224,15 @@ export default function CondorMotorsBrands() {
 
       {/* Create Brand Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-lg">
-            <div className="bg-gradient-to-r from-red-900 to-red-800 px-6 py-4 rounded-t-2xl border-b border-red-700">
-              <h3 className="text-xl font-bold text-white">
-                Registrar nueva marca
-              </h3>
-            </div>
+        <FormCreate setShowFormCreate={setShowCreateModal} refetch={MarcasRefetch} />
+      )}
 
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Marca:
-                </label>
-                <input
-                  type="text"
-                  value={brandName}
-                  onChange={(e) => setBrandName(e.target.value)}
-                  placeholder="Ej: Yokohama"
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
-                />
-              </div>
+      {showDeleteModal && (
+        <FormDelete setShowFormDelete={setShowDeleteModal} data={(marcas as Marca[]).find(marca => marca.id === idMarcaDelete)!} refetch={MarcasRefetch} />
+      )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Descripción:
-                </label>
-                <textarea
-                  value={brandDesc}
-                  onChange={(e) => setBrandDesc(e.target.value)}
-                  placeholder="Describe las características de esta marca..."
-                  rows={4}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all resize-none"
-                />
-              </div>
-            </div>
-
-            <div className="px-6 py-4 bg-gray-750 rounded-b-2xl border-t border-gray-700 flex gap-3">
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-white font-medium transition-colors border border-gray-600"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => {
-                  setShowCreateModal(false);
-                  setBrandName("");
-                  setBrandDesc("");
-                }}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg text-white font-medium transition-all shadow-lg"
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
+      { showEditModal && (
+        <FormEdit setShowFormEdit={setShowEditModal} data={(marcas as Marca[]).find(marca => marca.id === idMarcaEdit)!} refetch={MarcasRefetch} />
       )}
     </div>
   );

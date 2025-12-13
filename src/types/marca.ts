@@ -1,3 +1,9 @@
+export type Marca = {
+  id: number;
+  nombre: string;
+  descripcion: string;
+}
+
 export type PropMarca = {
   id: number;
   nombre: string;

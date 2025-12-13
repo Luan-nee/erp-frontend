@@ -5,9 +5,13 @@ interface CardMarcaProps {
   nombre: string;
   descripcion: string;
   cant_productos: number;
+  setIdMarcaDelete: (id: number) => void;
+  setIdMarcaEdit: (id: number) => void;
+  showDeleteModal: (p: boolean) => void;
+  showEditModal: (p: boolean) => void;
 }
 
-export default function CardMarca({id, nombre, descripcion, cant_productos}: CardMarcaProps) {
+export default function CardMarca({id, nombre, descripcion, cant_productos, setIdMarcaDelete, setIdMarcaEdit, showDeleteModal, showEditModal}: CardMarcaProps) {
   return (
     <div
       key={id}
@@ -20,10 +24,14 @@ export default function CardMarca({id, nombre, descripcion, cant_productos}: Car
         </h3>
         <div className="flex items-center justify-end mb-4">
           <div className="flex gap-2">
-            <button className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors shadow-md">
+            <button 
+            onClick={() => { setIdMarcaEdit(id); showEditModal(true); }}
+            className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors shadow-md">
               <Edit3 className="w-4 h-4" />
             </button>
-            <button className="p-2 bg-red-600 hover:bg-red-700 rounded-lg text-white transition-colors shadow-md">
+            <button 
+            onClick={() => { setIdMarcaDelete(id); showDeleteModal(true); }}
+            className="p-2 bg-red-600 hover:bg-red-700 rounded-lg text-white transition-colors shadow-md">
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
