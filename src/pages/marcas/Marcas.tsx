@@ -9,8 +9,8 @@ import {
   Tag,
   TrendingUp,
 } from "lucide-react";
-import Table from "../components/Table";
-import MetricCard from "../components/MetricCard";
+import Table from "../../components/Table";
+import MetricCard from "../../components/MetricCard";
 
 type Brand = {
   id: number;
