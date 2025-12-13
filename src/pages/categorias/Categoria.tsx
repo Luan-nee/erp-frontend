@@ -5,9 +5,6 @@ import {
   FolderOpen,
   Plus,
   Search,
-  Tag,
-  Edit3,
-  Trash2,
 } from "lucide-react";
 import Table from "../../components/Table";
 import MetricCard from "../../components/MetricCard";
