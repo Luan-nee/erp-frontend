@@ -4,7 +4,7 @@ interface LocalItemProps {
   id: number;
   nombre: string;
   direccion: string;
-  setSelectIdSucursal: (id: number | null) => void;
+  setSelectIdSucursal: (id: number) => void;
   isSelected: boolean;
 }
 

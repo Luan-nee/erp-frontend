@@ -200,6 +200,7 @@ const products: Product[] = [
 export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('Todos');
+  const [selectIdSucursal, setSelectIdSucursal] = useState<number | null>(1); // por defecto seleccionamos la primera sucursal
   // const [showAddProduct, setShowAddProduct] = useState(false);
 
   const categories = ['Todos', 'Buscador', 'Suspensión', 'Frenos', 'Motor'];
@@ -344,8 +345,8 @@ export default function Productos() {
           </div>
         </div>
       </div>
-
-      <LocalList />
+      {/* Sidebar - Local List */}
+      <LocalList setSelectIdSucursal={setSelectIdSucursal} selectIdSucursal={selectIdSucursal} />
     </div>
   );
 }

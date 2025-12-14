@@ -5,18 +5,16 @@ import useFetcher from '../data/useFetchet';
 import type { PropSucursal } from '../types/sucursal';
 import Loading from '../animation/Loading';
 
-interface Location { 
-  name: string;
-  address: string;
-  type: string;
+interface LocalListProps {
+  setSelectIdSucursal: (id: number) => void;
+  selectIdSucursal: number | null;
 }
 
-export default function LocalList() {
+export default function LocalList({ setSelectIdSucursal, selectIdSucursal }: LocalListProps) {
 
   const { data, isLoading: sucursalesLoading, hayError: sucursalesError, refetch: refetchSucursales } = useFetcher('http://localhost:3000/api/sucursales', 'sucursales');
 
   const sucursales = data as PropSucursal[];
-  const [selectIdSucursal, setSelectIdSucursal] = useState<number | null>(1); // por defecto seleccionamos la primera sucursal
   const [selectTipoSucursal, setSelectTipoSucursal] = useState<string>("central")
 
   return (
