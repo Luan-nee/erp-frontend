@@ -1,10 +1,19 @@
 import { useState } from "react";
+import Loading from "../../animation/Loading";
 import type { CategoriaCreate } from "../../types/categoria";
+import useFetch from "../../data/useFetch";
+
+/* 
+  TAREA:
+  **se observar un componetarmiendo inadecuado cuando se guardar un producto**:
+  el producto se guarda correctamente pero no aparece en la tabla de categorias, 
+  se sospecha de falta recargar la tabla cuando se crea una nueva categoría.
+*/
 
 interface FormCreateProps {
   setShowFormCreate: (p: boolean) => void;
-  refetchCategorias?: () => void | undefined;
-  refetchResumen?: () => void | undefined;
+  refetchCategorias: () => void | undefined;
+  refetchResumen: () => void | undefined;
 }
 
 export default function FormCreate( { setShowFormCreate, refetchCategorias, refetchResumen }: FormCreateProps) {
@@ -13,25 +22,11 @@ export default function FormCreate( { setShowFormCreate, refetchCategorias, refe
     descripcion: "",
   });
 
-  function saveCategoria( newCategoria: CategoriaCreate ) {
-    if ( !newCategoria.nombre || !newCategoria.descripcion ) {
-      alert("Por favor, completa todos los campos antes de guardar.");
-      return Promise.reject("Campos incompletos");
-    }
-
-    return fetch("http://localhost:3000/api/categorias", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newCategoria),
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText + " Error al guardar la categoría");
-      }
-      return response.json();
-    });
-  }
+  const { data, isLoading, hayError, refetch, doAction: sendPost  } = useFetch<number>().postData(
+    "http://localhost:3000/api/categorias",
+    "crear categoría",
+    dataCategoria
+  );
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -43,13 +38,12 @@ export default function FormCreate( { setShowFormCreate, refetchCategorias, refe
   };
 
   const handleSubmit = () => {
-    // implementar lógica para guardar la nueva categoría
-    // ...
-    saveCategoria( dataCategoria );
-    console.log("Categoría creada:", dataCategoria);
-    refetchCategorias?.(); // Llama a la función refetch para actualizar los datos
-    refetchResumen?.();
-    setShowFormCreate(false);
+    console.log("Creando la Categoría:", dataCategoria);
+
+    sendPost && sendPost();
+
+    // logica en enviar datos al backend
+    console.log("El nuevo ID de la categoría es:", data);
   };
 
   return (
@@ -101,13 +95,27 @@ export default function FormCreate( { setShowFormCreate, refetchCategorias, refe
             type="button"
             onClick={() => {
               // Lógica para guardar
-              setShowFormCreate(false);
               handleSubmit();
               setDataCategoria({ nombre: "", descripcion: "" });
+              setShowFormCreate(false);
+              refetchCategorias; // Llama a la función refetch para actualizar los datos
+              refetchResumen;
             }}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg text-white font-medium transition-all shadow-lg"
+            className="flex-1 flex justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg text-white font-medium transition-all shadow-lg"
           >
-            Guardar
+            {/* muestra el texto "Guardar, pero cuando se haya hecho click en ella debe cambiar a una animación de carga, cuando la carga se haya termiando recien se va cerrar la ventana" */}
+            { isLoading ? (
+              <Loading
+                w={6}
+                h={6}
+                color="white"
+              />
+            ) : (
+              <p>
+                Guardar
+              </p>
+            )
+            }
           </button>
         </div>
       </div>

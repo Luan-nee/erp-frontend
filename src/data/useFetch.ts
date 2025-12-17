@@ -17,11 +17,12 @@ export type EndpointReturn<T> = {
   isLoading: boolean;
   hayError: boolean;
   refetch: () => void;
+  doAction?: (body?: any) => void;
 };
 
 export default function useFetch<T>() {
-  const [data, setData] = useState< T | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [data, setData] = useState<T | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hayError, setHayError] = useState<boolean>(false);
   const [refetchTrigger, setRefetchTrigger] = useState<number>(0);
 
@@ -68,31 +69,33 @@ export default function useFetch<T>() {
     const refetch = () => setRefetchTrigger((prev) => prev + 1);
 
     return { data, isLoading, hayError, refetch };
-  };
+  }
 
-  function updateData(url:string, customMessage:string, body: any): EndpointReturn<T> {
-    const updateData = useCallback(
-      async () => {
-        setIsLoading(true);
-        setHayError(false);
-        try {
-          const response = await request<PropResponse<T>>(url, { 
-            method: "PUT",
-            body: JSON.stringify(body)
-          });
-          setData(response.info);
-          console.log(
-            `✅ Éxito: actualizando ${customMessage} exitosamente.`,
-            response.message
-          );
-        } catch (error) {
-          console.error(`❌ Error al actualizar ${customMessage}:`, error);
-          setHayError(true);
-        } finally {
-          setIsLoading(false);
-        }
-      }, [url]
-    );
+  function updateData(
+    url: string,
+    customMessage: string,
+    body: any
+  ): EndpointReturn<T> {
+    const updateData = useCallback(async () => {
+      setIsLoading(true);
+      setHayError(false);
+      try {
+        const response = await request<PropResponse<T>>(url, {
+          method: "PUT",
+          body: JSON.stringify(body),
+        });
+        setData(response.info);
+        console.log(
+          `✅ Éxito: actualizando ${customMessage} exitosamente.`,
+          response.message
+        );
+      } catch (error) {
+        console.error(`❌ Error al actualizar ${customMessage}:`, error);
+        setHayError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }, [url]);
     // la IA me recomienda usar [url, body]
 
     useEffect(() => {
@@ -101,39 +104,39 @@ export default function useFetch<T>() {
 
     const refetch = () => setRefetchTrigger((prev) => prev + 1);
 
-    return {data, isLoading, hayError, refetch};
+    return { data, isLoading, hayError, refetch };
   }
 
-  function postData(url: string, customMessage: string, body: any): EndpointReturn<T> {
-    const postData = useCallback(async () => {
+  function postData(
+    url: string,
+    customMessage: string,
+    body: any,
+  ): EndpointReturn<T> {
+    
+    async function sendPost() {
       setIsLoading(true);
       setHayError(false);
       try {
-        const response = await request<PropResponse<T>>(url, { 
+        const response = await request<PropResponse<T>>(url, {
           method: "POST",
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
         });
         setData(response.info);
         console.log(
           `✅ Éxito: creando ${customMessage} exitosamente.`,
           response.message
         );
-      }catch (error) {
+      } catch (error) {
         console.error(`❌ Error al crear ${customMessage}:`, error);
         setHayError(true);
-      }
-      finally {
+      } finally {
         setIsLoading(false);
       }
-    }, [url]);
-
-    useEffect(() => {
-      postData();
-    }, [postData]);
+  };
 
     const refetch = () => setRefetchTrigger((prev) => prev + 1);
 
-    return { data, isLoading, hayError, refetch };
+    return { data, isLoading, hayError, refetch, doAction: sendPost };
   }
 
   function deleteData(url: string, customMessage: string): EndpointReturn<T> {
@@ -141,7 +144,9 @@ export default function useFetch<T>() {
       setIsLoading(true);
       setHayError(false);
       try {
-        const response = await request<PropResponse<T>>(url, { method: "DELETE" });
+        const response = await request<PropResponse<T>>(url, {
+          method: "DELETE",
+        });
         setData(response.info);
         console.log(
           `✅ Éxito: eliminando ${customMessage} exitosamente.`,
