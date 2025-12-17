@@ -42,7 +42,7 @@ function Categories() {
     hayError: resumenError,
     refetch: refetchResumen,
   } = useFetcher(
-    "http://localhost:3000/api/resumen-categorias",
+    "http://localhost:3000/api/categorias/resumen",
     "resumen categorías"
   );
 
@@ -166,7 +166,7 @@ function Categories() {
                     name="Total Categorías"
                     isError={resumenError} 
                     isLoading={resumenLoading} 
-                    value={(resumen as PropResumenCategoria[])[0]?.total_categorias}
+                    value={(resumen as PropResumenCategoria)?.total_categorias}
                     color="red"
                   >
                     <FolderOpen className="w-6 h-6 text-white" />
@@ -176,7 +176,7 @@ function Categories() {
                     name="Total Productos"
                     isError={resumenError} 
                     isLoading={resumenLoading} 
-                    value={(resumen as PropResumenCategoria[])[0]?.total_productos}
+                    value={(resumen as PropResumenCategoria)?.total_productos}
                     color="green"
                   >
                     <Package className="w-6 h-6 text-white" />
@@ -186,7 +186,7 @@ function Categories() {
                     name="Promedio por Categoría"
                     isError={resumenError} 
                     isLoading={resumenLoading} 
-                    value={(resumen as PropResumenCategoria[])[0]?.promedio_categoria}
+                    value={(resumen as PropResumenCategoria)?.promedio_categoria}
                     color="blue"
                   >
                     <BarChart3 className="w-6 h-6 text-white" />
@@ -201,7 +201,8 @@ function Categories() {
       {showCreateModal && (
         <FormCreate
           setShowFormCreate={setShowCreateModal}
-          refetch={refetchCategorias}
+          refetchCategorias={refetchCategorias}
+          refetchResumen={refetchResumen}
         />
       )}
 

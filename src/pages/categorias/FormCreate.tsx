@@ -1,15 +1,37 @@
 import { useState } from "react";
+import type { CategoriaCreate } from "../../types/categoria";
 
 interface FormCreateProps {
   setShowFormCreate: (p: boolean) => void;
-  refetch: () => void;
+  refetchCategorias: () => void;
+  refetchResumen: () => void;
 }
 
-export default function FormCreate( { setShowFormCreate, refetch }: FormCreateProps) {
-  const [dataCategoria, setDataCategoria] = useState({
+export default function FormCreate( { setShowFormCreate, refetchCategorias, refetchResumen }: FormCreateProps) {
+  const [dataCategoria, setDataCategoria] = useState<CategoriaCreate>({
     nombre: "",
     descripcion: "",
   });
+
+  function saveCategoria( newCategoria: CategoriaCreate ) {
+    if ( !newCategoria.nombre || !newCategoria.descripcion ) {
+      alert("Por favor, completa todos los campos antes de guardar.");
+      return Promise.reject("Campos incompletos");
+    }
+
+    return fetch("http://localhost:3000/api/categorias", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newCategoria),
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText + " Error al guardar la categoría");
+      }
+      return response.json();
+    });
+  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -23,9 +45,10 @@ export default function FormCreate( { setShowFormCreate, refetch }: FormCreatePr
   const handleSubmit = () => {
     // implementar lógica para guardar la nueva categoría
     // ...
-    
-    console.log("Categoría actualizada:", dataCategoria);
-    refetch(); // Llama a la función refetch para actualizar los datos
+    saveCategoria( dataCategoria );
+    console.log("Categoría creada:", dataCategoria);
+    refetchCategorias(); // Llama a la función refetch para actualizar los datos
+    refetchResumen();
     setShowFormCreate(false);
   };
 
@@ -74,11 +97,13 @@ export default function FormCreate( { setShowFormCreate, refetch }: FormCreatePr
             Cancelar
           </button>
           <button
+            // que no recargue la pagina 
+            type="button"
             onClick={() => {
               // Lógica para guardar
               setShowFormCreate(false);
-              setDataCategoria({ nombre: "", descripcion: "" });
               handleSubmit();
+              setDataCategoria({ nombre: "", descripcion: "" });
             }}
             className="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg text-white font-medium transition-all shadow-lg"
           >

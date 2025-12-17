@@ -16,3 +16,8 @@ export type PropResumenCategoria = {
   total_productos: number;
   promedio_categoria: number; 
 }
+
+export type CategoriaCreate = {
+  nombre: string;
+  descripcion: string;
+};

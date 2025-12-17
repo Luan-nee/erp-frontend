@@ -6,7 +6,7 @@ import type { PropMarca, PropResumenMarca } from '../types/marca';
 import type { PropSucursal } from '../types/sucursal';
 import type { PropProductoResumen } from '../types/producto';
 
-type FetcherResult =  PropColor[] | PropCategoria[] | PropResumenCategoria[] | PropMarca[] | PropResumenMarca[] | PropSucursal[] | PropProductoResumen[];
+type FetcherResult =  PropColor[] | PropCategoria[] | PropResumenCategoria | PropMarca[] | PropResumenMarca[] | PropSucursal[] | PropProductoResumen[];
 
 interface FetcherReturn {
   data: FetcherResult;
