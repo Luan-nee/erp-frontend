@@ -10,3 +10,14 @@ export type PropProducto = {
   marca_id: number;
   fecha_creacion: Date;
 }
+
+export type PropProductoResumen = {
+  id: number;
+  sku: string;
+  nombre: string;
+  descripcion: string;
+  stock: number;
+  stock_minimo: number;
+  porcentaje_ganancia: number;
+  esta_habilitado: boolean;
+}

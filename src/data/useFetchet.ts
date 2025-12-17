@@ -4,8 +4,9 @@ import type { PropResponse } from '../types/PropResponse';
 import type { PropCategoria, PropResumenCategoria } from '../types/categoria';
 import type { PropMarca, PropResumenMarca } from '../types/marca';
 import type { PropSucursal } from '../types/sucursal';
+import type { PropProductoResumen } from '../types/producto';
 
-type FetcherResult =  PropColor[] | PropCategoria[] | PropResumenCategoria[] | PropMarca[] | PropResumenMarca[] | PropSucursal[];
+type FetcherResult =  PropColor[] | PropCategoria[] | PropResumenCategoria[] | PropMarca[] | PropResumenMarca[] | PropSucursal[] | PropProductoResumen[];
 
 interface FetcherReturn {
   data: FetcherResult;
