@@ -3,8 +3,8 @@ import type { CategoriaCreate } from "../../types/categoria";
 
 interface FormCreateProps {
   setShowFormCreate: (p: boolean) => void;
-  refetchCategorias: () => void;
-  refetchResumen: () => void;
+  refetchCategorias?: () => void | undefined;
+  refetchResumen?: () => void | undefined;
 }
 
 export default function FormCreate( { setShowFormCreate, refetchCategorias, refetchResumen }: FormCreateProps) {
@@ -47,8 +47,8 @@ export default function FormCreate( { setShowFormCreate, refetchCategorias, refe
     // ...
     saveCategoria( dataCategoria );
     console.log("Categoría creada:", dataCategoria);
-    refetchCategorias(); // Llama a la función refetch para actualizar los datos
-    refetchResumen();
+    refetchCategorias?.(); // Llama a la función refetch para actualizar los datos
+    refetchResumen?.();
     setShowFormCreate(false);
   };
 

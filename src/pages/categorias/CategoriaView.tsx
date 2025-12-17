@@ -14,7 +14,7 @@ import type {
   PropResumenCategoria,
 } from "../../types/categoria";
 // import useFetcher from "../../data/useFetcher";
-import useFetcher from "../../data/useFetchet";
+import useFetch from "../../data/useFetch";
 import FormCreate from "./FormCreate";
 import FormEdit from "./FormEdit";
 import FormDelete from "./FormDelete";
@@ -35,18 +35,19 @@ function Categories() {
     isLoading: categoriesLoading,
     hayError: categoriesError,
     refetch: refetchCategorias,
-  } = useFetcher("http://localhost:3000/api/categorias", "categorías");
+  } = useFetch<PropCategoria[]>().getData(
+    "http://localhost:3000/api/categorias",
+    "categorías"
+  );
   const {
     data: resumen,
     isLoading: resumenLoading,
     hayError: resumenError,
     refetch: refetchResumen,
-  } = useFetcher(
+  } = useFetch<PropResumenCategoria>().getData(
     "http://localhost:3000/api/categorias/resumen",
     "resumen categorías"
   );
-
-  const filteredCategories = categories as PropCategoria[];
 
   const headerTable = [
     "",
@@ -130,7 +131,7 @@ function Categories() {
                     
                   </tr>
                 ) : (
-                  filteredCategories.map((category) => (
+                  categories?.map((category) => (
                     <RowTable
                       key={category.id}
                       id={category.id}
@@ -166,7 +167,7 @@ function Categories() {
                     name="Total Categorías"
                     isError={resumenError} 
                     isLoading={resumenLoading} 
-                    value={(resumen as PropResumenCategoria)?.total_categorias}
+                    value={resumen ? resumen.total_categorias : 0}
                     color="red"
                   >
                     <FolderOpen className="w-6 h-6 text-white" />
@@ -176,7 +177,7 @@ function Categories() {
                     name="Total Productos"
                     isError={resumenError} 
                     isLoading={resumenLoading} 
-                    value={(resumen as PropResumenCategoria)?.total_productos}
+                    value={resumen ? resumen.total_productos : 0}
                     color="green"
                   >
                     <Package className="w-6 h-6 text-white" />
@@ -186,7 +187,7 @@ function Categories() {
                     name="Promedio por Categoría"
                     isError={resumenError} 
                     isLoading={resumenLoading} 
-                    value={(resumen as PropResumenCategoria)?.promedio_categoria}
+                    value={resumen ? resumen.promedio_categoria : 0}
                     color="blue"
                   >
                     <BarChart3 className="w-6 h-6 text-white" />

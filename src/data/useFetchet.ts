@@ -8,15 +8,15 @@ import type { PropProductoResumen } from '../types/producto';
 
 type FetcherResult =  PropColor[] | PropCategoria[] | PropResumenCategoria | PropMarca[] | PropResumenMarca[] | PropSucursal[] | PropProductoResumen[];
 
-interface FetcherReturn {
-  data: FetcherResult;
+export type FetcherReturn<T> = {
+  data: T | null;
   isLoading: boolean;
   hayError: boolean;
   refetch: () => void;
 }
 
-export default function useFetcher(url: string, customMessage: string): FetcherReturn {
-  const [data, setData] = useState<FetcherResult>([]);
+export default function useFetcher<T>(url: string, customMessage: string): FetcherReturn<T> {
+  const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hayError, setHayError] = useState<boolean>(false);
   const [refetchTrigger, setRefetchTrigger] = useState<number>(0);
@@ -32,7 +32,7 @@ export default function useFetcher(url: string, customMessage: string): FetcherR
           // 2xx Códigos de éxito (OK, Created, No Content, etc.)
           console.log(`✅ Éxito (${status}): obteniendo ${customMessage} exitosamente.`);
           console.log(message);
-          setData(info as FetcherResult);
+          setData(info as T);
           setHayError(false);
         } else if (status >= 300 && status < 400) {
           // 3xx Códigos de redirección (Moved Permanently, Found, etc.)
