@@ -1,10 +1,12 @@
-import { useState } from "react";
-import type { Categoria } from "../../types/categoria";
+import { useMemo, useState } from "react";
+import Loading from "../../animation/Loading";
+import type {CategoriaUpdate, PropCategoria } from "../../types/categoria";
 import { FolderOpen, X, Save } from "lucide-react";
+import CategoriaService from "../../service/categoria.service";
 
 interface FormCreateProps {
   setShowFormEdit: (p: boolean) => void;
-  dataCategoria: Categoria;
+  dataCategoria: PropCategoria;
   refetch?: () => void;
 }
 
@@ -13,7 +15,9 @@ export default function FormEdit({
   dataCategoria,
   refetch,
 }: FormCreateProps) {
-  const [formData, setFormData] = useState<Categoria>(dataCategoria);
+  const idCategoria: number = dataCategoria.id;
+  const [formData, setFormData] = useState<CategoriaUpdate>({nombre: dataCategoria.nombre, descripcion: dataCategoria.descripcion});
+  const categoriaService = useMemo(() => new CategoriaService(), []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -24,10 +28,22 @@ export default function FormEdit({
     });
   };
 
-  const handleSubmit = () => {
-    console.log("Categoría actualizada:", formData);
-    setShowFormEdit(false);
-    refetch && refetch(); // Llama a la función refetch para actualizar los datos
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    setIsError(false)
+
+    console.log("Editando la Categoría:", formData);
+    const {isLoading, hayError} = await categoriaService.update(idCategoria, formData)
+    
+    setIsLoading(isLoading);
+    setIsError(hayError)
+    if (!hayError) {
+      if (refetch) refetch();
+      setShowFormEdit(false);
+    }
   };
 
   return (
@@ -114,8 +130,22 @@ export default function FormEdit({
               onClick={handleSubmit}
               className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-900/50"
             >
-              <Save className="w-5 h-5" />
-              Guardar Cambios
+              { isLoading ? (
+                <Loading
+                  w={6}
+                  h={6}
+                  color="white"
+                />
+              ) : isError ? (
+                <p>
+                  Se produjo un error al Actualizar
+                </p>
+              ) : (
+                <>
+                  <Save className="w-5 h-5" />
+                  Guardar Cambios
+                </>
+              )}
             </button>
           </div>
         </div>

@@ -2,12 +2,6 @@ import { useMemo, useState } from "react";
 import Loading from "../../animation/Loading";
 import type { CategoriaCreate } from "../../types/categoria";
 import CategoriaService from "../../service/categoria.service";
-/* 
-  TAREA:
-  **se observar un componetarmiendo inadecuado cuando se guardar un producto**:
-  el producto se guarda correctamente pero no aparece en la tabla de categorias, 
-  se sospecha de falta recargar la tabla cuando se crea una nueva categoría.
-*/
 
 interface FormCreateProps {
   setShowFormCreate: (p: boolean) => void;
@@ -122,7 +116,6 @@ export default function FormCreate( { setShowFormCreate, refetchCategorias, refe
             }}
             className="flex-1 flex justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg text-white font-medium transition-all shadow-lg"
           >
-            {/* muestra el texto "Guardar, pero cuando se haya hecho click en ella debe cambiar a una animación de carga, cuando la carga se haya termiando recien se va cerrar la ventana" */}
             { categoriesLoading ? (
               <Loading
                 w={6}

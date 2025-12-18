@@ -21,3 +21,8 @@ export type CategoriaCreate = {
   nombre: string;
   descripcion: string;
 };
+
+export type CategoriaUpdate = {
+  nombre: string;
+  descripcion: string;
+};

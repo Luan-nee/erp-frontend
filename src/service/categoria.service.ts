@@ -1,5 +1,5 @@
 import type { PropResponse } from "../types/PropResponse";
-import type { PropCategoria, CategoriaCreate } from "../types/categoria";
+import type { PropCategoria, CategoriaCreate, CategoriaUpdate } from "../types/categoria";
 
 export default class CategoriaService {
   private baseUrl: string = "http://localhost:3000/api/categorias";
@@ -87,6 +87,41 @@ export default class CategoriaService {
       hayError = true;
       return {
         data: null,
+        isLoading: false,
+        hayError: true,
+      };
+    }
+  }
+
+  public async update(id_categoria: number, categoria: CategoriaUpdate): Promise<{
+    isLoading: boolean;
+    hayError: boolean;
+  }> {
+    let data: null = null;
+    let isLoading = false;
+    let hayError = false;
+
+    isLoading = true;
+    hayError = false;
+
+    try {
+      const response = await this.request<PropResponse<null>>(
+        `${this.baseUrl}/${id_categoria}`,
+        { 
+          method: "PUT", 
+          body: JSON.stringify(categoria) 
+        }
+      );
+      data = response.info;
+      isLoading = false;
+      return {
+        isLoading: false,
+        hayError: false,
+      };
+    } catch (error) {
+      isLoading = false;
+      hayError = true;
+      return {
         isLoading: false,
         hayError: true,
       };
