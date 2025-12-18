@@ -1,5 +1,5 @@
 import type { PropResponse } from "../types/PropResponse";
-import type { PropCategoria, CategoriaCreate, CategoriaUpdate } from "../types/categoria";
+import type { PropCategoria, CategoriaCreate, CategoriaUpdate, PropResumenCategoria } from "../types/categoria";
 
 export default class CategoriaService {
   private baseUrl: string = "http://localhost:3000/api/categorias";
@@ -27,6 +27,30 @@ export default class CategoriaService {
     try {
       const response = await this.request<PropResponse<PropCategoria[]>>(
         this.baseUrl,
+        { method: "GET" }
+      );
+      return {
+        data: response.info,
+        isLoading: false,
+        hayError: false,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        isLoading: false,
+        hayError: true,
+      };
+    }
+  }
+
+  public async getResumen(): Promise<{ 
+    data: PropResumenCategoria | null; 
+    isLoading: boolean; 
+    hayError: boolean; 
+  }> {
+    try {
+      const response = await this.request<PropResponse<PropResumenCategoria>>(
+        `${this.baseUrl}/resumen`,
         { method: "GET" }
       );
       return {

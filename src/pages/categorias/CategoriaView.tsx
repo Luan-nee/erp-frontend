@@ -13,8 +13,6 @@ import type {
   PropCategoria,
   PropResumenCategoria,
 } from "../../types/categoria";
-// import useFetcher from "../../data/useFetcher";
-import useFetch from "../../data/useFetch";
 import FormCreate from "./FormCreate";
 import FormEdit from "./FormEdit";
 import FormDelete from "./FormDelete";
@@ -34,9 +32,15 @@ function Categories() {
   
   const categoriaService = useMemo(() => new CategoriaService(), []);
 
+  // Estados para las categorías
   const [categories, setCategories] = useState<PropCategoria[] | null>(null);
   const [categoriesLoading, setCategoriesLoading] = useState<boolean>(true);
   const [categoriesError, setCategoriesError] = useState<boolean>(false);
+
+  // Estados para el resumen de categorías
+  const [resumen, setResumen] = useState<PropResumenCategoria | null>(null);
+  const [resumenLoading, setResumenLoading] = useState<boolean>(true);
+  const [resumenError, setResumenError] = useState<boolean>(false);
 
   const refetchCategorias = useCallback(async () => {
     setCategoriesLoading(true);
@@ -49,19 +53,21 @@ function Categories() {
     setCategoriesError(hayError);
   }, [categoriaService]);
 
-  useEffect(() => {
-    refetchCategorias();
-  }, [refetchCategorias]);
+  const refetchResumen = useCallback(async () => {
+    setResumenLoading(true);
+    setResumenError(false);
 
-  const {
-    data: resumen,
-    isLoading: resumenLoading,
-    hayError: resumenError,
-    refetch: refetchResumen,
-  } = useFetch<PropResumenCategoria>().getData(
-    "http://localhost:3000/api/categorias/resumen",
-    "resumen categorías"
-  );
+    const { data, isLoading, hayError } = await categoriaService.getResumen();
+
+    setResumen(data);
+    setResumenLoading(isLoading);
+    setResumenError(hayError);
+  }, [categoriaService]);
+
+  useEffect(() => {
+    refetchResumen();
+    refetchCategorias();
+  }, [refetchCategorias, refetchResumen]);
 
   const headerTable = [
     "",

@@ -6,7 +6,7 @@ import CategoriaService from "../../service/categoria.service";
 interface FormCreateProps {
   setShowFormCreate: (p: boolean) => void;
   refetchCategorias?: () => void;
-  refetchResumen: () => void | undefined;
+  refetchResumen: () => Promise<void>;
 }
 
 export default function FormCreate( { setShowFormCreate, refetchCategorias, refetchResumen }: FormCreateProps) {
