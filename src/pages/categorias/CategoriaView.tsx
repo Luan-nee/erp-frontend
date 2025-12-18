@@ -31,30 +31,24 @@ function Categories() {
   const [idCategoriaDelete, setIdCategoriaDelete] = useState<number | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
-
-  // const {
-  //   data: categories,
-  //   isLoading: categoriesLoading,
-  //   hayError: categoriesError,
-  //   // refetch: refetchCategorias,
-  // } = useFetch<PropCategoria[]>().getData(
-  //   "http://localhost:3000/api/categorias",
-  //   "categorías"
-  // );
   
   const categoriaService = useMemo(() => new CategoriaService(), []);
 
   const [categories, setCategories] = useState<PropCategoria[] | null>(null);
-  const [categoriesLoading, setCategoriesLoading] = useState<boolean>(false);
+  const [categoriesLoading, setCategoriesLoading] = useState<boolean>(true);
   const [categoriesError, setCategoriesError] = useState<boolean>(false);
 
   const refetchCategorias = useCallback(async () => {
+    setCategoriesLoading(true);
+    setCategoriesError(false);
+
     const { data, isLoading, hayError } = await categoriaService.get();
+
     setCategories(data);
     setCategoriesLoading(isLoading);
     setCategoriesError(hayError);
   }, [categoriaService]);
-  
+
   useEffect(() => {
     refetchCategorias();
   }, [refetchCategorias]);
@@ -118,6 +112,53 @@ function Categories() {
 
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-8">
+          {/* Stats Cards */}
+          {
+            resumenError ? (
+              <div className="col-span-3 px-6 py-4 text-center text-red-500">
+                Error al cargar el resumen de categorías.{" "}
+                <button
+                  onClick={() => refetchResumen()}
+                  className="underline text-red-400 hover:text-red-600"
+                >
+                  Recargar resumen
+                </button>
+              </div>
+            ): (
+              <div className="grid grid-cols-3 gap-6 mb-8">
+                <MetricCard
+                  name="Total Categorías"
+                  isError={resumenError} 
+                  isLoading={resumenLoading} 
+                  value={resumen ? resumen.total_categorias : 0}
+                  color="red"
+                >
+                  <FolderOpen className="w-6 h-6 text-white" />
+                </MetricCard>
+
+                <MetricCard
+                  name="Total Productos"
+                  isError={resumenError} 
+                  isLoading={resumenLoading} 
+                  value={resumen ? resumen.total_productos : 0}
+                  color="green"
+                >
+                  <Package className="w-6 h-6 text-white" />
+                </MetricCard>
+
+                <MetricCard
+                  name="Promedio por Categoría"
+                  isError={resumenError} 
+                  isLoading={resumenLoading} 
+                  value={resumen ? resumen.promedio_categoria : 0}
+                  color="blue"
+                >
+                  <BarChart3 className="w-6 h-6 text-white" />
+                </MetricCard>
+              </div>
+            )
+          }
+
           {/* Categories Table */}
           <div className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-hidden">
             <div className="overflow-x-auto">
@@ -169,52 +210,6 @@ function Categories() {
             </div>
           </div>
 
-          {/* Stats Cards */}
-            {
-              resumenError ? (
-                <div className="col-span-3 px-6 py-4 text-center text-red-500">
-                  Error al cargar el resumen de categorías.{" "}
-                  <button
-                    onClick={() => refetchResumen()}
-                    className="underline text-red-400 hover:text-red-600"
-                  >
-                    Recargar resumen
-                  </button>
-                </div>
-              ): (
-                <div className="grid grid-cols-3 gap-6 mt-8">
-                  <MetricCard
-                    name="Total Categorías"
-                    isError={resumenError} 
-                    isLoading={resumenLoading} 
-                    value={resumen ? resumen.total_categorias : 0}
-                    color="red"
-                  >
-                    <FolderOpen className="w-6 h-6 text-white" />
-                  </MetricCard>
-
-                  <MetricCard
-                    name="Total Productos"
-                    isError={resumenError} 
-                    isLoading={resumenLoading} 
-                    value={resumen ? resumen.total_productos : 0}
-                    color="green"
-                  >
-                    <Package className="w-6 h-6 text-white" />
-                  </MetricCard>
-
-                  <MetricCard
-                    name="Promedio por Categoría"
-                    isError={resumenError} 
-                    isLoading={resumenLoading} 
-                    value={resumen ? resumen.promedio_categoria : 0}
-                    color="blue"
-                  >
-                    <BarChart3 className="w-6 h-6 text-white" />
-                  </MetricCard>
-                </div>
-              )
-            }
         </div>
       </div>
 

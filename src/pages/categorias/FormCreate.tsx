@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Loading from "../../animation/Loading";
 import type { CategoriaCreate } from "../../types/categoria";
-import useFetch from "../../data/useFetch";
-
+import CategoriaService from "../../service/categoria.service";
 /* 
   TAREA:
   **se observar un componetarmiendo inadecuado cuando se guardar un producto**:
@@ -22,11 +21,11 @@ export default function FormCreate( { setShowFormCreate, refetchCategorias, refe
     descripcion: "",
   });
 
-  const { data, isLoading, hayError, refetch, doAction: sendPost  } = useFetch<number>().postData(
-    "http://localhost:3000/api/categorias",
-    "crear categoría",
-    dataCategoria
-  );
+  const categoriaService = useMemo(() => new CategoriaService(), []); 
+
+  const [idNewCategories, setIdNewCategories] = useState<number | null>(null);
+  const [categoriesLoading, setCategoriesLoading] = useState<boolean>(false);
+  const [categoriesError, setCategoriesError] = useState<boolean>(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -37,13 +36,37 @@ export default function FormCreate( { setShowFormCreate, refetchCategorias, refe
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    // 1. Iniciamos carga
+    setCategoriesLoading(true);
+    setCategoriesError(false);
     console.log("Creando la Categoría:", dataCategoria);
 
-    sendPost && sendPost();
+    try {
+      // 2. Esperamos la respuesta del servicio
+      const {data, isLoading, hayError } = await categoriaService.create(dataCategoria);
+      setIdNewCategories(data);
+      console.log("ID de la nueva categoría:", idNewCategories);
+      if (!hayError) {
+        console.log("✅ Categoría creada con éxito");
+        
+        // 3. ACTUALIZACIÓN DE DATOS: Ejecutamos los refetch ANTES de cerrar
+        if (refetchCategorias) refetchCategorias();
+        if (refetchResumen) refetchResumen();
 
-    // logica en enviar datos al backend
-    console.log("El nuevo ID de la categoría es:", data);
+        // 4. Limpieza y cierre exitoso
+        setDataCategoria({ nombre: "", descripcion: "" });
+        setShowFormCreate(!isLoading);
+      } else {
+        setCategoriesError(true);
+      }
+    } catch (error) {
+      console.error("❌ Error al crear la categoría:", error);
+      setCategoriesError(true);
+    } finally {
+      setCategoriesLoading(false);
+      setShowFormCreate(false);
+    }
   };
 
   return (
@@ -96,26 +119,25 @@ export default function FormCreate( { setShowFormCreate, refetchCategorias, refe
             onClick={() => {
               // Lógica para guardar
               handleSubmit();
-              setDataCategoria({ nombre: "", descripcion: "" });
-              setShowFormCreate(false);
-              refetchCategorias; // Llama a la función refetch para actualizar los datos
-              refetchResumen;
             }}
             className="flex-1 flex justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg text-white font-medium transition-all shadow-lg"
           >
             {/* muestra el texto "Guardar, pero cuando se haya hecho click en ella debe cambiar a una animación de carga, cuando la carga se haya termiando recien se va cerrar la ventana" */}
-            { isLoading ? (
+            { categoriesLoading ? (
               <Loading
                 w={6}
                 h={6}
                 color="white"
               />
+            ) : categoriesError ? (
+              <p>
+                Se produjo un error al guardar
+              </p>
             ) : (
               <p>
                 Guardar
               </p>
-            )
-            }
+            )}
           </button>
         </div>
       </div>
