@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Package,
   BarChart3,
@@ -19,6 +19,8 @@ import FormCreate from "./FormCreate";
 import FormEdit from "./FormEdit";
 import FormDelete from "./FormDelete";
 import Loading from "../../animation/Loading";
+import CategoriaService from "../../service/categoria.service";
+
 
 function Categories() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -30,15 +32,33 @@ function Categories() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const {
-    data: categories,
-    isLoading: categoriesLoading,
-    hayError: categoriesError,
-    refetch: refetchCategorias,
-  } = useFetch<PropCategoria[]>().getData(
-    "http://localhost:3000/api/categorias",
-    "categorías"
-  );
+  // const {
+  //   data: categories,
+  //   isLoading: categoriesLoading,
+  //   hayError: categoriesError,
+  //   // refetch: refetchCategorias,
+  // } = useFetch<PropCategoria[]>().getData(
+  //   "http://localhost:3000/api/categorias",
+  //   "categorías"
+  // );
+  
+  const categoriaService = useMemo(() => new CategoriaService(), []);
+
+  const [categories, setCategories] = useState<PropCategoria[] | null>(null);
+  const [categoriesLoading, setCategoriesLoading] = useState<boolean>(false);
+  const [categoriesError, setCategoriesError] = useState<boolean>(false);
+
+  const refetchCategorias = useCallback(async () => {
+    const { data, isLoading, hayError } = await categoriaService.get();
+    setCategories(data);
+    setCategoriesLoading(isLoading);
+    setCategoriesError(hayError);
+  }, [categoriaService]);
+  
+  useEffect(() => {
+    refetchCategorias();
+  }, [refetchCategorias]);
+
   const {
     data: resumen,
     isLoading: resumenLoading,

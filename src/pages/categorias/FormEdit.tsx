@@ -5,7 +5,7 @@ import { FolderOpen, X, Save } from "lucide-react";
 interface FormCreateProps {
   setShowFormEdit: (p: boolean) => void;
   dataCategoria: Categoria;
-  refetch: () => void;
+  refetch?: () => void;
 }
 
 export default function FormEdit({
@@ -27,7 +27,7 @@ export default function FormEdit({
   const handleSubmit = () => {
     console.log("Categoría actualizada:", formData);
     setShowFormEdit(false);
-    refetch(); // Llama a la función refetch para actualizar los datos
+    refetch && refetch(); // Llama a la función refetch para actualizar los datos
   };
 
   return (

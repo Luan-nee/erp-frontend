@@ -12,7 +12,7 @@ import useFetch from "../../data/useFetch";
 
 interface FormCreateProps {
   setShowFormCreate: (p: boolean) => void;
-  refetchCategorias: () => void | undefined;
+  refetchCategorias?: () => void;
   refetchResumen: () => void | undefined;
 }
 

@@ -5,7 +5,7 @@ import type { Categoria } from "../../types/categoria";
 interface FormDeleteProps {
   setShowFormDelete: (p: boolean) => void;
   dataCategoria: Categoria;
-  refetch: () => void;
+  refetch?: () => void;
 }
 
 export default function FormDelete({
@@ -24,7 +24,7 @@ export default function FormDelete({
       console.log(`Categoría "${dataCategoria.nombre}" con ID: ${dataCategoria.id} eliminada`);
       setShowFormDelete(false);
       setConfirmText("");
-      refetch();
+      refetch && refetch();
     }
   };
 
