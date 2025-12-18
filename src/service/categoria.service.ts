@@ -3,9 +3,6 @@ import type { PropCategoria, CategoriaCreate, CategoriaUpdate } from "../types/c
 
 export default class CategoriaService {
   private baseUrl: string = "http://localhost:3000/api/categorias";
-  public isLoading: boolean = false;
-  public hayError: boolean = false;
-  public data: PropCategoria[] | null = null;
 
   private async request<T>(endpoint: string, options: RequestInit): Promise<T> {
     const response = await fetch(endpoint, {
@@ -27,8 +24,9 @@ export default class CategoriaService {
     isLoading: boolean; 
     hayError: boolean; 
   }> {
-    this.isLoading = true;
-    this.hayError = false;
+    let data: PropCategoria[] | null = null;
+    let isLoading = true;
+    let hayError = false;
 
     try {
       const response = await this.request<PropResponse<PropCategoria[]>>(
@@ -36,17 +34,17 @@ export default class CategoriaService {
         { method: "GET" }
       );
       
-      this.data = response.info;
-      this.isLoading = false;
+      data = response.info;
+      isLoading = false;
       
       return {
-        data: this.data,
+        data: data,
         isLoading: false,
         hayError: false,
       };
     } catch (error) {
-      this.isLoading = false;
-      this.hayError = true;
+      isLoading = false;
+      hayError = true;
       return {
         data: null,
         isLoading: false,
@@ -64,8 +62,8 @@ export default class CategoriaService {
     let isLoading = false;
     let hayError = false;
 
-    this.isLoading = true;
-    this.hayError = false;
+    isLoading = true;
+    hayError = false;
 
     try {
       const response = await this.request<PropResponse<number>>(
@@ -97,7 +95,6 @@ export default class CategoriaService {
     isLoading: boolean;
     hayError: boolean;
   }> {
-    let data: null = null;
     let isLoading = false;
     let hayError = false;
 
@@ -105,14 +102,13 @@ export default class CategoriaService {
     hayError = false;
 
     try {
-      const response = await this.request<PropResponse<null>>(
+      await this.request<PropResponse<null>>(
         `${this.baseUrl}/${id_categoria}`,
         { 
           method: "PUT", 
           body: JSON.stringify(categoria) 
         }
       );
-      data = response.info;
       isLoading = false;
       return {
         isLoading: false,
