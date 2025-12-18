@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { AlertTriangle, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { AlertTriangle, Delete, X } from "lucide-react";
 import type { Categoria } from "../../types/categoria";
+import CategoriaService from "../../service/categoria.service";
+import Loading from "../../animation/Loading";
 
 interface FormDeleteProps {
   setShowFormDelete: (p: boolean) => void;
@@ -14,17 +16,26 @@ export default function FormDelete({
   refetch,
 }: FormDeleteProps) {
   const [confirmText, setConfirmText] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const categoriaService = useMemo(() => new CategoriaService(), []);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (confirmText.toLowerCase() === "eliminar") {
-      // lógica para eliminar la categoría
-      // ...
 
-      // menciona el id y el nombre de la categoría a eliminar
-      console.log(`Categoría "${dataCategoria.nombre}" con ID: ${dataCategoria.id} eliminada`);
-      setShowFormDelete(false);
-      setConfirmText("");
-      refetch && refetch();
+      setIsLoading(true);
+      setIsError(false)
+
+      console.log(`Eliminando la Categoría "${dataCategoria.nombre}" con ID: ${dataCategoria.id}`);
+      const {isLoading, hayError} = await categoriaService.delete(dataCategoria.id);
+      
+      setIsLoading(isLoading);
+      setIsError(hayError)
+      if (!hayError) {
+        if (refetch) refetch();
+        setShowFormDelete(false);
+        setConfirmText("");
+      }
     }
   };
 
@@ -68,7 +79,13 @@ export default function FormDelete({
           </p>
 
           <p className="text-sm text-slate-400">
-            Esta acción no se puede deshacer. Para confirmar, escribe{" "}
+            Todos los productos que pertenezcan a esta categoria será enviados a{" "}
+            <span className="font-mono text-green-400 font-bold">Sin Categoría</span>{" "}
+            hasta que se usted modifique manualmente su categoría.
+          </p>
+
+          <p className="text-sm text-slate-400">
+            Para eliminar esta categoría, escribe{" "}
             <span className="font-mono text-red-400 font-bold">eliminar</span>{" "}
             en el campo de abajo.
           </p>
@@ -94,13 +111,28 @@ export default function FormDelete({
             <button
               onClick={handleDelete}
               disabled={!isDeleteEnabled}
-              className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${
+              className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
                 isDeleteEnabled
                   ? "bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-900/50"
                   : "bg-slate-700 text-slate-500 cursor-not-allowed"
               }`}
             >
-              Eliminar
+              { isLoading ? (
+                <Loading
+                  w={6}
+                  h={6}
+                  color="white"
+                />
+              ) : isError ? (
+                <p>
+                  Se produjo un error al Eliminar
+                </p>
+              ) : (
+                <>
+                  <Delete className="w-5 h-5" />
+                  Eliminar
+                </>
+              )}
             </button>
           </div>
         </div>
