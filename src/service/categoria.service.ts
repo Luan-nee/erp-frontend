@@ -24,27 +24,17 @@ export default class CategoriaService {
     isLoading: boolean; 
     hayError: boolean; 
   }> {
-    let data: PropCategoria[] | null = null;
-    let isLoading = true;
-    let hayError = false;
-
     try {
       const response = await this.request<PropResponse<PropCategoria[]>>(
         this.baseUrl,
         { method: "GET" }
       );
-      
-      data = response.info;
-      isLoading = false;
-      
       return {
-        data: data,
+        data: response.info,
         isLoading: false,
         hayError: false,
       };
     } catch (error) {
-      isLoading = false;
-      hayError = true;
       return {
         data: null,
         isLoading: false,
@@ -58,13 +48,6 @@ export default class CategoriaService {
     isLoading: boolean; 
     hayError: boolean; 
   }> {
-    let data: number | null = null;
-    let isLoading = false;
-    let hayError = false;
-
-    isLoading = true;
-    hayError = false;
-
     try {
       const response = await this.request<PropResponse<number>>(
         this.baseUrl,
@@ -73,16 +56,12 @@ export default class CategoriaService {
           body: JSON.stringify(categoria) 
         }
       );
-      data = response.info;
-      isLoading = false;
       return {
-        data: data,
+        data: response.info,
         isLoading: false,
         hayError: false,
       };
     } catch (error) {
-      isLoading = false;
-      hayError = true;
       return {
         data: null,
         isLoading: false,
@@ -95,12 +74,6 @@ export default class CategoriaService {
     isLoading: boolean;
     hayError: boolean;
   }> {
-    let isLoading = false;
-    let hayError = false;
-
-    isLoading = true;
-    hayError = false;
-
     try {
       await this.request<PropResponse<null>>(
         `${this.baseUrl}/${id_categoria}`,
@@ -109,14 +82,34 @@ export default class CategoriaService {
           body: JSON.stringify(categoria) 
         }
       );
-      isLoading = false;
       return {
         isLoading: false,
         hayError: false,
       };
     } catch (error) {
-      isLoading = false;
-      hayError = true;
+      return {
+        isLoading: false,
+        hayError: true,
+      };
+    }
+  }
+
+  public async delete(id_categoria: number): Promise<{
+    isLoading: boolean;
+    hayError: boolean;
+  }> {
+    try {
+      await this.request<PropResponse<null>>(
+        `${this.baseUrl}/${id_categoria}`,
+        { 
+          method: "DELETE", 
+        }
+      );
+      return {
+        isLoading: false,
+        hayError: false,
+      };
+    } catch (error) {
       return {
         isLoading: false,
         hayError: true,
