@@ -1,6 +1,8 @@
-import { useState } from "react";
-import type { Marca } from "../../models/marca";
+import { useMemo, useState } from "react";
+import type { Marca, MarcaUpdate } from "../../models/marca";
 import { FolderOpen, X, Save } from "lucide-react";
+import Loading from "../../animation/Loading";
+import MarcaService from "../../service/marca.service";
 
 interface FormCreateProps {
   setShowFormEdit: (p: boolean) => void;
@@ -13,7 +15,15 @@ export default function FormEdit({
   data,
   refetch,
 }: FormCreateProps) {
-  const [formData, setFormData] = useState<Marca>(data);
+  const idMarca: number = data.id;
+  const [formData, setFormData] = useState<MarcaUpdate>({
+    nombre: data.nombre,
+    descripcion: data.descripcion,
+  });
+  const [isLoading , setIsLoading] = useState<boolean>(false);
+  const [isError , setIsError] = useState<boolean>(false);
+
+  const marcaService = useMemo(() => new MarcaService(), []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -24,10 +34,19 @@ export default function FormEdit({
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log("Marca actualizada:", formData);
-    setShowFormEdit(false);
-    refetch(); // Llama a la función refetch para actualizar los datos
+    setIsLoading(true);
+    setIsError(false);
+
+    const { isLoading, hayError } = await marcaService.update(idMarca, formData);
+
+    setIsLoading(isLoading);
+    setIsError(hayError);
+    if (!hayError) {
+      if(refetch) refetch();
+      setShowFormEdit(false);
+    }
   };
 
   return (
@@ -62,7 +81,7 @@ export default function FormEdit({
           {/* Nombre */}
           <div>
             <label
-              htmlFor="name"
+              htmlFor="nombre"
               className="block text-sm font-medium text-slate-300 mb-2"
             >
               Nombre de Marca <span className="text-red-400">*</span>
@@ -81,7 +100,7 @@ export default function FormEdit({
           {/* Descripción */}
           <div>
             <label
-              htmlFor="description"
+              htmlFor="descripcion"
               className="block text-sm font-medium text-slate-300 mb-2"
             >
               Descripción <span className="text-red-400">*</span>
@@ -104,8 +123,15 @@ export default function FormEdit({
           <div className="flex gap-3 pt-4">
             <button
               type="button"
+              disabled={isLoading} 
               onClick={() => setShowFormEdit(false)}
-              className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors border border-slate-600"
+              className={`
+                flex-1 px-6 py-3 rounded-lg font-medium transition-colors border 
+                ${isLoading 
+                  ? 'bg-slate-500 text-slate-300 border-slate-500 cursor-not-allowed opacity-70' // Estilos desactivado
+                  : 'bg-slate-700 hover:bg-slate-600 text-white border-slate-600 cursor-pointer' // Estilos activo
+                }
+              `}
             >
               Cancelar
             </button>
@@ -114,8 +140,22 @@ export default function FormEdit({
               onClick={handleSubmit}
               className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-900/50"
             >
-              <Save className="w-5 h-5" />
-              Guardar Cambios
+              { isLoading ? (
+                <Loading
+                  w={6}
+                  h={6}
+                  color="white"
+                />
+              ) : isError ? (
+                <p>
+                  Se produjo un error al Actualizar
+                </p>
+              ) : (
+                <>
+                  <Save className="w-5 h-5" />
+                  Guardar Cambios
+                </>
+              )}
             </button>
           </div>
         </div>

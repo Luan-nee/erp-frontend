@@ -35,9 +35,7 @@ export default function CondorMotorsBrands() {
   const [marcasError, setMarcasError] = useState<boolean>(false);
 
   // estados para el resumen de marcas
-  const [resumenMarcas, setResumenMarcas] = useState<PropResumenMarca | null>(
-    null
-  );
+  const [resumenMarcas, setResumenMarcas] = useState<PropResumenMarca | null>(null);
   const [resumenLoading, setResumenLoading] = useState<boolean>(true);
   const [resumenError, setResumenError] = useState<boolean>(false);
 
@@ -67,8 +65,6 @@ export default function CondorMotorsBrands() {
     resumenMarcasRefetch();
     MarcasRefetch();
   }, [MarcasRefetch, resumenMarcasRefetch]);
-
-  const marcasData = marcas as PropMarca[];
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
@@ -176,7 +172,7 @@ export default function CondorMotorsBrands() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {marcasData.map((marca) => (
+            {marcas?.map((marca) => (
               <CardMarca
                 key={marca.id}
                 id={marca.id}
@@ -229,7 +225,7 @@ export default function CondorMotorsBrands() {
                   </td>
                 </tr>
               ) : (
-                [...marcasData]
+                [...marcas as PropMarca[]]
                   .sort((a, b) => b.cantidad_productos - a.cantidad_productos)
                   .map((marca, idx) => (
                     <RowTable
