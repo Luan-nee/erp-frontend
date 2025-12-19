@@ -102,8 +102,16 @@ export default function FormCreate( { setShowFormCreate, refetchCategorias, refe
 
         <div className="px-6 py-4 bg-gray-750 rounded-b-2xl border-t border-gray-700 flex gap-3">
           <button
+            type="button"
+            disabled={categoriesLoading} 
             onClick={() => setShowFormCreate(false)}
-            className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-white font-medium transition-colors border border-gray-600"
+            className={`
+              flex-1 px-6 py-3 rounded-lg font-medium transition-colors border 
+              ${categoriesLoading 
+                ? 'bg-slate-500 text-slate-300 border-slate-500 cursor-not-allowed opacity-70' // Estilos desactivado
+                : 'bg-slate-700 hover:bg-slate-600 text-white border-slate-600 cursor-pointer' // Estilos activo
+              }
+            `}
           >
             Cancelar
           </button>
