@@ -12,7 +12,7 @@ import MovimientoInventario from './pages/MovimientoInventario.tsx';
 import ListaPedidosExclusivos from './pages/ListaPedidosExclusivos.tsx';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import NavBar from './layouts/NavBar.tsx';
-import Marcas from './pages/marcas/Marcas.tsx';
+import Marcas from './pages/marcas/MarcasView.tsx';
 import Colaboradores from './pages/Colaboradores.tsx';
 
 
