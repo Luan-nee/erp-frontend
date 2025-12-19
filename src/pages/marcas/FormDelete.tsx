@@ -97,8 +97,16 @@ export default function FormDelete({
           {/* Buttons */}
           <div className="flex gap-3 pt-2">
             <button
+              type="button"
+              disabled={isLoading} 
               onClick={handleCancel}
-              className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors border border-slate-600"
+              className={`
+                flex-1 px-6 py-3 rounded-lg font-medium transition-colors border 
+                ${isLoading 
+                  ? 'bg-slate-500 text-slate-300 border-slate-500 cursor-not-allowed opacity-70' // Estilos desactivado
+                  : 'bg-slate-700 hover:bg-slate-600 text-white border-slate-600 cursor-pointer' // Estilos activo
+                }
+              `}
             >
               Cancelar
             </button>
