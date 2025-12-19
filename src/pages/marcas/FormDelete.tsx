@@ -1,30 +1,41 @@
-import { useState } from "react";
-import { AlertTriangle, X } from "lucide-react";
-import type { Marca } from "../../types/marca";
+import { useMemo, useState } from "react";
+import { AlertTriangle, Delete, X } from "lucide-react";
+import type { Marca } from "../../models/marca";
+import MarcaService from "../../service/marca.service";
+import Loading from "../../animation/Loading";
 
 interface FormDeleteProps {
   setShowFormDelete: (p: boolean) => void;
-  data: Marca;
+  marcaData: Marca;
   refetch: () => void;
 }
 
 export default function FormDelete({
   setShowFormDelete,
-  data,
+  marcaData,
   refetch,
 }: FormDeleteProps) {
   const [confirmText, setConfirmText] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const marcaService = useMemo(() => new MarcaService(), []);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (confirmText.toLowerCase() === "eliminar") {
-      // lógica para eliminar la categoría
-      // ...
 
-      // menciona el id y el nombre de la marca a eliminar
-      console.log(`Marca "${data.nombre}" con ID: ${data.id} eliminada`);
-      setShowFormDelete(false);
-      setConfirmText("");
-      refetch();
+      setIsLoading(true);
+      setIsError(false)
+
+      console.log(`Eliminando la Categoría "${marcaData.nombre}" con ID: ${marcaData.id}`);
+      const {isLoading, hayError} = await marcaService.delete(marcaData.id);
+      
+      setIsLoading(isLoading);
+      setIsError(hayError)
+      if (!hayError) {
+        if (refetch) refetch();
+        setShowFormDelete(false);
+        setConfirmText("");
+      }
     }
   };
 
@@ -62,7 +73,7 @@ export default function FormDelete({
           <p className="text-slate-300">
             ¿Estás seguro de que deseas eliminar la marca{" "}
             <span className="font-bold text-white">
-              "{data.nombre}"
+              "{marcaData.nombre}"
             </span>
             ?
           </p>
@@ -94,13 +105,28 @@ export default function FormDelete({
             <button
               onClick={handleDelete}
               disabled={!isDeleteEnabled}
-              className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${
+              className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
                 isDeleteEnabled
                   ? "bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-900/50"
                   : "bg-slate-700 text-slate-500 cursor-not-allowed"
               }`}
             >
-              Eliminar
+              { isLoading ? (
+                <Loading
+                  w={6}
+                  h={6}
+                  color="white"
+                />
+              ) : isError ? (
+                <p>
+                  Se produjo un error al Eliminar
+                </p>
+              ) : (
+                <>
+                  <Delete className="w-5 h-5" />
+                  Eliminar
+                </>
+              )}
             </button>
           </div>
         </div>

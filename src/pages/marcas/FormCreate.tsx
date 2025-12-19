@@ -1,32 +1,53 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import MarcaService from "../../service/marca.service";
+import type { MarcaCreate } from "../../models/marca";
+import Loading from "../../animation/Loading";
 
 interface FormCreateProps {
   setShowFormCreate: (p: boolean) => void;
-  refetch: () => void;
+  refetchMarcas: () => void;
+  refetchResumen: () => Promise<void>;
 }
 
-export default function FormCreate( { setShowFormCreate, refetch }: FormCreateProps) {
-  const [data, setData] = useState({
+export default function FormCreate( { setShowFormCreate, refetchMarcas, refetchResumen }: FormCreateProps) {
+  const [dataMarca, setDataMarca] = useState<MarcaCreate>({
     nombre: "",
     descripcion: "",
   });
 
+  const marcaService = useMemo(() => new MarcaService(), []); 
+
+  const [idNewMarca, setIdNewMarca] = useState<number | null>(null);
+  const [marcaLoading, setMarcaLoading] = useState<boolean>(false);
+  const [marcaError, setMarcaError] = useState<boolean>(false);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setData({
-      ...data,
+    setDataMarca({
+      ...dataMarca,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = () => {
-    // implementar lógica para guardar la nueva marca
-    // ...
+  const handleSubmit = async () => {
+    // 1. Iniciamos carga
+    setMarcaLoading(true);
+    setMarcaError(false);
     
-    console.log("Marca creada:", data);
-    refetch(); // Llama a la función refetch para actualizar los datos
-    setShowFormCreate(false);
+    console.log("Creando la Marca:", dataMarca);
+    const {data, isLoading, hayError } = await marcaService.create(dataMarca);
+    
+    setIdNewMarca(data);
+    setMarcaLoading(isLoading);
+    setMarcaError(hayError);
+
+    if (!hayError) {
+      if (refetchMarcas) refetchMarcas();
+      if (refetchResumen) refetchResumen();
+      setShowFormCreate(false);
+      console.log("Marca creada con ID:", idNewMarca);
+    }
   };
 
   return (
@@ -74,15 +95,29 @@ export default function FormCreate( { setShowFormCreate, refetch }: FormCreatePr
             Cancelar
           </button>
           <button
+            // que no recargue la pagina 
+            type="button"
             onClick={() => {
               // Lógica para guardar
-              setShowFormCreate(false);
-              setData({ nombre: "", descripcion: "" });
               handleSubmit();
             }}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg text-white font-medium transition-all shadow-lg"
+            className="flex-1 flex justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg text-white font-medium transition-all shadow-lg"
           >
-            Guardar
+            { marcaLoading ? (
+              <Loading
+                w={6}
+                h={6}
+                color="white"
+              />
+            ) : marcaError ? (
+              <p>
+                Se produjo un error al Crear
+              </p>
+            ) : (
+              <p>
+                Crear
+              </p>
+            )}
           </button>
         </div>
       </div>

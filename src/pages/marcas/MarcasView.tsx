@@ -1,21 +1,20 @@
-import { useState } from "react";
-import {
-  Package,
-  Search,
-  Plus,
-  Award,
-  TrendingUp,
-} from "lucide-react";
-import type { Marca, PropMarca, PropResumenMarca } from "../../types/marca";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Package, Search, Plus, Award, TrendingUp } from "lucide-react";
+// import type { Marca, PropMarca, PropResumenMarca } from "../../types/marca";
+import type {
+  PropMarca,
+  PropResumenMarca,
+} from "../../models/marca";
 import Loading from "../../animation/Loading";
 import Table from "../../components/Table";
 import MetricCard from "../../components/MetricCard";
-import useFetcher from "../../data/useFetchet";
+// import useFetcher from "../../data/useFetchet";
 import CardMarca from "./CardMarca";
 import RowTable from "./RowTable";
 import FormCreate from "./FormCreate";
 import FormDelete from "./FormDelete";
 import FormEdit from "./FormEdit";
+import MarcaService from "../../service/marca.service";
 
 const headerTable = ["Ranking", "Marca", "Descripción", "Productos"];
 
@@ -28,19 +27,46 @@ export default function CondorMotorsBrands() {
   const [idMarcaEdit, setIdMarcaEdit] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const {
-    data: marcas,
-    isLoading: marcasLoading,
-    hayError: marcasError,
-    refetch: MarcasRefetch,
-  } = useFetcher("http://localhost:3000/api/marca", "marcas");
+  const marcaService = useMemo(() => new MarcaService(), []);
 
-  const {
-    data: resumenMarcas,
-    isLoading: resumenMarcasLoading,
-    hayError: resumenMarcasError,
-    refetch: resumenMarcasRefetch,
-  } = useFetcher("http://localhost:3000/api/resumen-marcas", "resumen-marcas");
+  // estados para las marcas
+  const [marcas, setMarcas] = useState<PropMarca[] | null>(null);
+  const [marcasLoading, setMarcasLoading] = useState<boolean>(true);
+  const [marcasError, setMarcasError] = useState<boolean>(false);
+
+  // estados para el resumen de marcas
+  const [resumenMarcas, setResumenMarcas] = useState<PropResumenMarca | null>(
+    null
+  );
+  const [resumenLoading, setResumenLoading] = useState<boolean>(true);
+  const [resumenError, setResumenError] = useState<boolean>(false);
+
+  const MarcasRefetch = useCallback(async () => {
+    setMarcasLoading(true);
+    setMarcasError(false);
+
+    const { data, isLoading, hayError } = await marcaService.get();
+
+    setMarcas(data);
+    setMarcasLoading(isLoading);
+    setMarcasError(hayError);
+  }, [marcaService]);
+
+  const resumenMarcasRefetch = useCallback(async () => {
+    setResumenLoading(true);
+    setResumenError(false);
+
+    const { data, isLoading, hayError } = await marcaService.getResumen();
+
+    setResumenMarcas(data);
+    setResumenLoading(isLoading);
+    setResumenError(hayError);
+  }, [marcaService]);
+
+  useEffect(() => {
+    resumenMarcasRefetch();
+    MarcasRefetch();
+  }, [MarcasRefetch, resumenMarcasRefetch]);
 
   const marcasData = marcas as PropMarca[];
 
@@ -69,7 +95,7 @@ export default function CondorMotorsBrands() {
 
       {/* Stats Cards */}
       <div className="bg-gray-800 border-b border-gray-700 p-8">
-        {resumenMarcasError ? (
+        {resumenError ? (
           <div className="col-span-3 px-6 py-4 text-center text-red-500">
             Error al cargar el resumen de categorías.{" "}
             <button
@@ -83,9 +109,9 @@ export default function CondorMotorsBrands() {
           <div className="grid grid-cols-3 gap-6">
             <MetricCard
               name="Total Marcas"
-              value={(resumenMarcas as PropResumenMarca[])[0]?.total_marcas}
-              isLoading={resumenMarcasLoading}
-              isError={resumenMarcasError}
+              value={resumenMarcas ? resumenMarcas.total_marcas : 0}
+              isLoading={resumenLoading}
+              isError={resumenError}
               color="blue"
             >
               <Award className="w-6 h-6 text-white" />
@@ -93,9 +119,9 @@ export default function CondorMotorsBrands() {
 
             <MetricCard
               name="Total Productos"
-              value={(resumenMarcas as PropResumenMarca[])[0]?.total_productos}
-              isLoading={resumenMarcasLoading}
-              isError={resumenMarcasError}
+              value={resumenMarcas ? resumenMarcas.total_productos : 0}
+              isLoading={resumenLoading}
+              isError={resumenError}
               color="green"
             >
               <Package className="w-6 h-6 text-white" />
@@ -103,9 +129,9 @@ export default function CondorMotorsBrands() {
 
             <MetricCard
               name="Promedio por Marca"
-              value={(resumenMarcas as PropResumenMarca[])[0]?.promedio_marca}
-              isLoading={resumenMarcasLoading}
-              isError={resumenMarcasError}
+              value={resumenMarcas ? resumenMarcas.promedio_marca : 0}
+              isLoading={resumenLoading}
+              isError={resumenError}
               color="purple"
             >
               <TrendingUp className="w-6 h-6 text-white" />
@@ -131,41 +157,40 @@ export default function CondorMotorsBrands() {
       {/* Content Area */}
       <div className="flex-1 p-8">
         {/* Brands Grid */}
-        { marcasError ? (
-            <div className="col-span-3 px-6 py-4 text-center text-red-500">
-              Error al cargar las marcas.{" "}
-              <button
-                onClick={() => MarcasRefetch()}
-                className="underline text-red-400 hover:text-red-600"
-              >
-                Recargar marcas
-              </button>
-            </div>
-          ): marcasLoading ? (
-            <div className=" flex flex-row items-center justify-center " >
-              <p className="px-6 py-4 text-center text-gray-400">
-                Cargando marcas...  
-              </p>
-              <Loading w={8} h={8} color="red" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {marcasData.map((marca) => (
-                <CardMarca
-                  key={marca.id}
-                  id={marca.id}
-                  nombre={marca.nombre}
-                  descripcion={marca.descripcion}
-                  cant_productos={marca.cantidad_productos}
-                  showDeleteModal={setShowDeleteModal}
-                  showEditModal={setShowEditModal}
-                  setIdMarcaDelete={setIdMarcaDelete}
-                  setIdMarcaEdit={setIdMarcaEdit}
-                />
-              ))}
-            </div>
-          )
-        }
+        {marcasError ? (
+          <div className="col-span-3 px-6 py-4 text-center text-red-500">
+            Error al cargar las marcas.{" "}
+            <button
+              onClick={() => MarcasRefetch()}
+              className="underline text-red-400 hover:text-red-600"
+            >
+              Recargar marcas
+            </button>
+          </div>
+        ) : marcasLoading ? (
+          <div className=" flex flex-row items-center justify-center ">
+            <p className="px-6 py-4 text-center text-gray-400">
+              Cargando marcas...
+            </p>
+            <Loading w={8} h={8} color="red" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {marcasData.map((marca) => (
+              <CardMarca
+                key={marca.id}
+                id={marca.id}
+                nombre={marca.nombre}
+                descripcion={marca.descripcion}
+                cant_productos={marca.cantidad_productos}
+                showDeleteModal={setShowDeleteModal}
+                showEditModal={setShowEditModal}
+                setIdMarcaDelete={setIdMarcaDelete}
+                setIdMarcaEdit={setIdMarcaEdit}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Top Brands Table */}
         <div className="mt-8 bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-hidden">
@@ -176,36 +201,35 @@ export default function CondorMotorsBrands() {
           </div>
           <div className="overflow-x-auto">
             <Table headerTable={headerTable}>
-                {marcasLoading ? (
-                  <tr>
-                    <td
-                      colSpan={headerTable.length}
-                      className="flex flex-row items-center justify-center py-6"
+              {marcasLoading ? (
+                <tr>
+                  <td
+                    colSpan={headerTable.length}
+                    className="flex flex-row items-center justify-center py-6"
+                  >
+                    <p className="px-6 py-4 text-center text-gray-400">
+                      Cargando marcas...
+                    </p>
+                    <Loading w={8} h={8} color="red" />
+                  </td>
+                </tr>
+              ) : marcasError ? (
+                <tr>
+                  <td
+                    colSpan={headerTable.length}
+                    className="px-6 py-4 text-center text-red-500"
+                  >
+                    Error al cargar las marcas.{" "}
+                    <button
+                      onClick={() => MarcasRefetch()}
+                      className="underline text-red-400 hover:text-red-600"
                     >
-                      <p className="px-6 py-4 text-center text-gray-400">
-                        Cargando marcas...  
-                      </p>
-                      <Loading w={8} h={8} color="red" />
-                    </td>
-                  </tr>
-                ) : marcasError ? (
-                  <tr>
-                    <td
-                      colSpan={headerTable.length}
-                      className="px-6 py-4 text-center text-red-500"
-                    >
-                      Error al cargar las marcas.{" "}
-                      <button
-                        onClick={() => MarcasRefetch()}
-                        className="underline text-red-400 hover:text-red-600"
-                      >
-                        Recargar página
-                      </button>
-                    </td>
-                    
-                  </tr>
-                ) : (
-                  [...marcasData]
+                      Recargar página
+                    </button>
+                  </td>
+                </tr>
+              ) : (
+                [...marcasData]
                   .sort((a, b) => b.cantidad_productos - a.cantidad_productos)
                   .map((marca, idx) => (
                     <RowTable
@@ -216,7 +240,7 @@ export default function CondorMotorsBrands() {
                       cantidad_productos={marca.cantidad_productos}
                     />
                   ))
-                )}
+              )}
             </Table>
           </div>
         </div>
@@ -224,15 +248,27 @@ export default function CondorMotorsBrands() {
 
       {/* Create Brand Modal */}
       {showCreateModal && (
-        <FormCreate setShowFormCreate={setShowCreateModal} refetch={MarcasRefetch} />
+        <FormCreate
+          setShowFormCreate={setShowCreateModal}
+          refetchMarcas={MarcasRefetch}
+          refetchResumen={resumenMarcasRefetch}
+        />
       )}
 
       {showDeleteModal && (
-        <FormDelete setShowFormDelete={setShowDeleteModal} data={(marcas as Marca[]).find(marca => marca.id === idMarcaDelete)!} refetch={MarcasRefetch} />
+        <FormDelete
+          setShowFormDelete={setShowDeleteModal}
+          marcaData={marcas?.find((marca) => marca.id === idMarcaDelete)!}
+          refetch={MarcasRefetch}
+        />
       )}
 
-      { showEditModal && (
-        <FormEdit setShowFormEdit={setShowEditModal} data={(marcas as Marca[]).find(marca => marca.id === idMarcaEdit)!} refetch={MarcasRefetch} />
+      {showEditModal && (
+        <FormEdit
+          setShowFormEdit={setShowEditModal}
+          data={marcas?.find((marca) => marca.id === idMarcaEdit)!}
+          refetch={MarcasRefetch}
+        />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Marca } from "../../types/marca";
+import type { Marca } from "../../models/marca";
 import { FolderOpen, X, Save } from "lucide-react";
 
 interface FormCreateProps {
