@@ -14,7 +14,7 @@ export default function Productos() {
 
   const categories = ['Todos', 'Buscador', 'Suspensión', 'Frenos', 'Motor'];
   
-  const { data: products, isLoading, hayError, refetch } = useFetcher(`http://localhost:3000/api/productos?id_sucursal=${selectIdSucursal}`,`productos de la sucursal ${selectIdSucursal}`);
+  const { data: products, isLoading, hayError, refetch } = useFetcher(`http://localhost:3001/api/productos?id_sucursal=${selectIdSucursal}`,`productos de la sucursal ${selectIdSucursal}`);
   const productos = products as PropProductoResumen[];
 
   return (
@@ -113,7 +113,7 @@ export default function Productos() {
             <div className="flex items-center gap-3 mb-4">
               <h3 className="text-xl font-bold text-white">Productos Activos</h3>
               <span className="px-3 py-1 bg-green-600/20 text-green-400 rounded-full text-sm font-medium border border-green-600/30">
-                {(products as PropProductoResumen[]).filter(p => p.esta_habilitado === true).length} productos
+                {(products as PropProductoResumen[])?.filter(p => p.esta_habilitado === true).length} productos
               </span>
             </div>
             
@@ -129,7 +129,7 @@ export default function Productos() {
                 </div>
               </button>
 
-              {productos.map(product => (
+              {productos?.map(product => (
                 // <ProductCard key={product.id} {...product} />
                 <ProductCard key={product.id} 
                   id={product.id}

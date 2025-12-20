@@ -12,7 +12,7 @@ interface LocalListProps {
 
 export default function LocalList({ setSelectIdSucursal, selectIdSucursal }: LocalListProps) {
 
-  const { data, isLoading: sucursalesLoading, hayError: sucursalesError, refetch: refetchSucursales } = useFetcher('http://localhost:3000/api/sucursales', 'sucursales');
+  const { data, isLoading: sucursalesLoading, hayError: sucursalesError, refetch: refetchSucursales } = useFetcher('http://localhost:3001/api/sucursales', 'sucursales');
 
   const sucursales = data as PropSucursal[];
   const [selectTipoSucursal, setSelectTipoSucursal] = useState<string>("central")
