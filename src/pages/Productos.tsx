@@ -1,18 +1,72 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Package, Plus, Search, ShoppingCart, TrendingUp, Archive } from 'lucide-react';
 import MetricCard from '../components/MetricCard';
 import LocalList from '../layouts/LocalList';
 import useFetcher from '../data/useFetchet';
 import type { PropProductoResumen } from '../types/producto';
 import ProductCard from './productos/ProductCard';
+import type { PropCategoria } from '../types/categoria';
+import CategoriaService from '../service/categoria.service';
+import Selector from '../utils/Selector';
 
 export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('Todos');
   const [selectIdSucursal, setSelectIdSucursal] = useState<number>(1); // por defecto seleccionamos la primera sucursal
   // const [showAddProduct, setShowAddProduct] = useState(false);
+  const categoriaService = useMemo(() => new CategoriaService(), []);
 
-  const categories = ['Todos', 'Buscador', 'Suspensión', 'Frenos', 'Motor'];
+  const [isLoadingCategorias, setIsLoadingCategorias] = useState<boolean>(true);
+  const [isErrorCategorias, setIsErrorCategorias] = useState<boolean>(false);
+  const [categorias, setCategorias] = useState<PropCategoria[] | null>([]);
+
+  const refreshCategorias = useCallback(async () => {
+    setIsLoadingCategorias(true);
+    setIsErrorCategorias(false);
+    
+    const {data, isLoading, hayError} = await categoriaService.get();
+
+    setCategorias(data);
+    setIsLoadingCategorias(isLoading);
+    setIsErrorCategorias(hayError);
+  }, [categoriaService]);
+
+  useEffect(()=> {
+    refreshCategorias();
+  }, [refreshCategorias])
+
+  const categories = [
+    {
+      id: 0,
+      nombre: 'Todos',
+      descripcion: 'Todas las categorías',
+      cant_productos: 0
+    },
+    {
+      id: 1,
+      nombre: 'Buscador',
+      descripcion: 'Categoría para productos buscados',
+      cant_productos: 0
+    },
+    {
+      id: 2,
+      nombre: 'Suspensión',
+      descripcion: 'Categoría para productos de suspensión',
+      cant_productos: 0
+    },
+    {
+      id: 3,
+      nombre: 'Frenos',
+      descripcion: 'Categoría para productos de frenos',
+      cant_productos: 0
+    },
+    {
+      id: 4,
+      nombre: 'Motor',
+      descripcion: 'Categoría para productos de motor',
+      cant_productos: 0
+    },
+  ];
   
   const { data: products, isLoading, hayError, refetch } = useFetcher(`http://localhost:3001/api/productos?id_sucursal=${selectIdSucursal}`,`productos de la sucursal ${selectIdSucursal}`);
   const productos = products as PropProductoResumen[];
@@ -49,30 +103,33 @@ export default function Productos() {
         {/* Search and Filter Bar */}
         <div className="bg-gray-800 border-b border-gray-700 px-8 py-4">
           <div className="flex gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <div className="flex-1 flex items-center relative">
+              <div className="absolute left-4 flex items-center pointer-events-none">
+                <Search className="w-5 h-5 text-gray-400" />
+              </div>
               <input
                 type="text"
                 placeholder="Buscar productos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
               />
             </div>
             <div className="flex gap-2">
-              {categories.map(cat => (
+              <Selector categorias={categorias} onSelect={(categoria) => setFilterCategory(categoria.nombre)} />
+              {/* {categorias?.map(cat => (
                 <button
-                  key={cat}
-                  onClick={() => setFilterCategory(cat)}
+                  key={cat.id}
+                  onClick={() => setFilterCategory(cat.nombre)}
                   className={`px-4 py-3 rounded-lg font-medium transition-all ${
-                    filterCategory === cat
+                    filterCategory === cat.nombre
                       ? 'bg-red-600 text-white shadow-lg'
                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }`}
                 >
-                  {cat}
+                  {cat.nombre}
                 </button>
-              ))}
+              ))} */}
             </div>
           </div>
         </div>
