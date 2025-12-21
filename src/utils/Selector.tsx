@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Check, Package } from 'lucide-react';
+import { ChevronDown, Check} from 'lucide-react';
+import Loading from '../animation/Loading';
 
 export type PropCategoria = {
   id: number;
@@ -12,12 +13,16 @@ interface Props {
   categorias: PropCategoria[] | null;
   onSelect: (categoria: PropCategoria) => void;
   placeholder?: string;
+  isLoading?: boolean;
+  isError?: boolean;
 }
 
 const Selector: React.FC<Props> = ({ 
   categorias, 
   onSelect, 
-  placeholder = "Selecciona una categoría" 
+  placeholder = "Selecciona una categoría", 
+  isLoading,
+  isError
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<PropCategoria | null>(null);
@@ -44,6 +49,7 @@ const Selector: React.FC<Props> = ({
       {/* Botón Principal - Tema Oscuro */}
       <button
         type="button"
+        disabled={isLoading || isError}
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 
           ${isOpen 
@@ -51,6 +57,16 @@ const Selector: React.FC<Props> = ({
             : 'bg-slate-900 border-slate-700 hover:border-slate-600'
           } border`}
       >
+        {isLoading ? (
+          <div className="flex items-center justify-center gap-2 w-full">
+            <Loading w={6} h={6} color="white" />
+            <p>Cargando categorías...</p>
+          </div>
+        ): isError ? (
+          <div className="flex items-center justify-center w-full text-red-500">
+            Error al cargar categorías
+          </div>
+        ) : (
         <div className="flex flex-col items-start truncate">
           <span className={`text-sm ${!selected ? 'text-slate-500' : 'text-slate-100 font-semibold'}`}>
             {selected ? selected.nombre : placeholder}
@@ -61,6 +77,7 @@ const Selector: React.FC<Props> = ({
             </span>
           )}
         </div>
+        )}
         <ChevronDown 
           className={`w-5 h-5 text-slate-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
         />

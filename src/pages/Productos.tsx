@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Package, Plus, Search, ShoppingCart, TrendingUp, Archive } from 'lucide-react';
+import { Package, Plus, Search, TrendingUp, Archive } from 'lucide-react';
 import MetricCard from '../components/MetricCard';
 import LocalList from '../layouts/LocalList';
-import useFetcher from '../data/useFetchet';
-import type { PropProductoResumen } from '../types/producto';
+import type { ProductoSelect, ResumenProductos } from '../models/producto';
 import ProductCard from './productos/ProductCard';
 import type { PropCategoria } from '../types/categoria';
 import CategoriaService from '../service/categoria.service';
+import ProductoService from '../service/producto.service';
 import Selector from '../utils/Selector';
+import Loading from '../animation/Loading';
 
 export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,61 +16,53 @@ export default function Productos() {
   const [selectIdSucursal, setSelectIdSucursal] = useState<number>(1); // por defecto seleccionamos la primera sucursal
   // const [showAddProduct, setShowAddProduct] = useState(false);
   const categoriaService = useMemo(() => new CategoriaService(), []);
+  const productoService = useMemo(() => new ProductoService(), []);
 
   const [isLoadingCategorias, setIsLoadingCategorias] = useState<boolean>(true);
   const [isErrorCategorias, setIsErrorCategorias] = useState<boolean>(false);
   const [categorias, setCategorias] = useState<PropCategoria[] | null>([]);
 
+  const [isLoadingProductos, setIsLoadingProductos] = useState<boolean>(true);
+  const [isErrorProductos, setIsErrorProductos] = useState<boolean>(false);
+  const [productos, setProductos] = useState<ProductoSelect[] | null>([]);
+
+  const [isLoadingResumen, setIsLoadingResumen] = useState<boolean>(true);
+  const [isErrorResumen, setIsErrorResumen] = useState<boolean>(false);
+  const [resumenProductos, setResumenProductos] = useState<ResumenProductos | null>(null);
+
+  const refreschResumen = useCallback(async () => {
+    setIsLoadingResumen(true);
+    setIsErrorResumen(false);
+    const {data, isLoading, hayError} = await productoService.getResumenProductos(selectIdSucursal);
+    console.log("Resumen productos:", data);
+    setResumenProductos(data);
+    setIsLoadingResumen(isLoading);
+    setIsErrorResumen(hayError);
+  }, [productoService, selectIdSucursal]);
+
+  const refreschProductos = useCallback(async () => {
+    setIsLoadingProductos(true);
+    setIsErrorProductos(false);
+    const {data, isLoading, hayError} = await productoService.getDetallesProductos(selectIdSucursal);
+    setProductos(data);
+    setIsLoadingProductos(isLoading);
+    setIsErrorProductos(hayError);
+  }, [productoService, selectIdSucursal]);
+
   const refreshCategorias = useCallback(async () => {
     setIsLoadingCategorias(true);
     setIsErrorCategorias(false);
-    
     const {data, isLoading, hayError} = await categoriaService.get();
-
     setCategorias(data);
     setIsLoadingCategorias(isLoading);
     setIsErrorCategorias(hayError);
   }, [categoriaService]);
 
   useEffect(()=> {
-    refreshCategorias();
-  }, [refreshCategorias])
-
-  const categories = [
-    {
-      id: 0,
-      nombre: 'Todos',
-      descripcion: 'Todas las categorías',
-      cant_productos: 0
-    },
-    {
-      id: 1,
-      nombre: 'Buscador',
-      descripcion: 'Categoría para productos buscados',
-      cant_productos: 0
-    },
-    {
-      id: 2,
-      nombre: 'Suspensión',
-      descripcion: 'Categoría para productos de suspensión',
-      cant_productos: 0
-    },
-    {
-      id: 3,
-      nombre: 'Frenos',
-      descripcion: 'Categoría para productos de frenos',
-      cant_productos: 0
-    },
-    {
-      id: 4,
-      nombre: 'Motor',
-      descripcion: 'Categoría para productos de motor',
-      cant_productos: 0
-    },
-  ];
-  
-  const { data: products, isLoading, hayError, refetch } = useFetcher(`http://localhost:3001/api/productos?id_sucursal=${selectIdSucursal}`,`productos de la sucursal ${selectIdSucursal}`);
-  const productos = products as PropProductoResumen[];
+    refreschProductos();
+    refreschResumen();
+    setFilterCategory('Todos');
+  }, [refreshCategorias, refreschProductos, refreschResumen, selectIdSucursal]);
 
   return (
     <div className="flex-1 flex overflow-hidden">
@@ -116,20 +109,13 @@ export default function Productos() {
               />
             </div>
             <div className="flex gap-2">
-              <Selector categorias={categorias} onSelect={(categoria) => setFilterCategory(categoria.nombre)} />
-              {/* {categorias?.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setFilterCategory(cat.nombre)}
-                  className={`px-4 py-3 rounded-lg font-medium transition-all ${
-                    filterCategory === cat.nombre
-                      ? 'bg-red-600 text-white shadow-lg'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-                >
-                  {cat.nombre}
-                </button>
-              ))} */}
+              <Selector 
+                categorias={categorias} 
+                onSelect={(categoria) => setFilterCategory(categoria.nombre)} 
+                isLoading={isLoadingCategorias}
+                isError={isErrorCategorias}
+                placeholder="Filtrar por categoría"
+              />
             </div>
           </div>
         </div>
@@ -137,76 +123,104 @@ export default function Productos() {
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-8">
           {/* Stats */}
-          <div className="grid grid-cols-4 gap-4 mb-8">
-            
+          <div className="grid grid-cols-3 gap-4 mb-8">
             <MetricCard
               name="Total Productos"
-              value={30}
+              value={(resumenProductos?.total_productos != null) ? resumenProductos.total_productos : 0}
               color="blue"
+              isLoading={isLoadingResumen}
+              isError={isErrorResumen}
             >
               <Package className="w-8 h-8 text-white" />
             </MetricCard>
-
-            
             <MetricCard
               name="Activos"
-              value={10}
+              value={(resumenProductos?.activos != null) ? resumenProductos.activos : 0}
               color="green"
+              isLoading={isLoadingResumen}
+              isError={isErrorResumen}
             >
               <TrendingUp className="w-8 h-8 text-white" />
             </MetricCard>
             <MetricCard
               name="Inhabilitados"
-              value={77}
+              value={(resumenProductos?.inhabilitados != null) ? resumenProductos.inhabilitados : 0}
               color="red"
+              isLoading={isLoadingResumen}
+              isError={isErrorResumen}
             >
               <Archive className="w-8 h-8 text-white" />
-            </MetricCard>
-
-            <MetricCard
-              name="Stock Total"
-              value={170}
-              color="purple"
-            >
-              <ShoppingCart className="w-8 h-8 text-white" />
             </MetricCard>
           </div>
 
           {/* Active Products */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <h3 className="text-xl font-bold text-white">Productos Activos</h3>
-              <span className="px-3 py-1 bg-green-600/20 text-green-400 rounded-full text-sm font-medium border border-green-600/30">
-                {(products as PropProductoResumen[])?.filter(p => p.esta_habilitado === true).length} productos
-              </span>
+              <h3 className="text-xl font-bold text-white">Productos</h3>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Add Product Card */}
-              <button 
-                // onClick={() => setShowAddProduct(true)}
-                className="bg-gray-800 border-2 border-dashed border-gray-600 rounded-xl p-8 hover:border-red-500 hover:bg-gray-750 transition-all group"
-              >
-                <div className="flex flex-col items-center justify-center text-gray-400 group-hover:text-red-400 transition-colors">
-                  <Plus className="w-12 h-12 mb-3" />
-                  <p className="font-semibold">Agregar Producto</p>
-                </div>
-              </button>
 
-              {productos?.map(product => (
-                // <ProductCard key={product.id} {...product} />
-                <ProductCard key={product.id} 
-                  id={product.id}
-                  sku={product.sku}
-                  nombre={product.nombre}
-                  descripcion={product.descripcion}
-                  stock={product.stock} 
-                  stock_minimo={product.stock_minimo}
-                  porcentaje_ganancia={product.porcentaje_ganancia}
-                  esta_habilitado={product.esta_habilitado}
-                />
-              ))}
-            </div>
+            { isLoadingProductos ? (
+              // implementa el componente Loading aqui
+              <>
+                <div className="mt-6 text-center text-blue-500">
+                  Cargando los productos...
+                </div>
+                <div className="flex justify-center items-center mt-4">
+                  <Loading 
+                    w={16} 
+                    h={16} 
+                    color={'blue'}
+                  />
+                </div>
+              </>
+            ): isErrorProductos ? (
+              <div className="mt-6 text-center text-red-500">
+                Error al cargar los productos. Por favor, intenta de nuevo.
+                {/* agrega un botón para recargar los productos*/}
+                <div className="mt-4">
+                  <button 
+                    onClick={refreschProductos}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+                  >
+                    Reintentar
+                  </button>
+                </div>
+              </div>
+            ) : productos === null ? (
+              <div className="mt-6 text-center text-gray-400">
+                No se encontraron productos.
+              </div>
+            ) : ( 
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Add Product Card */}
+                { selectIdSucursal === 1 &&
+                  <button 
+                    // onClick={() => setShowAddProduct(true)}
+                    className="bg-gray-800 border-2 border-dashed border-gray-600 rounded-xl p-8 hover:border-red-500 hover:bg-gray-750 transition-all group"
+                  >
+                    <div className="flex flex-col items-center justify-center text-gray-400 group-hover:text-red-400 transition-colors">
+                      <Plus className="w-12 h-12 mb-3" />
+                      <p className="font-semibold">Agregar Producto</p>
+                    </div>
+                  </button>
+                }
+                {productos?.map(product => (
+                  // <ProductCard key={product.id} {...product} />
+                  <ProductCard key={product.id} 
+                    id={product.id}
+                    sku={product.sku}
+                    nombre={product.nombre}
+                    descripcion={product.descripcion}
+                    stock={product.stock} 
+                    stock_minimo={product.stock_minimo}
+                    porcentaje_ganancia={product.porcentaje_ganancia}
+                    esta_habilitado={!product.esta_inhabilitado}
+                  />
+                ))}
+              </div>
+            )
+            }
+
           </div>
         </div>
       </div>
