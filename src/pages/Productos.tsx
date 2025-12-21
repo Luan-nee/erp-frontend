@@ -31,7 +31,14 @@ export default function Productos() {
             </div>
             <button 
               // onClick={() => setShowAddProduct(true)}
-              className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg text-white font-medium transition-all shadow-lg flex items-center gap-2"
+              disabled={selectIdSucursal !== 1}
+              title={selectIdSucursal !== 1 ? "Para crear un producto es necesario están en el local central" : ""}
+              className={`px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg text-white font-medium transition-all shadow-lg flex items-center gap-2
+                ${selectIdSucursal !== 1 
+                ? 'bg-slate-500 text-slate-300 border-slate-500 cursor-not-allowed opacity-70' // Estilos desactivado
+                : 'bg-slate-700 hover:bg-slate-600 text-white border-slate-600 cursor-pointer' // Estilos activo
+                }
+                `}
             >
               <Plus className="w-5 h-5" />
               Nuevo Producto
