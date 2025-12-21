@@ -8,10 +8,11 @@ export interface Product {
   stock_minimo: number;
   porcentaje_ganancia: number;
   esta_habilitado: boolean;
+  setShowFormCreateProduct: (p: boolean) => void;
 }
 
 
-export default function ProductCard({ id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado }: Product) {
+export default function ProductCard({ id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado, setShowFormCreateProduct }: Product) {
   const isLowStock = stock <= stock_minimo;
 
   // Estilos de estado idénticos a la imagen (textos más oscuros sobre fondos claros)
@@ -85,7 +86,7 @@ export default function ProductCard({ id, sku, nombre, descripcion, stock, stock
       {/* Botón de Acción */}
       {/* Se mantiene el azul vibrante (bg-blue-600) pero se quitó la sombra clara (shadow-blue-200) que se ve mal en dark mode */}
       <button
-        onClick={() => console.log("Ver detalles de:", { id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado })}
+        onClick={() => {console.log("Ver detalles de:", { id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado }); setShowFormCreateProduct(true);}}
         className="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 text-sm"
       >
         Ver Detalles

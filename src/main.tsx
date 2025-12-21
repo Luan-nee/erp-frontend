@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import Inventory from './pages/Inventario.tsx';
 import Categories from './pages/categorias/CategoriaView.tsx';
-import Products from './pages/Productos.tsx';
+import Products from './pages/productos/Productos.tsx';
 import NotFound from './pages/NotFound.tsx';
 import AnalisisVenta from './pages/AnalisisVenta.tsx';
 import Facturacion from './pages/Facturacion.tsx';

@@ -1,19 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Package, Plus, Search, TrendingUp, Archive } from 'lucide-react';
-import MetricCard from '../components/MetricCard';
-import LocalList from '../layouts/LocalList';
-import type { ProductoSelect, ResumenProductos } from '../models/producto';
-import ProductCard from './productos/ProductCard';
-import type { PropCategoria } from '../types/categoria';
-import CategoriaService from '../service/categoria.service';
-import ProductoService from '../service/producto.service';
-import Selector from '../utils/Selector';
-import Loading from '../animation/Loading';
+import MetricCard from '../../components/MetricCard';
+import LocalList from '../../layouts/LocalList';
+import type { ProductoSelect, ResumenProductos } from '../../models/producto';
+import ProductCard from './ProductCard';
+import type { PropCategoria } from '../../types/categoria';
+import CategoriaService from '../../service/categoria.service';
+import ProductoService from '../../service/producto.service';
+import Selector from '../../utils/Selector';
+import Loading from '../../animation/Loading';
+import FormCreate from './FormCreate';
 
 export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('Todos');
   const [selectIdSucursal, setSelectIdSucursal] = useState<number>(1); // por defecto seleccionamos la primera sucursal
+
+  const [showFormCreateProduct, setShowFormCreateProduct] = useState(true);
+
   // const [showAddProduct, setShowAddProduct] = useState(false);
   const categoriaService = useMemo(() => new CategoriaService(), []);
   const productoService = useMemo(() => new ProductoService(), []);
@@ -62,6 +66,7 @@ export default function Productos() {
     refreschProductos();
     refreschResumen();
     setFilterCategory('Todos');
+    refreshCategorias();
   }, [refreshCategorias, refreschProductos, refreschResumen, selectIdSucursal]);
 
   return (
@@ -205,7 +210,6 @@ export default function Productos() {
                   </button>
                 }
                 {productos?.map(product => (
-                  // <ProductCard key={product.id} {...product} />
                   <ProductCard key={product.id} 
                     id={product.id}
                     sku={product.sku}
@@ -215,6 +219,7 @@ export default function Productos() {
                     stock_minimo={product.stock_minimo}
                     porcentaje_ganancia={product.porcentaje_ganancia}
                     esta_habilitado={!product.esta_inhabilitado}
+                    setShowFormCreateProduct={setShowFormCreateProduct}
                   />
                 ))}
               </div>
@@ -226,6 +231,11 @@ export default function Productos() {
       </div>
       {/* Sidebar - Local List */}
       <LocalList setSelectIdSucursal={setSelectIdSucursal} selectIdSucursal={selectIdSucursal} />
+      { showFormCreateProduct && 
+        <FormCreate 
+        setShowFormCreateProduct={setShowFormCreateProduct}
+        />
+      }
     </div>
   );
 }
