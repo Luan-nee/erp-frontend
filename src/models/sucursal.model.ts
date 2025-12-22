@@ -1,7 +1,7 @@
 export type SucursalSelect = {
   id: number;
   nombre: string;
-  direccion: string;
+  direccion: string;  
   tipo_sucursal: "central" | "sucursal";
 }
 
