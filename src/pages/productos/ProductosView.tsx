@@ -81,7 +81,7 @@ export default function Productos() {
               <p className="text-gray-400">Gestiona el catálogo de productos</p>
             </div>
             <button 
-              // onClick={() => setShowAddProduct(true)}
+              onClick={() => setShowFormCreateProduct(true)}
               disabled={selectIdSucursal !== 1}
               title={selectIdSucursal !== 1 ? "Para crear un producto es necesario están en el local central" : ""}
               className={`px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg text-white font-medium transition-all shadow-lg flex items-center gap-2
@@ -200,7 +200,7 @@ export default function Productos() {
                 {/* Add Product Card */}
                 { selectIdSucursal === 1 &&
                   <button 
-                    // onClick={() => setShowAddProduct(true)}
+                    onClick={() => setShowFormCreateProduct(true)}
                     className="bg-gray-800 border-2 border-dashed border-gray-600 rounded-xl p-8 hover:border-red-500 hover:bg-gray-750 transition-all group"
                   >
                     <div className="flex flex-col items-center justify-center text-gray-400 group-hover:text-red-400 transition-colors">
@@ -234,7 +234,7 @@ export default function Productos() {
       {/* Formulario para registrar un nuevo producto */}
       { showFormCreateProduct && 
         <FormCreate 
-        setShowFormCreateProduct={setShowFormCreateProduct}
+          setShowFormCreateProduct={setShowFormCreateProduct}
         />
       }
     </div>
