@@ -100,6 +100,7 @@ export default function Productos() {
         {/* Search and Filter Bar */}
         <div className="bg-gray-800 border-b border-gray-700 px-8 py-4">
           <div className="flex gap-4">
+            {/* LA BARRA DE BUSQUE NO FUNCIONA POR EL MOMENTO */}
             <div className="flex-1 flex items-center relative">
               <div className="absolute left-4 flex items-center pointer-events-none">
                 <Search className="w-5 h-5 text-gray-400" />
@@ -230,6 +231,8 @@ export default function Productos() {
       </div>
       {/* Sidebar - Local List */}
       <LocalList setSelectIdSucursal={setSelectIdSucursal} selectIdSucursal={selectIdSucursal} />
+
+      {/* Formulario para registrar un nuevo producto */}
       { showFormCreateProduct && 
         <FormCreate 
         setShowFormCreateProduct={setShowFormCreateProduct}
