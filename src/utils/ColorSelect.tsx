@@ -1,15 +1,15 @@
 // src/components/ColorSelect.tsx
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react"; // Necesitarás instalar lucide-react o usar un icono SVG similar
-import type { PropColor } from "../types/PropColor";
+import type { PropColor } from "../models/color";
 import Loading from "../animation/Loading";
 
 interface ColorSelectProps {
-  options?: PropColor[];
+  options: PropColor[] | null;
   selectedValue: number;
-  onChange: (value: number) => void;
+  onChange: (p: number) => void;
   label?: string;
-  isloading?: boolean;
+  isLoading?: boolean;
   isError?: boolean;
 }
 
@@ -18,7 +18,7 @@ export default function ColorSelect({
   selectedValue,
   onChange,
   label = "Seleccionar Color",
-  isloading = false,
+  isLoading = false,
   isError,
 }: ColorSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +44,6 @@ export default function ColorSelect({
 
   // La función de selección ahora usa la propiedad 'nombre' como el valor retornado
   const handleSelect = (option: PropColor) => {
-    onChange(option.id);
     setIsOpen(false);
   };
 
@@ -63,7 +62,7 @@ export default function ColorSelect({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
         >
-          {isloading ? 
+          {isLoading ? 
           (
             <span className="flex items-center space-x-2">
               <Loading w={4} h={4} color="green" />
@@ -126,7 +125,7 @@ export default function ColorSelect({
                     : ""
                 }
               `}
-              onClick={() => handleSelect(option)}
+              onClick={() => {handleSelect(option); onChange(option.id); }}
               role="option"
               // Compara con 'nombre'
               aria-selected={selectedValue === option.id}

@@ -1,24 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check} from 'lucide-react';
 import Loading from '../animation/Loading';
-
-export type PropCategoria = {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  cantidad_productos: number;
-};
+import type { PropCategoria } from '../models/categoria';
+import type { PropMarca } from '../types/marca';
 
 interface Props {
-  categorias: PropCategoria[] | null;
-  onSelect: (categoria: PropCategoria) => void;
+  opciones: PropCategoria[] | PropMarca[] | null;
+  onSelect: (id: number) => void;
   placeholder?: string;
   isLoading?: boolean;
   isError?: boolean;
 }
 
 const Selector: React.FC<Props> = ({ 
-  categorias, 
+  opciones, 
   onSelect, 
   placeholder = "Selecciona una categoría", 
   isLoading,
@@ -40,7 +35,7 @@ const Selector: React.FC<Props> = ({
 
   const handleSelect = (categoria: PropCategoria) => {
     setSelected(categoria);
-    onSelect(categoria);
+    onSelect(categoria.id);
     setIsOpen(false);
   };
 
@@ -87,8 +82,8 @@ const Selector: React.FC<Props> = ({
       {isOpen && (
         <div className="absolute z-50 w-full mt-2 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           <ul className="max-h-72 overflow-y-auto py-2 scrollbar-thin scrollbar-thumb-slate-700">
-            {categorias && categorias.length > 0 ? (
-              categorias.map((cat) => (
+            {opciones && opciones.length > 0 ? (
+              opciones.map((cat) => (
                 <li
                   key={cat.id}
                   onClick={() => handleSelect(cat)}

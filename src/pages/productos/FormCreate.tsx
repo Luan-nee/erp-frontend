@@ -1,4 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo} from 'react';
+import Selector from '../../utils/Selector';
+import ColorSelect from '../../utils/ColorSelect';
+import type { PropColor } from '../../models/color';
+import type { PropCategoria } from '../../models/categoria';
+import type { PropMarca } from '../../models/marca';
+import CategoriaService from '../../service/categoria.service';
+import MarcaService from '../../service/marca.service';
+import ColorService from '../../service/color.service';
 
 interface ProductForm {
   nombre: string;
@@ -31,6 +39,61 @@ const FormCreate = ({ setShowFormCreateProduct }: PropFormCreate) => {
     marca_id: 0,
   });
 
+  const [selectCategoriaId, setSelectCategoriaId] = useState<number>(0);
+  const [selectMarcaId, setSelectMarcaId] = useState<number>(0);
+  const [selectColorId, setSelectColorId] = useState<number>(0);
+  // const [selectColorId, setSelectColorId] = useState<number>(0);
+
+  const categoriaService = useMemo(() => new CategoriaService(), []);
+  const marcaService = useMemo(() => new MarcaService(), []);
+  const colorService = useMemo(() => new ColorService(), []);
+  // const colorService = useMemo(() => new ColorService(), []);
+
+  const [isLoadingCategorias, setIsLoadingCategorias] = useState(false);
+  const [isErrorCategorias, setIsErrorCategorias] = useState(false);
+  const [categorias, setCategorias] = useState<PropCategoria[] | null>([]);
+
+  const [isLoadingMarcas, setIsLoadingMarcas] = useState(false);
+  const [isErrorMarcas, setIsErrorMarcas] = useState(false);
+  const [marcas, setMarcas] = useState<PropMarca[] | null>([]);
+
+  const [isLoadingColores, setIsLoadingColores] = useState(false);
+  const [isErrorColores, setIsErrorColores] = useState(false);
+  const [colores, setColores] = useState<PropColor[] | null>([]);
+
+  const refreshColores = async () => {
+    setIsErrorColores(false);
+    setIsLoadingColores(true);
+    const {data, isLoading, hayError} = await colorService.get();
+    setIsLoadingColores(isLoading);
+    setIsErrorColores(hayError);
+    setColores(data);
+  }
+
+  const refreshCategorias = async () => {
+    setIsErrorCategorias(false);
+    setIsLoadingCategorias(true);
+    const {data, isLoading, hayError} = await categoriaService.get();
+    setIsLoadingCategorias(isLoading);
+    setIsErrorCategorias(hayError);
+    setCategorias(data);
+  };
+
+  const refreshMarcas = async () => {
+    setIsErrorMarcas(false);
+    setIsLoadingMarcas(true);
+    const {data, isLoading, hayError} = await marcaService.get(); 
+    setIsLoadingMarcas(isLoading);
+    setIsErrorMarcas(hayError);
+    setMarcas(data);
+  }
+
+  useEffect(() => {
+    refreshColores();
+    refreshCategorias();
+    refreshMarcas();
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     
@@ -58,26 +121,6 @@ const FormCreate = ({ setShowFormCreateProduct }: PropFormCreate) => {
     alert('Producto guardado exitosamente');
   };
 
-  const categorias = [
-    { id: 1, nombre: 'Electrónica' },
-    { id: 2, nombre: 'Accesorios' },
-    { id: 3, nombre: 'Hogar' },
-  ];
-
-  const colores = [
-    { id: 1, nombre: 'Negro' },
-    { id: 2, nombre: 'Blanco' },
-    { id: 3, nombre: 'Azul' },
-    { id: 4, nombre: 'Rojo' },
-  ];
-
-  const marcas = [
-    { id: 1, nombre: 'Samsung' },
-    { id: 2, nombre: 'Apple' },
-    { id: 3, nombre: 'Sony' },
-    { id: 4, nombre: 'LG' },
-  ];
-
   return (
     // aplica estilos de tailwindcss para que la venta flote
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-8">
@@ -90,6 +133,55 @@ const FormCreate = ({ setShowFormCreateProduct }: PropFormCreate) => {
 
         {/* Form Content */}
         <div className="p-8 space-y-6">
+          {/* Clasificación */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-white border-b border-slate-600 pb-2">
+              Clasificación
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Categoría *
+                </label>
+                <Selector 
+                  opciones={categorias} 
+                  onSelect={setSelectCategoriaId}
+                  isLoading={isLoadingCategorias}
+                  isError={isErrorCategorias}
+                  placeholder="Seleccionar..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Marca *
+                </label>
+                <Selector 
+                  opciones={marcas} 
+                  onSelect={setSelectMarcaId}
+                  isLoading={isLoadingMarcas}
+                  isError={isErrorMarcas}
+                  placeholder="Seleccionar..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Color *
+                </label>
+                <ColorSelect
+                  options={colores} 
+                  selectedValue={selectColorId}
+                  onChange={setSelectColorId}
+                  isLoading={isLoadingColores}
+                  isError={isErrorColores}
+                  label="Seleccionar..."
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Información básica */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-white border-b border-slate-600 pb-2">
@@ -221,66 +313,6 @@ const FormCreate = ({ setShowFormCreateProduct }: PropFormCreate) => {
                 </p>
               </div>
             )}
-          </div>
-
-          {/* Clasificación */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-white border-b border-slate-600 pb-2">
-              Clasificación
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Categoría *
-                </label>
-                <select
-                  name="categoria_id"
-                  value={formData.categoria_id}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                >
-                  <option value={0}>Seleccionar...</option>
-                  {categorias.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.nombre}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Color *
-                </label>
-                <select
-                  name="color_id"
-                  value={formData.color_id}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                >
-                  <option value={0}>Seleccionar...</option>
-                  {colores.map(color => (
-                    <option key={color.id} value={color.id}>{color.nombre}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Marca *
-                </label>
-                <select
-                  name="marca_id"
-                  value={formData.marca_id}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                >
-                  <option value={0}>Seleccionar...</option>
-                  {marcas.map(marca => (
-                    <option key={marca.id} value={marca.id}>{marca.nombre}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
           </div>
 
           {/* Estado */}

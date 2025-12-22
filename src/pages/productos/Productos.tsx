@@ -13,10 +13,10 @@ import FormCreate from './FormCreate';
 
 export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('Todos');
+  const [selectCategoriaId, setSelectCategoriaId] = useState<number>(0);
   const [selectIdSucursal, setSelectIdSucursal] = useState<number>(1); // por defecto seleccionamos la primera sucursal
 
-  const [showFormCreateProduct, setShowFormCreateProduct] = useState(true);
+  const [showFormCreateProduct, setShowFormCreateProduct] = useState(false);
 
   // const [showAddProduct, setShowAddProduct] = useState(false);
   const categoriaService = useMemo(() => new CategoriaService(), []);
@@ -65,7 +65,6 @@ export default function Productos() {
   useEffect(()=> {
     refreschProductos();
     refreschResumen();
-    setFilterCategory('Todos');
     refreshCategorias();
   }, [refreshCategorias, refreschProductos, refreschResumen, selectIdSucursal]);
 
@@ -115,8 +114,8 @@ export default function Productos() {
             </div>
             <div className="flex gap-2">
               <Selector 
-                categorias={categorias} 
-                onSelect={(categoria) => setFilterCategory(categoria.nombre)} 
+                opciones={categorias} 
+                onSelect={setSelectCategoriaId} 
                 isLoading={isLoadingCategorias}
                 isError={isErrorCategorias}
                 placeholder="Filtrar por categoría"
