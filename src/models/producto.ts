@@ -1,3 +1,21 @@
+export type ProductoCreate = {
+  nombre: string;
+  descripcion: string;
+  precio_compra: number;
+  color_id: number;
+  categoria_id: number;
+  marca_id: number;
+} 
+
+export type DetallesProductoCreate = {
+  porcentaje_ganancia: number;
+  stock: number;
+  stock_minimo: number;
+}
+
+export type ProductCreateMain = ProductoCreate & DetallesProductoCreate;
+
+
 export type ProductoSelect = {
   id: number;
   sku: string;
@@ -24,24 +42,6 @@ export type ProductoSelectById = {
   porcentaje_ganancia: number;
   esta_inhabilitado: boolean;
   fecha_actualizacion: Date;
-}
-
-export type ProductoCreate = {
-  sku: string;
-  nombre: string;
-  descripcion: string;
-  precio_compra: number;
-  color_id: number;
-  categoria_id: number;
-  marca_id: number;
-} 
-
-export type DetallesProductoCreate = {
-  porcentaje_ganancia: number;
-  stock: number;
-  stock_minimo: number;
-  producto_id: number;
-  sucursal_id: number;
 }
 
 export type ProductoUpdate = {
