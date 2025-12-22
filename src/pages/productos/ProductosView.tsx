@@ -219,7 +219,6 @@ export default function Productos() {
                     stock_minimo={product.stock_minimo}
                     porcentaje_ganancia={product.porcentaje_ganancia}
                     esta_habilitado={!product.esta_inhabilitado}
-                    setShowFormCreateProduct={setShowFormCreateProduct}
                   />
                 ))}
               </div>
