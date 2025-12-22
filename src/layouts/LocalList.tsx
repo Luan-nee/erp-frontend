@@ -1,9 +1,9 @@
+import { useState, useEffect, useMemo } from 'react';
 import { Plus } from 'lucide-react';
 import LocalItem from '../components/LocalItem';
-import { useState } from 'react';
-import useFetcher from '../data/useFetchet';
-import type { PropSucursal } from '../types/sucursal';
+import type { SucursalSelect } from '../models/sucursal.model';
 import Loading from '../animation/Loading';
+import SucursalService from '../service/sucursal.service';
 
 interface LocalListProps {
   setSelectIdSucursal: (id: number) => void;
@@ -11,11 +11,25 @@ interface LocalListProps {
 }
 
 export default function LocalList({ setSelectIdSucursal, selectIdSucursal }: LocalListProps) {
-
-  const { data, isLoading: sucursalesLoading, hayError: sucursalesError, refetch: refetchSucursales } = useFetcher('http://localhost:3001/api/sucursales', 'sucursales');
-
-  const sucursales = data as PropSucursal[];
   const [selectTipoSucursal, setSelectTipoSucursal] = useState<string>("central")
+  const sucursalService = useMemo(() => new SucursalService(), []);
+
+  const [sucursalesLoading, setSucursalesLoading] = useState<boolean>(true);
+  const [sucursalesError, setSucursalesError] = useState<boolean>(false);
+  const [sucursales, setSucursales] = useState<SucursalSelect[] | null>([]);
+
+  const refreshSucursales = async () => {
+    setSucursalesLoading(true);
+    setSucursalesError(false);
+    const {data, isLoading, hayError} = await sucursalService.getSucursales()
+    setSucursalesLoading(isLoading);
+    setSucursalesError(hayError);
+    setSucursales(data);
+  }
+
+  useEffect(() => {
+    refreshSucursales();
+  }, []);
 
   return (
     <div className="w-80 bg-gray-800 border-l border-gray-700 flex flex-col">
@@ -54,14 +68,14 @@ export default function LocalList({ setSelectIdSucursal, selectIdSucursal }: Loc
           <div className="flex flex-col items-center justify-center">
             <p className="text-red-500 mb-2">Error al cargar las sucursales.</p>
             <button
-              onClick={refetchSucursales}
+              onClick={() => refreshSucursales()}
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
             >
               Reintentar
             </button>
           </div>
         ) : (
-          sucursales.filter((local) => local.tipo_sucursal === selectTipoSucursal)
+          sucursales?.filter((local) => local.tipo_sucursal === selectTipoSucursal)
             .map((local, idx) => (
             <LocalItem
               key={idx}
