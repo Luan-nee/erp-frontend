@@ -15,6 +15,7 @@ export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectCategoriaId, setSelectCategoriaId] = useState<number>(0);
   const [selectIdSucursal, setSelectIdSucursal] = useState<number>(1); // por defecto seleccionamos la primera sucursal
+  const [filtroProductos, setFiltroProductos] = useState<'activo' | 'inhabilitado'>('activo');
 
   const [showFormCreateProduct, setShowFormCreateProduct] = useState(false);
 
@@ -158,6 +159,28 @@ export default function Productos() {
             </MetricCard>
           </div>
 
+          {/* Botones de filtro simple */}
+          <div className="flex justify-end gap-4 mb-4">
+            <button
+              onClick={() => setFiltroProductos('activo')}
+              type="button"
+              className={`px-4 py-2 bg-gray-700 text-white rounded-lg font-medium transition-all ${
+                filtroProductos === 'activo' ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800' : ''
+              }`}
+            >
+              Activos 
+            </button>
+            <button
+              onClick={() => setFiltroProductos('inhabilitado')}
+              type="button"
+              className={`px-4 py-2 bg-gray-700 text-white rounded-lg font-medium transition-all ${
+                filtroProductos === 'inhabilitado' ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800' : ''
+              }`}
+            >
+              Inhabilitados 
+            </button>
+          </div>
+
           {/* Active Products */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
@@ -205,22 +228,55 @@ export default function Productos() {
                   >
                     <div className="flex flex-col items-center justify-center text-gray-400 group-hover:text-red-400 transition-colors">
                       <Plus className="w-12 h-12 mb-3" />
-                      <p className="font-semibold">Agregar Producto</p>
+                      <p className="font-semibold">Registrar Nuevo Producto</p>
                     </div>
                   </button>
                 }
-                {productos?.map(product => (
-                  <ProductCard key={product.id} 
-                    id={product.id}
-                    sku={product.sku}
-                    nombre={product.nombre}
-                    descripcion={product.descripcion}
-                    stock={product.stock} 
-                    stock_minimo={product.stock_minimo}
-                    porcentaje_ganancia={product.porcentaje_ganancia}
-                    esta_habilitado={!product.esta_inhabilitado}
-                  />
-                ))}
+                {
+                  filtroProductos === 'activo' ? (
+                    productos.filter((producto) => producto.esta_inhabilitado == false)?.map(product => (
+                      <ProductCard 
+                        key={product.id} 
+                        id={product.id}
+                        sku={product.sku}
+                        nombre={product.nombre}
+                        descripcion={product.descripcion}
+                        stock={product.stock} 
+                        stock_minimo={product.stock_minimo}
+                        porcentaje_ganancia={product.porcentaje_ganancia}
+                        esta_habilitado={!product.esta_inhabilitado}
+                      />
+                    ))
+                  ): filtroProductos === 'inhabilitado' ? (
+                    productos.filter((producto) => producto.esta_inhabilitado == true)?.map(product => (
+                      <ProductCard 
+                        key={product.id} 
+                        id={product.id}
+                        sku={product.sku}
+                        nombre={product.nombre}
+                        descripcion={product.descripcion}
+                        stock={product.stock} 
+                        stock_minimo={product.stock_minimo}
+                        porcentaje_ganancia={product.porcentaje_ganancia}
+                        esta_habilitado={!product.esta_inhabilitado}
+                      />
+                    ))
+                  ) : (
+                    productos?.map(product => (
+                      <ProductCard 
+                        key={product.id} 
+                        id={product.id}
+                        sku={product.sku}
+                        nombre={product.nombre}
+                        descripcion={product.descripcion}
+                        stock={product.stock} 
+                        stock_minimo={product.stock_minimo}
+                        porcentaje_ganancia={product.porcentaje_ganancia}
+                        esta_habilitado={!product.esta_inhabilitado}
+                      />
+                    ))
+                  )
+                }
               </div>
             )
             }
