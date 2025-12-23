@@ -290,6 +290,8 @@ export default function Productos() {
       {/* Formulario para registrar un nuevo producto */}
       { showFormCreateProduct && 
         <FormCreate 
+          refreshResumen={refreschResumen}
+          refreshProductos={refreschProductos}
           setShowFormCreateProduct={setShowFormCreateProduct}
         />
       }

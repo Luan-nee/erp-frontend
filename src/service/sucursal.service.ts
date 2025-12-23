@@ -2,7 +2,7 @@ import type { Sucursal, SucursalSelect } from "../models/sucursal.model";
 import type { PropResponse } from "../types/PropResponse";
 
 export default class SucursalService {
-  private baseUrl: string = "http://localhost:3001/api/sucursales";
+  private baseUrl: string = "http://localhost:3000/api/sucursales";
   
   private async request<T>(endpoint: string, options: RequestInit): Promise<T> {
     const response = await fetch(endpoint, {

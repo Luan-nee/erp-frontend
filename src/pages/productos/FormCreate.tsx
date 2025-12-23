@@ -4,41 +4,20 @@ import ColorSelect from '../../utils/ColorSelect';
 import type { PropColor } from '../../models/color';
 import type { PropCategoria } from '../../models/categoria';
 import type { PropMarca } from '../../models/marca';
+import type { ProductCreateMain } from '../../models/producto';
 import CategoriaService from '../../service/categoria.service';
 import MarcaService from '../../service/marca.service';
 import ColorService from '../../service/color.service';
-
-interface ProductForm {
-  nombre: string;
-  descripcion: string;
-  stock: number;
-  stock_minimo: number;
-  precio_compra: number;
-  porcentaje_ganancia: number;
-  esta_inhabilitado: boolean;
-  categoria_id: number;
-  color_id: number;
-  marca_id: number;
-}
+import ProductoService from '../../service/producto.service';
+import Loading from '../../animation/Loading';
 
 interface PropFormCreate {
   setShowFormCreateProduct: (p: boolean) => void;
+  refreshProductos: () => Promise<void>;
+  refreshResumen: () => Promise<void>;
 }
 
-const FormCreate = ({ setShowFormCreateProduct }: PropFormCreate) => {
-  const [formData, setFormData] = useState<ProductForm>({
-    nombre: '',
-    descripcion: '',
-    stock: 0,
-    stock_minimo: 0,
-    precio_compra: 0,
-    porcentaje_ganancia: 0,
-    esta_inhabilitado: false,
-    categoria_id: 0,
-    color_id: 0,
-    marca_id: 0,
-  });
-
+const FormCreate = ({ setShowFormCreateProduct, refreshProductos, refreshResumen }: PropFormCreate) => {
   const [selectCategoriaId, setSelectCategoriaId] = useState<number>(0);
   const [selectMarcaId, setSelectMarcaId] = useState<number>(0);
   const [selectColorId, setSelectColorId] = useState<number>(0);
@@ -47,7 +26,12 @@ const FormCreate = ({ setShowFormCreateProduct }: PropFormCreate) => {
   const categoriaService = useMemo(() => new CategoriaService(), []);
   const marcaService = useMemo(() => new MarcaService(), []);
   const colorService = useMemo(() => new ColorService(), []);
+  const productoService = useMemo(() => new ProductoService(), []);
   // const colorService = useMemo(() => new ColorService(), []);
+
+  const [isLoadingCrearProducto, setIsLoadingCrearProducto] = useState<boolean>(false);
+  const [isErrorCrearProducto, setIsErrorCrearProducto] = useState<boolean>(false);
+  const [idProductoCreado, setIdProductoCreado] = useState<number | null>(null);
 
   const [isLoadingCategorias, setIsLoadingCategorias] = useState(false);
   const [isErrorCategorias, setIsErrorCategorias] = useState(false);
@@ -60,6 +44,18 @@ const FormCreate = ({ setShowFormCreateProduct }: PropFormCreate) => {
   const [isLoadingColores, setIsLoadingColores] = useState(false);
   const [isErrorColores, setIsErrorColores] = useState(false);
   const [colores, setColores] = useState<PropColor[] | null>([]);
+
+  const [formData, setFormData] = useState<ProductCreateMain>({
+    nombre: '',
+    descripcion: '',
+    precio_compra: 0,
+    color_id: selectColorId,
+    categoria_id: selectCategoriaId,
+    marca_id: selectMarcaId,
+    porcentaje_ganancia: 0,
+    stock: 0,
+    stock_minimo: 0,
+  });
 
   const refreshColores = async () => {
     setIsErrorColores(false);
@@ -116,9 +112,22 @@ const FormCreate = ({ setShowFormCreateProduct }: PropFormCreate) => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log('Datos del formulario:', formData);
-    alert('Producto guardado exitosamente');
+  const handleSubmit = async () => {
+    formData.categoria_id = selectCategoriaId;
+    formData.marca_id = selectMarcaId;
+    formData.color_id = selectColorId;
+
+    setIsLoadingCrearProducto(true);
+    setIsErrorCrearProducto(false);
+    const { data, isLoading, hayError } = await productoService.createProducto(formData)
+    setIsLoadingCrearProducto(isLoading);
+    setIsErrorCrearProducto(hayError);
+    setIdProductoCreado(data?.id || null);
+
+    console.log("Producto creado con ID:", idProductoCreado);
+    refreshProductos();
+    refreshResumen();
+    setShowFormCreateProduct(false);
   };
 
   return (
@@ -298,7 +307,6 @@ const FormCreate = ({ setShowFormCreateProduct }: PropFormCreate) => {
                     className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     placeholder="0.00"
                   />
-                  <span className="absolute right-4 top-3 text-slate-400">%</span>
                 </div>
               </div>
             </div>
@@ -308,49 +316,67 @@ const FormCreate = ({ setShowFormCreateProduct }: PropFormCreate) => {
                 <p className="text-sm text-blue-300">
                   Precio de Venta Calculado: 
                   <span className="font-bold text-xl ml-2">
-                    ${(formData.precio_compra * (1 + formData.porcentaje_ganancia / 100)).toFixed(2)}
+                    ${(formData.precio_compra + (formData.precio_compra * formData.porcentaje_ganancia)).toFixed(2)}
                   </span>
                 </p>
               </div>
             )}
           </div>
 
-          {/* Estado */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-white border-b border-slate-600 pb-2">
-              Estado
-            </h2>
-            
-            <div className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                name="esta_inhabilitado"
-                checked={formData.esta_inhabilitado}
-                onChange={handleChange}
-                id="inhabilitado"
-                className="w-5 h-5 bg-slate-700 border-slate-600 rounded focus:ring-2 focus:ring-red-500"
-              />
-              <label htmlFor="inhabilitado" className="text-slate-300 select-none cursor-pointer">
-                Producto inhabilitado (no disponible para venta)
-              </label>
-            </div>
-          </div>
-
           {/* Botones */}
           <div className="flex justify-end space-x-4 pt-6 border-t border-slate-600">
-            <button
+            {/* <button
               type="button"
               onClick={() => {setShowFormCreateProduct(false);}}
               className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg transition-colors duration-200"
             >
               Cancelar
-            </button>
+            </button> */}
+
             <button
+            type="button"
+            disabled={isLoadingCrearProducto} 
+            onClick={() => {setShowFormCreateProduct(false);}}
+            className={`
+              px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg transition-colors duration-200 
+              ${isLoadingCrearProducto 
+                ? 'bg-slate-500 text-slate-300 border-slate-500 cursor-not-allowed opacity-70' // Estilos desactivado
+                : 'bg-slate-700 hover:bg-slate-600 text-white border-slate-600 cursor-pointer' // Estilos activo
+              }
+            `}
+          >
+            Cancelar
+          </button>
+
+
+            {/* <button
               type="button"
               onClick={handleSubmit}
               className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-lg"
             >
               Guardar Producto
+            </button> */}
+
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-lg"
+            >
+              { isLoadingCrearProducto ? (
+                <Loading
+                  w={6}
+                  h={6}
+                  color="white"
+                />
+              ) : isErrorCrearProducto ? (
+                <p>
+                  Se produjo un error al guardar
+                </p>
+              ) : (
+                <p>
+                  Crear
+                </p>
+              )}
             </button>
           </div>
         </div>

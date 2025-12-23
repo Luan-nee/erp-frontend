@@ -1,5 +1,5 @@
 import type { PropResponse } from "../types/PropResponse";
-import type { ProductoSelect, ResumenProductos,  } from "../models/producto";
+import type { ProductoSelect, ResumenProductos, ProductCreateMain} from "../models/producto";
 
 export default class ProductoService {
   private baseUrl: string = "http://localhost:3000/api/productos";
@@ -52,6 +52,33 @@ export default class ProductoService {
       const response = await this.request<PropResponse<ResumenProductos>>(
         `${this.baseUrl}/resumen/${id_sucursal}`,
         { method: "GET" }
+      );
+      return {
+        data: response.info,
+        isLoading: false,
+        hayError: false,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        isLoading: false,
+        hayError: true,
+      };
+    }
+  }
+
+  public async createProducto(productoData: ProductCreateMain): Promise<{ 
+    data: ProductoSelect | null; 
+    isLoading: boolean;
+    hayError: boolean; 
+  }> {
+    try {
+      const response = await this.request<PropResponse<ProductoSelect>>(
+        this.baseUrl,
+        {
+          method: "POST",
+          body: JSON.stringify(productoData),
+        }
       );
       return {
         data: response.info,
