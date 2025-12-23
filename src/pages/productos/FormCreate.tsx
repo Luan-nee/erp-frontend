@@ -338,7 +338,7 @@ const FormCreate = ({ setShowFormCreateProduct, refreshProductos, refreshResumen
             disabled={isLoadingCrearProducto} 
             onClick={() => {setShowFormCreateProduct(false);}}
             className={`
-              px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg transition-colors duration-200 
+              px-6 py-3 rounded-lg font-medium transition-colors border 
               ${isLoadingCrearProducto 
                 ? 'bg-slate-500 text-slate-300 border-slate-500 cursor-not-allowed opacity-70' // Estilos desactivado
                 : 'bg-slate-700 hover:bg-slate-600 text-white border-slate-600 cursor-pointer' // Estilos activo
