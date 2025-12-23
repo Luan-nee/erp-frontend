@@ -7,7 +7,7 @@ const ProductDetail: React.FC = () => {
   const [product] = useState<ProductoSelectById>({
     id: 1,
     sku: "ELC001",
-    nombre: "Laptop UltraPro 15\"",
+    nombre: "Laptop UltraPro 15",
     descripcion: "Portátil de alto rendimiento con procesador i9 y 32GB de RAM.",
     precio_compra: 1200.50,
     categoria_id: 1,
