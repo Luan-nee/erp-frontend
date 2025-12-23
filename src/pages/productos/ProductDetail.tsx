@@ -88,7 +88,7 @@ const ProductDetail: React.FC = () => {
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(95vh-200px)]">
+        <div className="p-6 overflow-y-auto">
           {/* Product Info Section */}
           <div className="bg-[#243447] p-6 rounded-xl mb-6 border border-gray-700">
             <h3 className="text-2xl font-bold text-white mb-3">{product.nombre}</h3>
