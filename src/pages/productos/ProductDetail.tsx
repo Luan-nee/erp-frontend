@@ -1,59 +1,29 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Edit2, Package, TrendingUp, AlertCircle } from 'lucide-react';
-
-interface ProductData {
-  id: number;
-  sku: string;
-  nombre: string;
-  descripcion: string;
-  precio_compra: string;
-  categoria_id: number;
-  color_id: number;
-  marca_id: number;
-  fecha_creacion: string;
-  stock: number;
-  stock_minimo: number;
-  porcentaje_ganancia: string;
-  esta_inhabilitado: number;
-  fecha_actualizacion: string;
-}
+import type { ProductoSelectById } from '../../models/producto';
 
 const ProductDetail: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const [product] = useState<ProductData>({
+  const [product] = useState<ProductoSelectById>({
     id: 1,
     sku: "ELC001",
     nombre: "Laptop UltraPro 15\"",
     descripcion: "Portátil de alto rendimiento con procesador i9 y 32GB de RAM.",
-    precio_compra: "1200.50",
+    precio_compra: 1200.50,
     categoria_id: 1,
     color_id: 8,
     marca_id: 1,
-    fecha_creacion: "2025-12-23T16:13:28.000Z",
+    fecha_creacion: new Date("2025-12-23T16:13:28.000Z"),
     stock: 15,
     stock_minimo: 5,
-    porcentaje_ganancia: "0.2000",
-    esta_inhabilitado: 0,
-    fecha_actualizacion: "2025-12-23T16:13:28.000Z"
+    porcentaje_ganancia: 0.2000,
+    esta_inhabilitado: false,
+    fecha_actualizacion: new Date("2025-12-23T16:13:28.000Z")
   });
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const formatCurrency = (value: string) => {
-    return `$${parseFloat(value).toFixed(2)}`;
-  };
-
   const calculatePrecioVenta = () => {
-    const precioCompra = parseFloat(product.precio_compra);
-    const ganancia = parseFloat(product.porcentaje_ganancia);
+    const precioCompra = product.precio_compra;
+    const ganancia = product.porcentaje_ganancia;
     return precioCompra * (1 + ganancia);
   };
 
@@ -100,12 +70,12 @@ const ProductDetail: React.FC = () => {
             <div className="inline-flex items-center gap-2 bg-[#17212e] px-4 py-2.5 rounded-lg border border-gray-700">
               <input
                 type="checkbox"
-                checked={product.esta_inhabilitado === 1}
+                checked={product.esta_inhabilitado}
                 readOnly
                 className="w-5 h-5 rounded border-gray-600 bg-gray-700 text-red-500 focus:ring-2 focus:ring-red-500 focus:ring-offset-0 cursor-pointer"
               />
-              <span className={`font-semibold ${product.esta_inhabilitado === 1 ? 'text-red-400' : 'text-green-400'}`}>
-                {product.esta_inhabilitado === 1 ? 'Producto Inhabilitado' : 'Producto Activo'}
+              <span className={`font-semibold ${product.esta_inhabilitado ? 'text-red-400' : 'text-green-400'}`}>
+                {product.esta_inhabilitado ? 'Producto Inhabilitado' : 'Producto Activo'}
               </span>
             </div>
           </div>
@@ -114,18 +84,18 @@ const ProductDetail: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-5 rounded-xl shadow-lg">
               <p className="text-blue-200 text-sm font-medium mb-1">Precio de Compra</p>
-              <p className="text-3xl font-bold text-white">{formatCurrency(product.precio_compra)}</p>
+              <p className="text-3xl font-bold text-white">{product.precio_compra}</p>
             </div>
 
             <div className="bg-gradient-to-br from-green-600 to-green-700 p-5 rounded-xl shadow-lg">
               <p className="text-green-200 text-sm font-medium mb-1">Precio de Venta</p>
-              <p className="text-3xl font-bold text-white">{formatCurrency(calculatePrecioVenta().toString())}</p>
+              <p className="text-3xl font-bold text-white">{calculatePrecioVenta().toString()}</p>
             </div>
 
             <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 p-5 rounded-xl shadow-lg flex items-center justify-between">
               <div>
                 <p className="text-emerald-200 text-sm font-medium mb-1">Ganancia</p>
-                <p className="text-3xl font-bold text-white">{(parseFloat(product.porcentaje_ganancia) * 100).toFixed(0)}%</p>
+                <p className="text-3xl font-bold text-white">{(product.porcentaje_ganancia * 100).toFixed(0)}%</p>
               </div>
               <TrendingUp className="w-10 h-10 text-emerald-200 opacity-50" />
             </div>
@@ -183,11 +153,11 @@ const ProductDetail: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-400 text-xs mb-1">Fecha de Creación</p>
-                <p className="text-gray-300 text-sm">{formatDate(product.fecha_creacion)}</p>
+                <p className="text-gray-300 text-sm">{product.fecha_creacion.toLocaleDateString()}</p>
               </div>
               <div>
                 <p className="text-gray-400 text-xs mb-1">Última Actualización</p>
-                <p className="text-gray-300 text-sm">{formatDate(product.fecha_actualizacion)}</p>
+                <p className="text-gray-300 text-sm">{product.fecha_actualizacion.toLocaleDateString()}</p>
               </div>
             </div>
           </div>
