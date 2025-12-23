@@ -46,6 +46,10 @@ const ProductDetail: React.FC = () => {
                 <span className="text-sm text-gray-400">SKU: {product.sku}</span>
                 <span className="text-gray-600">•</span>
                 <span className="text-sm text-gray-400">ID: {product.id}</span>
+                <span className="text-gray-600">•</span>
+                <span className={`font-semibold ${product.esta_inhabilitado ? 'text-red-400' : 'text-green-400'}`}>
+                  {product.esta_inhabilitado ? 'Producto Inhabilitado' : 'Producto Activo'}
+                </span>
               </div>
             </div>
           </div>
@@ -67,17 +71,6 @@ const ProductDetail: React.FC = () => {
 
           {/* Status Badge */}
           <div className="mb-6">
-            <div className="inline-flex items-center gap-2 bg-[#17212e] px-4 py-2.5 rounded-lg border border-gray-700">
-              <input
-                type="checkbox"
-                checked={product.esta_inhabilitado}
-                readOnly
-                className="w-5 h-5 rounded border-gray-600 bg-gray-700 text-red-500 focus:ring-2 focus:ring-red-500 focus:ring-offset-0 cursor-pointer"
-              />
-              <span className={`font-semibold ${product.esta_inhabilitado ? 'text-red-400' : 'text-green-400'}`}>
-                {product.esta_inhabilitado ? 'Producto Inhabilitado' : 'Producto Activo'}
-              </span>
-            </div>
           </div>
 
           {/* Price & Profit Cards */}
