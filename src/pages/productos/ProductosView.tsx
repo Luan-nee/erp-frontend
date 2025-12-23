@@ -10,6 +10,7 @@ import ProductoService from '../../service/producto.service';
 import Selector from '../../utils/Selector';
 import Loading from '../../animation/Loading';
 import FormCreate from './FormCreate';
+import ProductDetail from './ProductDetail';
 
 export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,7 +18,8 @@ export default function Productos() {
   const [selectIdSucursal, setSelectIdSucursal] = useState<number>(1); // por defecto seleccionamos la primera sucursal
   const [filtroProductos, setFiltroProductos] = useState<'activo' | 'inhabilitado'>('activo');
 
-  const [showFormCreateProduct, setShowFormCreateProduct] = useState(false);
+  const [showFormCreateProduct, setShowFormCreateProduct] = useState<boolean>(false);
+  const [showProductDetail, setShowProductDetail] = useState<boolean>(false);
 
   // const [showAddProduct, setShowAddProduct] = useState(false);
   const categoriaService = useMemo(() => new CategoriaService(), []);
@@ -245,6 +247,7 @@ export default function Productos() {
                         stock_minimo={product.stock_minimo}
                         porcentaje_ganancia={product.porcentaje_ganancia}
                         esta_habilitado={!product.esta_inhabilitado}
+                        setShowProductDetail={setShowProductDetail}
                       />
                     ))
                   ): filtroProductos === 'inhabilitado' ? (
@@ -259,6 +262,7 @@ export default function Productos() {
                         stock_minimo={product.stock_minimo}
                         porcentaje_ganancia={product.porcentaje_ganancia}
                         esta_habilitado={!product.esta_inhabilitado}
+                        setShowProductDetail={setShowProductDetail}
                       />
                     ))
                   ) : (
@@ -273,6 +277,7 @@ export default function Productos() {
                         stock_minimo={product.stock_minimo}
                         porcentaje_ganancia={product.porcentaje_ganancia}
                         esta_habilitado={!product.esta_inhabilitado}
+                        setShowProductDetail={setShowProductDetail}
                       />
                     ))
                   )
@@ -294,6 +299,11 @@ export default function Productos() {
           refreshProductos={refreschProductos}
           setShowFormCreateProduct={setShowFormCreateProduct}
         />
+      }
+
+      {/* Detalle del producto */}
+      { showProductDetail && 
+        <ProductDetail />
       }
     </div>
   );
