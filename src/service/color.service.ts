@@ -1,4 +1,4 @@
-import type { PropColor } from "../models/color";
+import type { PropColor, Color } from "../models/color";
 import type { PropResponse } from "../types/PropResponse";
 
 export default class ColorService {
@@ -16,6 +16,30 @@ export default class ColorService {
       throw new Error("Error en la petición");
     }
     return response.json();
+  }
+
+  public async select(): Promise<{
+    data: Color[] | null;
+    isLoading: boolean;
+    hayError: boolean;
+  }> {
+    try {
+      const response = await this.request<PropResponse<Color[]>>(
+        `${this.baseUrl}/select`,
+        { method: "GET" }
+      );
+      return {
+        data: response.info,
+        isLoading: false,
+        hayError: false,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        isLoading: false,
+        hayError: true,
+      };
+    }
   }
 
   public async get(): Promise<{ 

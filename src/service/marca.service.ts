@@ -1,5 +1,5 @@
 import type { PropResponse } from "../types/PropResponse";
-import type { PropMarca, MarcaCreate, MarcaUpdate, PropResumenMarca } from "../models/marca";
+import type { PropMarca, MarcaCreate, MarcaUpdate, PropResumenMarca, Marca } from "../models/marca";
 
 export default class MarcaService {
   private baseUrl: string = "http://localhost:3000/api/marcas";
@@ -17,6 +17,30 @@ export default class MarcaService {
       throw new Error("Error en la petición");
     }
     return response.json();
+  }
+
+  public async select(): Promise<{
+    data: Marca[] | null;
+    isLoading: boolean;
+    hayError: boolean;
+  }> {
+    try {
+      const response = await this.request<PropResponse<Marca[]>>(
+        `${this.baseUrl}/select`,
+        { method: "GET" }
+      );
+      return {
+        data: response.info,
+        isLoading: false,
+        hayError: false,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        isLoading: false,
+        hayError: true,
+      };
+    }
   }
 
   public async get(): Promise<{ 
