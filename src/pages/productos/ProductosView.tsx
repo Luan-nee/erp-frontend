@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Package, Plus, Search, TrendingUp, Archive } from 'lucide-react';
 import MetricCard from '../../components/MetricCard';
 import LocalList from '../../layouts/LocalList';
-import type { ProductoSelect, ResumenProductos } from '../../models/producto';
+import type { ProductoSelect, ProductoSelectById, ResumenProductos } from '../../models/producto';
 import ProductCard from './ProductCard';
 import type { PropCategoria } from '../../types/categoria';
 import CategoriaService from '../../service/categoria.service';
@@ -16,8 +16,9 @@ export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectCategoriaId, setSelectCategoriaId] = useState<number>(0);
   const [selectIdSucursal, setSelectIdSucursal] = useState<number>(1); // por defecto seleccionamos la primera sucursal
+  const [idProducto, setIdProducto] = useState<number>(-1);
   const [filtroProductos, setFiltroProductos] = useState<'activo' | 'inhabilitado'>('activo');
-
+  
   const [showFormCreateProduct, setShowFormCreateProduct] = useState<boolean>(false);
   const [showProductDetail, setShowProductDetail] = useState<boolean>(false);
 
@@ -248,6 +249,7 @@ export default function Productos() {
                         porcentaje_ganancia={product.porcentaje_ganancia}
                         esta_habilitado={!product.esta_inhabilitado}
                         setShowProductDetail={setShowProductDetail}
+                        setIdProducto={setIdProducto}
                       />
                     ))
                   ): filtroProductos === 'inhabilitado' ? (
@@ -263,6 +265,7 @@ export default function Productos() {
                         porcentaje_ganancia={product.porcentaje_ganancia}
                         esta_habilitado={!product.esta_inhabilitado}
                         setShowProductDetail={setShowProductDetail}
+                        setIdProducto={setIdProducto}
                       />
                     ))
                   ) : (
@@ -278,6 +281,7 @@ export default function Productos() {
                         porcentaje_ganancia={product.porcentaje_ganancia}
                         esta_habilitado={!product.esta_inhabilitado}
                         setShowProductDetail={setShowProductDetail}
+                        setIdProducto={setIdProducto}
                       />
                     ))
                   )
@@ -303,7 +307,11 @@ export default function Productos() {
 
       {/* Detalle del producto */}
       { showProductDetail && 
-        <ProductDetail />
+        <ProductDetail 
+          setShowProductDetail={setShowProductDetail}
+          selectIdSucursal={selectIdSucursal}
+          idProducto={idProducto}
+        />
       }
     </div>
   );

@@ -9,10 +9,11 @@ export interface Product {
   porcentaje_ganancia: number;
   esta_habilitado: boolean;
   setShowProductDetail: (show: boolean) => void;
+  setIdProducto: (id: number) => void;
 }
 
 
-export default function ProductCard({ id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado, setShowProductDetail}: Product) {
+export default function ProductCard({ id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado, setShowProductDetail, setIdProducto}: Product) {
   const isLowStock = stock <= stock_minimo;
 
   // Estilos de estado idénticos a la imagen (textos más oscuros sobre fondos claros)
@@ -86,7 +87,7 @@ export default function ProductCard({ id, sku, nombre, descripcion, stock, stock
       {/* Botón de Acción */}
       {/* Se mantiene el azul vibrante (bg-blue-600) pero se quitó la sombra clara (shadow-blue-200) que se ve mal en dark mode */}
       <button
-        onClick={() => {console.log("Ver detalles de:", { id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado }); setShowProductDetail(true);}}
+        onClick={() => {console.log("Ver detalles de:", { id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado }); setIdProducto(id); setShowProductDetail(true);}}
         className="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 text-sm"
       >
         Ver Detalles

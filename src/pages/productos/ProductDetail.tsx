@@ -1,35 +1,47 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { X, Edit2, Package, TrendingUp, AlertCircle } from 'lucide-react';
 import type { ProductoSelectById } from '../../models/producto';
+import ProductoService from '../../service/producto.service';
+import Loading from '../../animation/Loading';
 
-const ProductDetail: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(true);
-  const [product] = useState<ProductoSelectById>({
-    id: 1,
-    sku: "ELC001",
-    nombre: "Laptop UltraPro 15",
-    descripcion: "Portátil de alto rendimiento con procesador i9 y 32GB de RAM.",
-    precio_compra: 1200.50,
-    categoria_id: 1,
-    color_id: 8,
-    marca_id: 1,
-    fecha_creacion: new Date("2025-12-23T16:13:28.000Z"),
-    stock: 15,
-    stock_minimo: 5,
-    porcentaje_ganancia: 0.2000,
-    esta_inhabilitado: false,
-    fecha_actualizacion: new Date("2025-12-23T16:13:28.000Z")
-  });
+/*
+  La animación de carga para cada campo es innecesario, lo mejor sería remplazar todos
+  los campos por un solo indicador de carga mientras se obtienen los datos del producto.
+*/
+
+interface ProductDetailProps {
+  setShowProductDetail: (value: boolean) => void;
+  selectIdSucursal: number;
+  idProducto: number;
+}
+
+const ProductDetail: React.FC<ProductDetailProps> = ({ setShowProductDetail, selectIdSucursal, idProducto }) => {
+  const productoService = useMemo(() => new ProductoService(), []);
+
+  const [productoSelectById, setProductoSelectById] = useState<ProductoSelectById | null>(null);
+  const [isLoadingProductoById, setIsLoadingProductoById] = useState<boolean>(false);
+  const [isErrorProductoById, setIsErrorProductoById] = useState<boolean>(false);
+
+  const getProductoById = useCallback(async () => {
+    setIsLoadingProductoById(true);
+    setIsErrorProductoById(false);
+    const {data, isLoading, hayError} = await productoService.getById(selectIdSucursal, idProducto);
+    setProductoSelectById(data);
+    setIsLoadingProductoById(isLoading);
+    setIsErrorProductoById(hayError);
+  }, [productoService, selectIdSucursal, idProducto]);
+
+  useEffect(() => {
+    getProductoById();
+  }, [getProductoById]);
 
   const calculatePrecioVenta = () => {
-    const precioCompra = product.precio_compra;
-    const ganancia = product.porcentaje_ganancia;
-    return precioCompra * (1 + ganancia);
+    const precioCompra =  productoSelectById?.precio_compra || 0;
+    const ganancia = productoSelectById?.porcentaje_ganancia || 0;
+    return (precioCompra * (1 + ganancia)).toFixed(2);
   };
 
-  const stockStatus = product.stock <= product.stock_minimo;
-
-  if (!isOpen) return null;
+  const stockStatus = (productoSelectById?.stock || 0) <= (productoSelectById?.stock_minimo || 0);
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-8">
@@ -40,21 +52,37 @@ const ProductDetail: React.FC = () => {
             <div className="bg-blue-600 p-3 rounded-xl">
               <Package className="w-7 h-7 text-white" />
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-white">Detalle del Producto</h2>
-              <div className="flex items-center gap-3 mt-1">
-                <span className="text-sm text-gray-400">SKU: {product.sku}</span>
-                <span className="text-gray-600">•</span>
-                <span className="text-sm text-gray-400">ID: {product.id}</span>
-                <span className="text-gray-600">•</span>
-                <span className={`font-semibold ${product.esta_inhabilitado ? 'text-red-400' : 'text-green-400'}`}>
-                  {product.esta_inhabilitado ? 'Producto Inhabilitado' : 'Producto Activo'}
-                </span>
-              </div>
-            </div>
+              { isLoadingProductoById ? (
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-2xl font-bold text-white">Cargando...</h2>
+                    <Loading 
+                      w={6}
+                      h={6}
+                      color="white"
+                    />
+                  </div>
+                ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                ) : (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Detalle del Producto</h2>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="text-sm text-gray-400">SKU: {productoSelectById?.sku}</span>
+                      <span className="text-gray-600">•</span>
+                      <span className="text-sm text-gray-400">ID: {productoSelectById?.id}</span>
+                      <span className="text-gray-600">•</span>
+                      <span className={`font-semibold ${productoSelectById?.esta_inhabilitado ? 'text-red-400' : 'text-green-400'}`}>
+                        {productoSelectById?.esta_inhabilitado ? 'Producto Inhabilitado' : 'Producto Activo'}
+                      </span>
+                    </div>
+                  </div>
+                )
+              }
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={() => setShowProductDetail(false)}
             className="text-gray-400 hover:text-white hover:bg-gray-700 p-2 rounded-lg transition-all"
           >
             <X className="w-6 h-6" />
@@ -65,8 +93,8 @@ const ProductDetail: React.FC = () => {
         <div className="p-6 overflow-y-auto">
           {/* Product Info Section */}
           <div className="bg-[#243447] p-6 rounded-xl mb-6 border border-gray-700">
-            <h3 className="text-2xl font-bold text-white mb-3">{product.nombre}</h3>
-            <p className="text-gray-300 leading-relaxed">{product.descripcion}</p>
+            <h3 className="text-2xl font-bold text-white mb-3">{productoSelectById?.nombre}</h3>
+            <p className="text-gray-300 leading-relaxed">{productoSelectById?.descripcion}</p>
           </div>
 
           {/* Status Badge */}
@@ -77,18 +105,60 @@ const ProductDetail: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-5 rounded-xl shadow-lg">
               <p className="text-blue-200 text-sm font-medium mb-1">Precio de Compra</p>
-              <p className="text-3xl font-bold text-white">{`S/ ${product.precio_compra}`}</p>
+              {
+                isLoadingProductoById ? (
+                  <Loading 
+                    w={6}
+                    h={6}
+                    color="white"
+                  />
+                ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                ) : (
+                  <p className="text-3xl font-bold text-white">{`S/ ${productoSelectById?.precio_compra}`}</p>
+                )
+              }
             </div>
 
             <div className="bg-gradient-to-br from-green-600 to-green-700 p-5 rounded-xl shadow-lg">
               <p className="text-green-200 text-sm font-medium mb-1">Precio de Venta</p>
-              <p className="text-3xl font-bold text-white">{`S/ ${calculatePrecioVenta().toString()}`}</p>
+              {
+                isLoadingProductoById ? (
+                  <Loading 
+                    w={6}
+                    h={6}
+                    color="white"
+                  />
+                ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                ) : (
+                  <p className="text-3xl font-bold text-white">{`S/ ${calculatePrecioVenta().toString()}`}</p>
+                )
+              }
             </div>
 
             <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 p-5 rounded-xl shadow-lg flex items-center justify-between">
               <div>
                 <p className="text-emerald-200 text-sm font-medium mb-1">Ganancia</p>
-                <p className="text-3xl font-bold text-white">{(product.porcentaje_ganancia * 100).toFixed(0)}%</p>
+                {
+                  isLoadingProductoById ? (
+                    <Loading 
+                      w={6}
+                      h={6}
+                      color="white"
+                    />
+                  ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                  ) : (
+                    <p className="text-3xl font-bold text-white">{productoSelectById?.porcentaje_ganancia}</p>
+                  )
+                }
               </div>
               <TrendingUp className="w-10 h-10 text-emerald-200 opacity-50" />
             </div>
@@ -109,15 +179,43 @@ const ProductDetail: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className={`p-5 rounded-xl border-2 ${stockStatus ? 'bg-red-900 bg-opacity-20 border-red-700' : 'bg-[#243447] border-gray-700'}`}>
               <p className="text-gray-400 text-sm font-medium mb-2">Stock Actual</p>
-              <p className={`text-4xl font-bold ${stockStatus ? 'text-red-400' : 'text-white'}`}>
-                {product.stock}
-              </p>
+              {
+                isLoadingProductoById ? (
+                  <Loading
+                    w={6}
+                    h={6}
+                    color="white"
+                  />
+                ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                ) : (
+                  <p className={`text-4xl font-bold ${stockStatus ? 'text-red-400' : 'text-white'}`}>
+                    {productoSelectById?.stock}
+                  </p>
+                )
+              }
               <p className="text-gray-400 text-sm mt-1">unidades disponibles</p>
             </div>
 
             <div className="bg-[#243447] p-5 rounded-xl border border-gray-700">
               <p className="text-gray-400 text-sm font-medium mb-2">Stock Mínimo</p>
-              <p className="text-4xl font-bold text-white">{product.stock_minimo}</p>
+              {
+                isLoadingProductoById ? (
+                  <Loading
+                    w={6}
+                    h={6}
+                    color="white"
+                  />
+                ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                ) : (
+                  <p className="text-4xl font-bold text-white">{productoSelectById?.stock_minimo}</p>
+                )
+              }
               <p className="text-gray-400 text-sm mt-1">nivel de reposición</p>
             </div>
           </div>
@@ -126,17 +224,59 @@ const ProductDetail: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-[#243447] p-4 rounded-xl border border-gray-700">
               <p className="text-gray-400 text-xs font-medium mb-1.5">CATEGORÍA</p>
-              <p className="text-white text-lg font-semibold">ID: {product.categoria_id}</p>
-            </div>
+              {
+                isLoadingProductoById ? (
+                  <Loading 
+                    w={6}
+                    h={6}
+                    color="white"
+                  />
+                ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                ) : (
+                  <p className="text-white text-lg font-semibold">{productoSelectById?.categoria}</p>
+                )
+              }
+            </div >
 
             <div className="bg-[#243447] p-4 rounded-xl border border-gray-700">
               <p className="text-gray-400 text-xs font-medium mb-1.5">MARCA</p>
-              <p className="text-white text-lg font-semibold">ID: {product.marca_id}</p>
+              {
+                isLoadingProductoById ? (
+                  <Loading 
+                    w={6}
+                    h={6}
+                    color="white"
+                  />
+                ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                ) : (
+                  <p className="text-white text-lg font-semibold">{productoSelectById?.marca}</p>
+                )
+              }
             </div>
 
             <div className="bg-[#243447] p-4 rounded-xl border border-gray-700">
               <p className="text-gray-400 text-xs font-medium mb-1.5">COLOR</p>
-              <p className="text-white text-lg font-semibold">ID: {product.color_id}</p>
+              {
+                isLoadingProductoById ? (
+                  <Loading 
+                    w={6}
+                    h={6}
+                    color="white"
+                  />
+                ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                ) : (
+                  <p className="text-white text-lg font-semibold">{productoSelectById?.color}</p>
+                )
+              }
             </div>
           </div>
 
@@ -146,11 +286,39 @@ const ProductDetail: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-400 text-xs mb-1">Fecha de Creación</p>
-                <p className="text-gray-300 text-sm">{product.fecha_creacion.toLocaleDateString()}</p>
+                {
+                  isLoadingProductoById ? (
+                    <Loading 
+                      w={6}
+                      h={6}
+                      color="white"
+                    />
+                  ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                  ) : (
+                    <p className="text-gray-300 text-sm">{productoSelectById?.fecha_creacion}</p>
+                  )
+                }
               </div>
               <div>
                 <p className="text-gray-400 text-xs mb-1">Última Actualización</p>
-                <p className="text-gray-300 text-sm">{product.fecha_actualizacion.toLocaleDateString()}</p>
+                { 
+                  isLoadingProductoById ? (
+                    <Loading 
+                      w={6}
+                      h={6}
+                      color="white"
+                    />
+                  ) : isErrorProductoById ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
+                  </div>
+                  ) : (
+                    <p className="text-gray-300 text-sm">{productoSelectById?.fecha_actualizacion}</p>
+                  )
+                }
               </div>
             </div>
           </div>
@@ -159,7 +327,7 @@ const ProductDetail: React.FC = () => {
         {/* Footer */}
         <div className="bg-[#17212e] px-6 py-4 flex items-center justify-end gap-3 border-t border-gray-700">
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={() => setShowProductDetail(false)}
             className="px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all shadow-md"
           >
             Cerrar
