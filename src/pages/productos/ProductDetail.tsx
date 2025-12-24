@@ -77,12 +77,12 @@ const ProductDetail: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-5 rounded-xl shadow-lg">
               <p className="text-blue-200 text-sm font-medium mb-1">Precio de Compra</p>
-              <p className="text-3xl font-bold text-white">{product.precio_compra}</p>
+              <p className="text-3xl font-bold text-white">{`S/ ${product.precio_compra}`}</p>
             </div>
 
             <div className="bg-gradient-to-br from-green-600 to-green-700 p-5 rounded-xl shadow-lg">
               <p className="text-green-200 text-sm font-medium mb-1">Precio de Venta</p>
-              <p className="text-3xl font-bold text-white">{calculatePrecioVenta().toString()}</p>
+              <p className="text-3xl font-bold text-white">{`S/ ${calculatePrecioVenta().toString()}`}</p>
             </div>
 
             <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 p-5 rounded-xl shadow-lg flex items-center justify-between">
