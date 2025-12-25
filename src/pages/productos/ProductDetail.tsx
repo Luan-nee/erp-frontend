@@ -15,6 +15,14 @@ interface ProductDetailProps {
   idProducto: number;
 }
 
+function formatDateString(dateString: string | undefined): string {
+  const date = new Date(dateString ?? '');
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); 
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${day}/${month}/${year}`;
+}
+
 const ProductDetail: React.FC<ProductDetailProps> = ({ setShowProductDetail, selectIdSucursal, idProducto }) => {
   const productoService = useMemo(() => new ProductoService(), []);
 
@@ -22,10 +30,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ setShowProductDetail, sel
   const [isLoadingProductoById, setIsLoadingProductoById] = useState<boolean>(false);
   const [isErrorProductoById, setIsErrorProductoById] = useState<boolean>(false);
 
+  const [fechaCreacion, setFechaCreacion] = useState<string | null>(null);
+  const [fechaActualizacion, setFechaActualizacion] = useState<string | null>(null);
+
   const getProductoById = useCallback(async () => {
     setIsLoadingProductoById(true);
     setIsErrorProductoById(false);
-    const {data, isLoading, hayError} = await productoService.getById(selectIdSucursal, idProducto);
+    let {data, isLoading, hayError} = await productoService.getById(selectIdSucursal, idProducto);
+    setFechaCreacion( formatDateString(data?.fecha_creacion.toString()) );
+    setFechaActualizacion( formatDateString(data?.fecha_actualizacion.toString()) );
     setProductoSelectById(data);
     setIsLoadingProductoById(isLoading);
     setIsErrorProductoById(hayError);
@@ -298,7 +311,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ setShowProductDetail, sel
                     <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
                   </div>
                   ) : (
-                    <p className="text-gray-300 text-sm">{productoSelectById?.fecha_creacion}</p>
+                    <p className="text-gray-300 text-sm">
+                      {fechaCreacion}
+                    </p>
                   )
                 }
               </div>
@@ -316,7 +331,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ setShowProductDetail, sel
                     <h2 className="text-2xl font-bold text-white">Error al cargar el producto</h2>
                   </div>
                   ) : (
-                    <p className="text-gray-300 text-sm">{productoSelectById?.fecha_actualizacion}</p>
+                    <p className="text-gray-300 text-sm">
+                      {fechaActualizacion}
+                      </p>
                   )
                 }
               </div>

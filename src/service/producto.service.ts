@@ -28,6 +28,7 @@ export default class ProductoService {
         `${this.baseUrl}/${id_sucursal}/${id_producto}`,
         { method: "GET" }
       );
+
       return {
         data: response.info,
         isLoading: false,
