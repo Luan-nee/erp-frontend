@@ -36,21 +36,25 @@ export type ProductoSelectById = {
   categoria: string;
   color: string;
   marca: string;
-  fecha_creacion: Date;
   stock: number;
   stock_minimo: number;
   porcentaje_ganancia: number;
   esta_inhabilitado: boolean;
+  fecha_creacion: Date;
   fecha_actualizacion: Date;
 }
 
 export type ProductoUpdate = {
-  nombre: string;
+  nombre: string; 
   descripcion: string;
   precio_compra: number;
   categoria_id: number;
   color_id: number;
   marca_id: number;
+  stock: number;
+  stock_minimo: number;
+  porcentaje_ganancia: number;
+  esta_inhabilitado: boolean;
 }
 
 export type DetalleProductoUpdate = {

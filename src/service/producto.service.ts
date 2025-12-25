@@ -1,5 +1,5 @@
 import type { PropResponse } from "../types/PropResponse";
-import type { ProductoSelect, ResumenProductos, ProductCreateMain, ProductoSelectById} from "../models/producto";
+import type { ProductoSelect, ResumenProductos, ProductCreateMain, ProductoSelectById, ProductoUpdate} from "../models/producto";
 
 export default class ProductoService {
   private baseUrl: string = "http://localhost:3000/api/productos";
@@ -102,6 +102,33 @@ export default class ProductoService {
         this.baseUrl,
         {
           method: "POST",
+          body: JSON.stringify(productoData),
+        }
+      );
+      return {
+        data: response.info,
+        isLoading: false,
+        hayError: false,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        isLoading: false,
+        hayError: true,
+      };
+    }
+  }
+
+  public async updateProducto(id_sucursal: number, id_producto: number, productoData: ProductoUpdate): Promise<{
+    data: number | null;
+    isLoading: boolean;
+    hayError: boolean;
+  }> {
+    try {
+      const response = await this.request<PropResponse<number>>(  
+        `${this.baseUrl}/${id_sucursal}/${id_producto}`,
+        { 
+          method: "PUT",
           body: JSON.stringify(productoData),
         }
       );
