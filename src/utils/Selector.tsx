@@ -66,11 +66,6 @@ const Selector: React.FC<Props> = ({
           <span className={`text-sm ${!selected ? 'text-slate-500' : 'text-slate-100 font-semibold'}`}>
             {selected ? selected.nombre : placeholder}
           </span>
-          {selected && (
-            <span className="text-[10px] text-indigo-400 font-medium uppercase tracking-wider">
-              {selected.cantidad_productos} productos disponibles
-            </span>
-          )}
         </div>
         )}
         <ChevronDown 
@@ -92,9 +87,6 @@ const Selector: React.FC<Props> = ({
                   <div className="flex flex-col min-w-0 pr-4">
                     <span className={`text-sm font-bold ${selected?.id === cat.id ? 'text-indigo-400' : 'text-slate-200'}`}>
                       {cat.nombre}
-                    </span>
-                    <span className="text-xs text-slate-500 line-clamp-1 group-hover:text-slate-400">
-                      {cat.descripcion}
                     </span>
                   </div>
                   
