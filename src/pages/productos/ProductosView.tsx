@@ -17,7 +17,10 @@ export default function Productos() {
   const [selectCategoriaId, setSelectCategoriaId] = useState<number>(0);
   const [selectIdSucursal, setSelectIdSucursal] = useState<number>(1); // por defecto seleccionamos la primera sucursal
   const [idProducto, setIdProducto] = useState<number>(-1);
-  const [filtroProductos, setFiltroProductos] = useState<'activo' | 'inhabilitado'>('activo');
+  const [filtroEstadoProductos, setFiltroEstadoProductos] = useState<{
+    nombre: 'activo' | 'inhabilitado',
+    valor: boolean
+  }>({nombre: 'activo', valor: true});
   
   const [showFormCreateProduct, setShowFormCreateProduct] = useState<boolean>(false);
   const [showProductDetail, setShowProductDetail] = useState<boolean>(false);
@@ -165,19 +168,19 @@ export default function Productos() {
           {/* Botones de filtro simple */}
           <div className="flex justify-end gap-4 mb-4">
             <button
-              onClick={() => setFiltroProductos('activo')}
+              onClick={() => setFiltroEstadoProductos({nombre: 'activo', valor: true})}
               type="button"
               className={`px-4 py-2 bg-gray-700 text-white rounded-lg font-medium transition-all ${
-                filtroProductos === 'activo' ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800' : ''
+                filtroEstadoProductos.nombre === 'activo' ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800' : ''
               }`}
             >
               Activos 
             </button>
             <button
-              onClick={() => setFiltroProductos('inhabilitado')}
+              onClick={() => setFiltroEstadoProductos({nombre: 'inhabilitado', valor: false})}
               type="button"
               className={`px-4 py-2 bg-gray-700 text-white rounded-lg font-medium transition-all ${
-                filtroProductos === 'inhabilitado' ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800' : ''
+                filtroEstadoProductos.nombre === 'inhabilitado' ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800' : ''
               }`}
             >
               Inhabilitados 
@@ -236,55 +239,21 @@ export default function Productos() {
                   </button>
                 }
                 {
-                  filtroProductos === 'activo' ? (
-                    productos.filter((producto) => producto.esta_inhabilitado == false)?.map(product => (
-                      <ProductCard 
-                        key={product.id} 
-                        id={product.id}
-                        sku={product.sku}
-                        nombre={product.nombre}
-                        descripcion={product.descripcion}
-                        stock={product.stock} 
-                        stock_minimo={product.stock_minimo}
-                        porcentaje_ganancia={product.porcentaje_ganancia}
-                        esta_habilitado={!product.esta_inhabilitado}
-                        setShowProductDetail={setShowProductDetail}
-                        setIdProducto={setIdProducto}
-                      />
-                    ))
-                  ): filtroProductos === 'inhabilitado' ? (
-                    productos.filter((producto) => producto.esta_inhabilitado == true)?.map(product => (
-                      <ProductCard 
-                        key={product.id} 
-                        id={product.id}
-                        sku={product.sku}
-                        nombre={product.nombre}
-                        descripcion={product.descripcion}
-                        stock={product.stock} 
-                        stock_minimo={product.stock_minimo}
-                        porcentaje_ganancia={product.porcentaje_ganancia}
-                        esta_habilitado={!product.esta_inhabilitado}
-                        setShowProductDetail={setShowProductDetail}
-                        setIdProducto={setIdProducto}
-                      />
-                    ))
-                  ) : (
-                    productos?.map(product => (
-                      <ProductCard 
-                        key={product.id} 
-                        id={product.id}
-                        sku={product.sku}
-                        nombre={product.nombre}
-                        descripcion={product.descripcion}
-                        stock={product.stock} 
-                        stock_minimo={product.stock_minimo}
-                        porcentaje_ganancia={product.porcentaje_ganancia}
-                        esta_habilitado={!product.esta_inhabilitado}
-                        setShowProductDetail={setShowProductDetail}
-                        setIdProducto={setIdProducto}
-                      />
-                    ))
-                  )
+                  productos.filter((producto) => producto.esta_inhabilitado == !filtroEstadoProductos.valor)?.map(product => (
+                    <ProductCard 
+                      key={product.id} 
+                      id={product.id}
+                      sku={product.sku}
+                      nombre={product.nombre}
+                      descripcion={product.descripcion}
+                      stock={product.stock} 
+                      stock_minimo={product.stock_minimo}
+                      porcentaje_ganancia={product.porcentaje_ganancia}
+                      esta_habilitado={!product.esta_inhabilitado}
+                      setShowProductDetail={setShowProductDetail}
+                      setIdProducto={setIdProducto}
+                    />
+                  ))
                 }
               </div>
             )
