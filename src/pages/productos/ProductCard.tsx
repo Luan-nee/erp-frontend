@@ -9,11 +9,12 @@ export interface Product {
   porcentaje_ganancia: number;
   esta_habilitado: boolean;
   setShowProductDetail: (show: boolean) => void;
+  setShowFormEdit: (show: boolean) => void;
   setIdProducto: (id: number) => void;
 }
 
 
-export default function ProductCard({ id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado, setShowProductDetail, setIdProducto}: Product) {
+export default function ProductCard({ id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado, setShowProductDetail, setShowFormEdit, setIdProducto}: Product) {
   const isLowStock = stock <= stock_minimo;
 
   // Estilos de estado idénticos a la imagen (textos más oscuros sobre fondos claros)
@@ -93,6 +94,17 @@ export default function ProductCard({ id, sku, nombre, descripcion, stock, stock
         Ver Detalles
         <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {/* Agrega otro botón pero para editar */}
+      <button
+        onClick={() => {console.log("Editar producto:", { id, sku, nombre, descripcion, stock, stock_minimo, porcentaje_ganancia, esta_habilitado }); setIdProducto(id); setShowFormEdit(true);}}
+        className="mt-2 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 text-sm"
+      >
+        Editar Producto
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
         </svg>
       </button>
 

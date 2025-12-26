@@ -11,6 +11,7 @@ import Selector from '../../utils/Selector';
 import Loading from '../../animation/Loading';
 import FormCreate from './FormCreate';
 import ProductDetail from './ProductDetail';
+import FormEdit from './FormEdit';
 
 export default function Productos() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,6 +25,7 @@ export default function Productos() {
   
   const [showFormCreateProduct, setShowFormCreateProduct] = useState<boolean>(false);
   const [showProductDetail, setShowProductDetail] = useState<boolean>(false);
+  const [showEditForm, setShowEditForm] = useState<boolean>(false);
 
   // const [showAddProduct, setShowAddProduct] = useState(false);
   const categoriaService = useMemo(() => new CategoriaService(), []);
@@ -251,6 +253,7 @@ export default function Productos() {
                       porcentaje_ganancia={product.porcentaje_ganancia}
                       esta_habilitado={!product.esta_inhabilitado}
                       setShowProductDetail={setShowProductDetail}
+                      setShowFormEdit={setShowEditForm}
                       setIdProducto={setIdProducto}
                     />
                   ))
@@ -279,6 +282,15 @@ export default function Productos() {
         <ProductDetail 
           setShowProductDetail={setShowProductDetail}
           selectIdSucursal={selectIdSucursal}
+          idProducto={idProducto}
+        />
+      }
+
+      { showEditForm &&
+        <FormEdit 
+          refreshResumen={refreschResumen}
+          refreshProductos={refreschProductos}
+          setShowEditForm={setShowEditForm}
           idProducto={idProducto}
         />
       }

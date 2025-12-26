@@ -1,31 +1,24 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Save, Package } from 'lucide-react';
-
-interface ProductEditData {
-  nombre: string;
-  descripcion: string;
-  precio_compra: number;
-  categoria_id: number;
-  color_id: number;
-  marca_id: number;
-  stock: number;
-  stock_minimo: number;
-  porcentaje_ganancia: number;
-  esta_inhabilitado: boolean;
-}
+import type { ProductoUpdate } from '../../models/producto';
 
 interface ProductEditFormProps {
+  refreshProductos: () => void;
+  refreshResumen: () => void;
   setShowEditForm: (value: boolean) => void;
-  initialData?: ProductEditData;
-  onSave?: (data: ProductEditData) => void;
+  idProducto: number;
 }
 
 const FormEdit: React.FC<ProductEditFormProps> = ({ 
   setShowEditForm,
-  initialData,
-  onSave 
+  refreshProductos,
+  refreshResumen,
+  idProducto
 }) => {
-  const [formData, setFormData] = useState<ProductEditData>(initialData || {
+  
+  const [hayError, setHayError] = useState<boolean>(false);
+  const [isLoadingData, setIsLoadingData] = useState<boolean>(false);
+  const [formData, setFormData] = useState<ProductoUpdate>({
     nombre: '',
     descripcion: '',
     precio_compra: 0,
@@ -61,10 +54,13 @@ const FormEdit: React.FC<ProductEditFormProps> = ({
   };
 
   const handleSubmit = () => {
-    if (onSave) {
-      onSave(formData);
-    }
     console.log('Datos del formulario:', formData);
+    console.log('ID del producto a editar:', idProducto);
+
+    // después de haber realizado las validaciones y el envio
+    refreshProductos();
+    refreshResumen();
+    setShowEditForm(false);
   };
 
   const calculatePrecioVenta = () => {
