@@ -53,6 +53,11 @@ const FormEdit: React.FC<ProductEditFormProps> = ({
     }
   };
 
+  // TAREA: 
+  // AGREGAR UN ENDPOINT PARA OBTENER LOS DATOS DE UN PRODUCTO Y CARGARLOS AL INICIAR EL FORMULARIO 
+  // El endpoint debe proporcionar los datos necesarios, no para mostrar sino para usar dentro del formulario
+  // por lo tanto me debe proporcionar el id del color, marca y categorias.
+
   const handleSubmit = () => {
     console.log('Datos del formulario:', formData);
     console.log('ID del producto a editar:', idProducto);
