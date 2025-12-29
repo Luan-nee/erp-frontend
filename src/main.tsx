@@ -8,7 +8,7 @@ import NotFound from './pages/NotFound.tsx';
 import AnalisisVenta from './pages/AnalisisVenta.tsx';
 import Facturacion from './pages/Facturacion.tsx';
 import PedidosExclusivos from './pages/PedidosExclusivos.tsx';
-import MovimientoInventario from './pages/MovimientoInventario.tsx';
+import MovimientoInventario from './pages/movimientoDeInventario/MovimientoInventarioView.tsx';
 import ListaPedidosExclusivos from './pages/ListaPedidosExclusivos.tsx';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import NavBar from './layouts/NavBar.tsx';
