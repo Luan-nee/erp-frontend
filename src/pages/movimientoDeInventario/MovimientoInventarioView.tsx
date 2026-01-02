@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {Search, Calendar, ArrowUpCircle, ArrowDownCircle, XCircle, CheckCircle, Eye, Download, RefreshCw, TrendingUp} from 'lucide-react';
-import MetricCard from '../components/MetricCard';
-import Table from '../components/Table';
+import MetricCard from '../../components/MetricCard';
+import Table from '../../components/Table';
 
 type StatusColors = {
   [key: string]: {

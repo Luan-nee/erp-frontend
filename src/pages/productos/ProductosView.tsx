@@ -157,7 +157,7 @@ export default function Productos() {
               <TrendingUp className="w-8 h-8 text-white" />
             </MetricCard>
             <MetricCard
-              name="Inhabilitados"
+              name="Desactivados"
               value={(resumenProductos?.inhabilitados != null) ? resumenProductos.inhabilitados : 0}
               color="red"
               isLoading={isLoadingResumen}
