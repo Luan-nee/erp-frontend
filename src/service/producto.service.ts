@@ -120,12 +120,11 @@ export default class ProductoService {
   }
 
   public async updateProducto(id_sucursal: number, id_producto: number, productoData: ProductoUpdate): Promise<{
-    data: number | null;
     isLoading: boolean;
     hayError: boolean;
   }> {
     try {
-      const response = await this.request<PropResponse<number>>(  
+      await this.request<PropResponse<null>>(  
         `${this.baseUrl}/${id_sucursal}/${id_producto}`,
         { 
           method: "PUT",
@@ -133,13 +132,11 @@ export default class ProductoService {
         }
       );
       return {
-        data: response.info,
         isLoading: false,
         hayError: false,
       };
     } catch (error) {
       return {
-        data: null,
         isLoading: false,
         hayError: true,
       };

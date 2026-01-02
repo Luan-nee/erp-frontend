@@ -10,6 +10,7 @@ import ProductoService from '../../service/producto.service';
 import type { PropCategoria } from '../../models/categoria';
 import type { PropMarca } from '../../models/marca';
 import type { PropColor } from '../../models/color';
+import Loading from '../../animation/Loading';
 
 interface ProductEditFormProps {
   refreshProductos: () => void;
@@ -143,7 +144,7 @@ const FormEdit: React.FC<ProductEditFormProps> = ({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const informacionProducto: ProductoUpdate = {
       ...formData,
       categoria_id: selectCategoriaId,
@@ -151,13 +152,17 @@ const FormEdit: React.FC<ProductEditFormProps> = ({
       color_id: selectColorId
     };
 
-    console.log('Datos del formulario:', informacionProducto);
-    console.log('ID del producto a editar:', idProducto);
+    setIsLoadingData(true);
+    setHayError(false);
+    const {isLoading, hayError} = await productoService.updateProducto(idSucursal, idProducto, informacionProducto);
+    setHayError(hayError);
+    setIsLoadingData(isLoading);
 
-    // después de haber realizado las validaciones y el envio
-    refreshProductos();
-    refreshResumen();
-    setShowEditForm(false);
+    if (!hayError){
+      if (refreshProductos) refreshProductos();
+      if (refreshResumen) refreshResumen();
+      setShowEditForm(false);
+    }
   };
 
   const calculatePrecioVenta = () => {
@@ -385,19 +390,42 @@ const FormEdit: React.FC<ProductEditFormProps> = ({
         {/* Footer */}
         <div className="bg-[#17212e] px-6 py-4 flex items-center justify-end gap-3 border-t border-gray-700 sticky bottom-0">
           <button
-            type="button"
-            onClick={() => setShowEditForm(false)}
-            className="px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all shadow-md"
-          >
-            Cerrar
-          </button>
+              type="button"
+              disabled={isLoadingData} 
+              onClick={() => setShowEditForm(false)}
+              className={`
+                flex-1 px-6 py-3 rounded-lg font-medium transition-colors border 
+                ${isLoadingData 
+                  ? 'bg-slate-500 text-slate-300 border-slate-500 cursor-not-allowed opacity-70' // Estilos desactivado
+                  : 'bg-slate-700 hover:bg-slate-600 text-white border-slate-600 cursor-pointer' // Estilos activo
+                }
+              `}
+            >
+              Cancelar
+            </button>
           <button
             type="button"
             onClick={handleSubmit}
             className="px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-lg transition-all flex items-center gap-2 shadow-lg"
           >
-            <Save className="w-4 h-4" />
-            Guardar Cambios
+            {/* <Save className="w-4 h-4" />
+            Guardar Cambios */}
+            { isLoadingData ? (
+              <Loading
+                w={6}
+                h={6}
+                color="white"
+              />
+            ) : hayError ? (
+              <p>
+                Se produjo un error al Actualizar
+              </p>
+            ) : (
+              <>
+                <Save className="w-5 h-5" />
+                Guardar Cambios
+              </>
+            )}
           </button>
         </div>
       </div>
