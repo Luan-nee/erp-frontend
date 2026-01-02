@@ -5,6 +5,7 @@ import type { PropCategoria } from '../models/categoria';
 import type { PropMarca } from '../types/marca';
 
 interface Props {
+  idDefaultSelect?: number;
   opciones: PropCategoria[] | PropMarca[] | null;
   onSelect: (id: number) => void;
   placeholder?: string;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const Selector: React.FC<Props> = ({ 
+  idDefaultSelect,
   opciones, 
   onSelect, 
   placeholder = "Selecciona una categoría", 
@@ -24,19 +26,24 @@ const Selector: React.FC<Props> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setSelected(
+      opciones ? opciones.find(op => op.id === idDefaultSelect) as PropCategoria : null
+    );
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
+      
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [idDefaultSelect, opciones]);
 
   const handleSelect = (categoria: PropCategoria) => {
     setSelected(categoria);
     onSelect(categoria.id);
     setIsOpen(false);
+    console.log('la opción selecionada es:', categoria);
   };
 
   return (

@@ -5,6 +5,7 @@ import type { PropColor } from "../models/color";
 import Loading from "../animation/Loading";
 
 interface ColorSelectProps {
+  // idDefaultSelect?: number;
   options: PropColor[] | null;
   selectedValue: number;
   onChange: (p: number) => void;
@@ -14,6 +15,7 @@ interface ColorSelectProps {
 }
 
 export default function ColorSelect({
+  // idDefaultSelect,
   options,
   selectedValue,
   onChange,
@@ -28,6 +30,8 @@ export default function ColorSelect({
 
   // Maneja los clics fuera del componente para cerrarlo
   useEffect(() => {
+
+
     const handleClickOutside = (event: MouseEvent) => {
       if (
         selectRef.current &&

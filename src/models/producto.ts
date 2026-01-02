@@ -70,3 +70,16 @@ export type ResumenProductos = {
   activos: number;
   inhabilitados: number;
 }
+
+export type DataProducto = {
+  nombre: string; 
+  descripcion: string; 
+  precio_compra: number; 
+  categoria_id: number; 
+  color_id: number; 
+  marca_id: number; 
+  stock: number; 
+  stock_minimo: number; 
+  porcentaje_ganancia: number; 
+  esta_inhabilitado: boolean; 
+}

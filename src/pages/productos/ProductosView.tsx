@@ -292,6 +292,7 @@ export default function Productos() {
           refreshProductos={refreschProductos}
           setShowEditForm={setShowEditForm}
           idProducto={idProducto}
+          idSucursal={selectIdSucursal}
         />
       }
     </div>
