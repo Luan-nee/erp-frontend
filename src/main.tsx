@@ -11,7 +11,7 @@ import MovimientoInventario from './pages/movimientoDeInventario/MovimientoInven
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import NavBar from './layouts/NavBar.tsx';
 import Marcas from './pages/marcas/MarcasView.tsx';
-import Colaboradores from './pages/Colaboradores.tsx';
+import Colaboradores from './pages/colaboradores/ColaboradoresView.tsx';
 
 
 createRoot(document.getElementById('root')!).render(

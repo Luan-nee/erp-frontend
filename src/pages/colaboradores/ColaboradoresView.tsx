@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Users,Search, UserPlus, MapPin, Phone, Mail, CheckCircle, XCircle, Eye, Edit3, Trash2 } from 'lucide-react';
-import MetricCard from '../components/MetricCard';
+import MetricCard from '../../components/MetricCard';
 
 export default function CondorMotorsCollaborators() {
   const [searchTerm, setSearchTerm] = useState('');
