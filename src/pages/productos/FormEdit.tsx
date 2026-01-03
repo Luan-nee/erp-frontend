@@ -12,6 +12,12 @@ import type { PropMarca } from '../../models/marca';
 import type { PropColor } from '../../models/color';
 import Loading from '../../animation/Loading';
 
+/*
+  MEJORA:
+    - Agregar animaciones de carga en los campos del formulario mientras se obtienen los datos.
+*/
+
+
 interface ProductEditFormProps {
   refreshProductos: () => void;
   refreshResumen: () => void;
