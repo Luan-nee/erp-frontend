@@ -1,5 +1,6 @@
 
 export type Colaborador = {
+  id: number;
   nombres: string;
   apellidos: string;
   rol: string; // admin, vendedor, cajero.
@@ -9,7 +10,7 @@ export type Colaborador = {
 }
 
 export type resumenColaboradores = {
-  totalColaboradores: number;
+  total_colaboradores: number;
   activos: number;
   inactivos: number;
 }
