@@ -43,11 +43,11 @@ export default function NavBar() {
           <NavItem link="/analysis" icon={BarChart3} label="Análisis de ventas" active={activeSection === 'analysis'} collapsed={!sidebarOpen} onClick={() => setActiveSection('analysis')} />
           <NavItem link="/facturacion" icon={FileText} label="Facturación" active={activeSection === 'facturacion'} collapsed={!sidebarOpen} onClick={() => setActiveSection('facturacion')} />
           
-          <NavItem link="/inventory" icon={Package} label="Inventario" active={activeSection === 'inventory'} collapsed={!sidebarOpen} onClick={() => setActiveSection('inventory')}>
+          <NavItem link="/inventory/products" icon={List} label="Productos" active={activeSection === 'inventory/products'} onClick={() => setActiveSection('inventory/products')} >
           {sidebarOpen && (
               <div className="ml-8 mt-2 space-y-1">
                 <SubNavItem link="/inventory/categories" label="Categorías" active={activeSection === 'inventory/categories'} onClick={() => setActiveSection('inventory/categories')} />
-                <SubNavItem link="/inventory/products" label="Productos" active={activeSection === 'inventory/products'} onClick={() => setActiveSection('inventory/products')} />
+                {/* <SubNavItem link="/inventory/products" label="Productos" active={activeSection === 'inventory/products'} onClick={() => setActiveSection('inventory/products')} /> */}
                 <SubNavItem link="/inventory/movements" label="Movimiento de inventario" active={activeSection === 'inventory/movements'} onClick={() => setActiveSection('inventory/movements')} />
                 <SubNavItem link="/inventory/marcas" label="Marcas" active={activeSection === 'inventory/marcas'} onClick={() => setActiveSection('inventory/marcas')} />
               </div>
@@ -55,13 +55,6 @@ export default function NavBar() {
           </NavItem>
 
           <NavItem link="/collaborators" icon={Users} label="Colaboradores" active={activeSection === 'collaborators'} collapsed={!sidebarOpen} onClick={() => setActiveSection('collaborators')} />
-          <NavItem link="/exclusive-order" icon={List} label="Pedido exclusivo" active={activeSection === 'exclusive-order'} collapsed={!sidebarOpen} onClick={() => setActiveSection('exclusive-order')}>
-          {sidebarOpen && (
-              <div className="ml-8 mt-2 space-y-1">
-                <SubNavItem link="/exclusive-order/list" label="Lista de pedidos" active={activeSection === 'exclusive-order/list'} onClick={() => setActiveSection('exclusive-order/list')} />
-              </div>
-          )}
-          </NavItem>
         </nav>
 
         {/* Logout */}

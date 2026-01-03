@@ -7,9 +7,7 @@ import Products from './pages/productos/ProductosView.tsx';
 import NotFound from './pages/NotFound.tsx';
 import AnalisisVenta from './pages/AnalisisVenta.tsx';
 import Facturacion from './pages/Facturacion.tsx';
-import PedidosExclusivos from './pages/PedidosExclusivos.tsx';
 import MovimientoInventario from './pages/movimientoDeInventario/MovimientoInventarioView.tsx';
-import ListaPedidosExclusivos from './pages/ListaPedidosExclusivos.tsx';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import NavBar from './layouts/NavBar.tsx';
 import Marcas from './pages/marcas/MarcasView.tsx';
@@ -35,8 +33,6 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/inventory/movements" element={<MovimientoInventario />} />
             <Route path="/inventory/marcas" element={<Marcas />} />
             <Route path="/collaborators" element={<Colaboradores />} />
-            <Route path="/exclusive-order" element={<PedidosExclusivos />} />
-            <Route path="/exclusive-order/list" element={<ListaPedidosExclusivos />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
