@@ -10,7 +10,7 @@ import WindowDetallesCredenciales from './DetallesCredenciales';
 
 export default function CondorMotorsCollaborators() {
   const [showDetallesColaborador, setShowDetallesColaborador] = useState<boolean>(false);
-  const [showDetallesCredenciales, setShowDetallesCredenciales] = useState<boolean>(true);
+  const [showDetallesCredenciales, setShowDetallesCredenciales] = useState<boolean>(false);
 
   const [idColaboradorSelected, setIdColaboradorSelected] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -205,6 +205,7 @@ export default function CondorMotorsCollaborators() {
       { showDetallesCredenciales &&
         <WindowDetallesCredenciales 
           setShowDetallesCredenciales={setShowDetallesCredenciales}
+          idColaboradorSelected={idColaboradorSelected!}
         />
       }
     </div>

@@ -1,29 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { X, User, Lock, Shield, Eye, EyeOff, Edit2, Key, UserCheck } from 'lucide-react';
-
-interface DetallesCredencialesColaborador {
-  usuario: string;
-  clave: string;
-  rol_id: number;
-  rol_nombre: string;
-  usuario_nombres: string;
-  usuario_apellidos: string;
-}
+import type { DetallesCredencialesColaborador } from '../../models/colaboradores.model';
+import ColaboradorService from '../../service/colaborador.service';
 
 interface WindowDetallesColaboradorProps {
   setShowDetallesCredenciales: (p: boolean) => void;
+  idColaboradorSelected: number;
 }
 
-export default function WindowDetallesCredenciales({ setShowDetallesCredenciales }: WindowDetallesColaboradorProps) {
+export default function WindowDetallesCredenciales({ setShowDetallesCredenciales, idColaboradorSelected }: WindowDetallesColaboradorProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [cuentaUsuario] = useState<DetallesCredencialesColaborador>({
-    usuario: "ldelsol",
-    clave: "********",
-    rol_id: 1,
-    rol_nombre: "Administrador del Sistema",
-    usuario_nombres: "Luan Del",
-    usuario_apellidos: "Sol Huilca Sanchez"
-  });
+
+  const colaboradorService = useMemo(() => new ColaboradorService(), []);
+
+  const [cuentaUsuario, setCuentaUsuario] = useState<DetallesCredencialesColaborador | null>(null);
+  const [isLoadingDetalles, setIsLoadingDetalles] = useState<boolean>(true);
+  const [isErrorDetalles, setIsErrorDetalles] = useState<boolean>(false);
+
+  const refreshDetallesColaborador = async (id_colaborador: number) => {
+    setIsLoadingDetalles(true);
+    setIsErrorDetalles(false);
+    console.log("ID COLABORADOR SELECCIONADO:", id_colaborador);
+    const {data, isLoading, hayError} = await colaboradorService.getDetallesCredenciales(id_colaborador)
+    setCuentaUsuario(data);
+    setIsLoadingDetalles(isLoading);
+    setIsErrorDetalles(hayError);
+  }
+
+  useEffect(() => {
+    refreshDetallesColaborador(idColaboradorSelected!);
+  }, [colaboradorService, idColaboradorSelected]);
+
 
   const getRolColor = (rolNombre: string) => {
     switch(rolNombre.toLowerCase()) {
@@ -59,7 +66,7 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
     }
   };
 
-  const rolColors = getRolColor(cuentaUsuario.rol_nombre);
+  const rolColors = getRolColor(cuentaUsuario?.rol_nombre || '');
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-8">
@@ -98,9 +105,9 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
             </div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-white mb-1">
-                {cuentaUsuario.usuario_nombres} {cuentaUsuario.usuario_apellidos}
+                {cuentaUsuario?.usuario_nombres} {cuentaUsuario?.usuario_apellidos}
               </h2>
-              <p className="text-slate-400 text-xl">{cuentaUsuario.rol_nombre}</p>
+              <p className="text-slate-400 text-xl">{cuentaUsuario?.rol_nombre}</p>
             </div>
           </div>
 
@@ -129,7 +136,7 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
                   <div className="flex items-center gap-3">
                     <input
                       type="text"
-                      value={cuentaUsuario.usuario}
+                      value={cuentaUsuario?.usuario}
                       readOnly
                       className="flex-1 bg-slate-800/50 text-white px-4 py-2 rounded-lg border border-slate-600 font-mono text-lg"
                     />
@@ -148,7 +155,7 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
                   <div className="flex items-center gap-2">
                     <input
                       type={showPassword ? "text" : "password"}
-                      value={cuentaUsuario.clave}
+                      value={cuentaUsuario?.clave}
                       readOnly
                       className="flex-1 bg-slate-800/50 text-white px-4 py-2 rounded-lg border border-slate-600 font-mono text-lg"
                     />
@@ -186,7 +193,7 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
                     </div>
                     <div>
                       <p className="text-xs text-slate-400">ID del Rol</p>
-                      <p className="text-white font-semibold text-lg">#{cuentaUsuario.rol_id}</p>
+                      <p className="text-white font-semibold text-lg">#{cuentaUsuario?.rol_id}</p>
                     </div>
                   </div>
                 </div>
@@ -200,7 +207,7 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
                   <div className={`flex items-center gap-3 p-4 ${rolColors.bg} rounded-lg border ${rolColors.border}`}>
                     <Shield className={`w-6 h-6 ${rolColors.icon}`} />
                     <span className={`text-lg font-bold ${rolColors.text}`}>
-                      {cuentaUsuario.rol_nombre}
+                      {cuentaUsuario?.rol_nombre}
                     </span>
                   </div>
                 </div>
