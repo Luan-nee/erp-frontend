@@ -91,7 +91,10 @@ export default function CardColaborador({id, nombres, apellidos, rol, estaActivo
 
           {/* agrega un botón que diga "Acceso" */}
           <button className="flex-1 px-2 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
-            onClick={() => setShowDetallesCredenciales(true)}
+            onClick={() => {
+              setShowDetallesCredenciales(true);
+              setIdColaboradorSelected(id);
+            }}
           >
             <CheckCircle className="w-4 h-4" />
             Acceso

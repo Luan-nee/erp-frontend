@@ -12,7 +12,7 @@ export default function CondorMotorsCollaborators() {
   const [showDetallesColaborador, setShowDetallesColaborador] = useState<boolean>(false);
   const [showDetallesCredenciales, setShowDetallesCredenciales] = useState<boolean>(false);
 
-  const [idColaboradorSelected, setIdColaboradorSelected] = useState<number | null>(null);
+  const [idColaboradorSelected, setIdColaboradorSelected] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('Todos');
 
@@ -198,14 +198,14 @@ export default function CondorMotorsCollaborators() {
       { showDetallesColaborador &&
         <WindowDetallesColaborador
           setShowDetallesColaborador={setShowDetallesColaborador}
-          idColaboradorSelected={idColaboradorSelected!}
+          idColaboradorSelected={idColaboradorSelected}
         />
       }
 
       { showDetallesCredenciales &&
         <WindowDetallesCredenciales 
           setShowDetallesCredenciales={setShowDetallesCredenciales}
-          idColaboradorSelected={idColaboradorSelected!}
+          idColaboradorSelected={idColaboradorSelected}
         />
       }
     </div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { X, User, Lock, Shield, Eye, EyeOff, Edit2, Key, UserCheck } from 'lucide-react';
 import type { DetallesCredencialesColaborador } from '../../models/colaboradores.model';
 import ColaboradorService from '../../service/colaborador.service';
+import Loading from '../../animation/Loading';
 
 interface WindowDetallesColaboradorProps {
   setShowDetallesCredenciales: (p: boolean) => void;
@@ -13,14 +14,20 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
 
   const colaboradorService = useMemo(() => new ColaboradorService(), []);
 
-  const [cuentaUsuario, setCuentaUsuario] = useState<DetallesCredencialesColaborador | null>(null);
+  const [cuentaUsuario, setCuentaUsuario] = useState<DetallesCredencialesColaborador | null>({
+    usuario: '',
+    clave: '',
+    rol_id: 0,
+    rol_nombre: '',
+    usuario_nombres: '',
+    usuario_apellidos: ''
+  });
   const [isLoadingDetalles, setIsLoadingDetalles] = useState<boolean>(true);
   const [isErrorDetalles, setIsErrorDetalles] = useState<boolean>(false);
 
   const refreshDetallesColaborador = async (id_colaborador: number) => {
     setIsLoadingDetalles(true);
     setIsErrorDetalles(false);
-    console.log("ID COLABORADOR SELECCIONADO:", id_colaborador);
     const {data, isLoading, hayError} = await colaboradorService.getDetallesCredenciales(id_colaborador)
     setCuentaUsuario(data);
     setIsLoadingDetalles(isLoading);
@@ -91,6 +98,18 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
           </div>
         </div>
 
+        {isErrorDetalles ? (
+          <div className="mx-8 mt-4 rounded-lg border border-red-500/30 bg-red-500/10 text-red-200 px-4 py-3 flex items-center justify-between">
+            <span>Ocurrió un error al cargar las credenciales del usuario.</span>
+            <button
+              className="px-3 py-1 text-sm font-semibold rounded-md bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 transition-colors"
+              onClick={() => refreshDetallesColaborador(idColaboradorSelected)}
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : null}
+
         {/* Main Content */}
         <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 backdrop-blur-sm border-x border-slate-700/50 p-8">
           {/* User Profile Section */}
@@ -105,9 +124,23 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
             </div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-white mb-1">
-                {cuentaUsuario?.usuario_nombres} {cuentaUsuario?.usuario_apellidos}
+                {isLoadingDetalles ? (
+                  <Loading w={5} h={5} color="blue" />
+                ) : isErrorDetalles ? (
+                  <span className="text-red-300 text-sm">No se pudo cargar</span>
+                ) : (
+                  <>{cuentaUsuario?.usuario_nombres} {cuentaUsuario?.usuario_apellidos}</>
+                )}
               </h2>
-              <p className="text-slate-400 text-xl">{cuentaUsuario?.rol_nombre}</p>
+              <p className="text-slate-400 text-xl">
+                {isLoadingDetalles ? (
+                  <Loading w={4} h={4} color="blue" />
+                ) : isErrorDetalles ? (
+                  <span className="text-red-300 text-sm">No se pudo cargar</span>
+                ) : (
+                  cuentaUsuario?.rol_nombre
+                )}
+              </p>
             </div>
           </div>
 
@@ -134,12 +167,20 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
                     Nombre de usuario
                   </label>
                   <div className="flex items-center gap-3">
+                    {isLoadingDetalles ? (
+                    <div className="flex-1 bg-slate-800/50 px-4 py-2 rounded-lg border border-slate-600">
+                      <Loading w={5} h={5} color="blue" />
+                    </div>
+                  ) : isErrorDetalles ? (
+                    <div className="flex-1 bg-slate-800/50 text-red-300 px-4 py-2 rounded-lg border border-slate-600 text-sm">No se pudo cargar</div>
+                  ) : (
                     <input
                       type="text"
                       value={cuentaUsuario?.usuario}
                       readOnly
                       className="flex-1 bg-slate-800/50 text-white px-4 py-2 rounded-lg border border-slate-600 font-mono text-lg"
                     />
+                  )}
                     <div className="px-3 py-2 bg-emerald-500/20 text-emerald-300 rounded-lg text-xs font-semibold border border-emerald-500/30">
                       Activo
                     </div>
@@ -153,12 +194,20 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
                     Contraseña
                   </label>
                   <div className="flex items-center gap-2">
+                    {isLoadingDetalles ? (
+                    <div className="flex-1 bg-slate-800/50 px-4 py-2 rounded-lg border border-slate-600">
+                      <Loading w={5} h={5} color="blue" />
+                    </div>
+                  ) : isErrorDetalles ? (
+                    <div className="flex-1 bg-slate-800/50 text-red-300 px-4 py-2 rounded-lg border border-slate-600 text-sm">No se pudo cargar</div>
+                  ) : (
                     <input
                       type={showPassword ? "text" : "password"}
                       value={cuentaUsuario?.clave}
                       readOnly
                       className="flex-1 bg-slate-800/50 text-white px-4 py-2 rounded-lg border border-slate-600 font-mono text-lg"
                     />
+                  )}
                     <button
                       onClick={() => setShowPassword(!showPassword)}
                       className="p-2 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg transition-colors border border-slate-600"
@@ -193,7 +242,15 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
                     </div>
                     <div>
                       <p className="text-xs text-slate-400">ID del Rol</p>
-                      <p className="text-white font-semibold text-lg">#{cuentaUsuario?.rol_id}</p>
+                      <p className="text-white font-semibold text-lg">
+                        {isLoadingDetalles ? (
+                          <Loading w={4} h={4} color="blue" />
+                        ) : isErrorDetalles ? (
+                          <span className="text-red-300 text-sm">No se pudo cargar</span>
+                        ) : (
+                          <>#{cuentaUsuario?.rol_id}</>
+                        )}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -207,7 +264,13 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
                   <div className={`flex items-center gap-3 p-4 ${rolColors.bg} rounded-lg border ${rolColors.border}`}>
                     <Shield className={`w-6 h-6 ${rolColors.icon}`} />
                     <span className={`text-lg font-bold ${rolColors.text}`}>
-                      {cuentaUsuario?.rol_nombre}
+                      {isLoadingDetalles ? (
+                        <Loading w={4} h={4} color="blue" />
+                      ) : isErrorDetalles ? (
+                        <span className="text-red-300 text-sm">No se pudo cargar</span>
+                      ) : (
+                        cuentaUsuario?.rol_nombre
+                      )}
                     </span>
                   </div>
                 </div>
