@@ -1,24 +1,20 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect} from 'react';
 import { X, User, Phone, CreditCard, Clock, DollarSign, MapPin, Save, AlertCircle } from 'lucide-react';
-
-interface ColaboradorForm {
-  nombres: string;
-  apellidos: string;
-  dni: string;
-  estaActivo: boolean;
-  celular: string;
-  hora_inicio_jornada: string;
-  hora_fin_jornada: string;
-  sueldo: number;
-  id_sucursal: number;
-}
+import ColaboradorService from '../../service/colaborador.service';
+import SucursalService from '../../service/sucursal.service.ts';
+import type { RegistrarColaborador } from '../../models/colaboradores.model.ts';
+import type { SucursalSelect } from '../../models/sucursal.model.ts';
+import SelectLocal from '../../utils/SelectLocal';
 
 interface FormCreateProps {
   setShowFormCreate: (show: boolean) => void;
-}
+} 
 
 export default function FormCreate({ setShowFormCreate }: FormCreateProps) {
-  const [formData, setFormData] = useState<ColaboradorForm>({
+  const colaboradorService = useMemo(() => new ColaboradorService(), []); 
+  const sucursalService = useMemo(() => new SucursalService(), []); 
+
+  const [formData, setFormData] = useState<RegistrarColaborador>({
     nombres: '',
     apellidos: '',
     dni: '',
@@ -29,8 +25,34 @@ export default function FormCreate({ setShowFormCreate }: FormCreateProps) {
     sueldo: 0,
     id_sucursal: 1
   });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
 
-  const [errors, setErrors] = useState<Partial<Record<keyof ColaboradorForm, string>>>({});
+  const [sucursales, setSucursales] = useState<SucursalSelect[] | null>([
+    {
+      id: 0,
+      nombre: '',
+      direccion: '',
+      tipo_sucursal: 'central'
+    }
+  ]);
+  const [isLoadingSucursales, setIsLoadingSucursales] = useState<boolean>(false);
+  const [isErrorSucursales, setIsErrorSucursales] = useState<boolean>(false);
+
+  const refreshSucursales = async () => {
+    setIsLoadingSucursales(true);
+    setIsErrorSucursales(false);
+    const { data, isLoading, hayError} = await sucursalService.getSucursales();
+    setSucursales(data);
+    setIsLoadingSucursales(isLoading)
+    setIsErrorSucursales(hayError);
+  }
+
+  useEffect(() => {
+    refreshSucursales();
+  }, [sucursalService]);
+
+  const [errors, setErrors] = useState<Partial<Record<keyof RegistrarColaborador, string>>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -44,13 +66,13 @@ export default function FormCreate({ setShowFormCreate }: FormCreateProps) {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
     
-    if (errors[name as keyof ColaboradorForm]) {
+    if (errors[name as keyof RegistrarColaborador]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<Record<keyof ColaboradorForm, string>> = {};
+    const newErrors: Partial<Record<keyof RegistrarColaborador, string>> = {};
 
     if (!formData.nombres.trim()) newErrors.nombres = 'Los nombres son requeridos';
     if (!formData.apellidos.trim()) newErrors.apellidos = 'Los apellidos son requeridos';
@@ -64,10 +86,20 @@ export default function FormCreate({ setShowFormCreate }: FormCreateProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      console.log('Datos del colaborador:', formData);
-      alert('Colaborador registrado exitosamente!');
+      setIsLoading(true);
+      setIsError(false);
+      try {
+        const nuevoColaborador = formData;
+        await colaboradorService.registrarColaborador(nuevoColaborador);
+        setShowFormCreate(false);
+      } catch (error) {
+        console.error('Error al registrar colaborador:', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -96,6 +128,91 @@ export default function FormCreate({ setShowFormCreate }: FormCreateProps) {
 
         {/* Form Content */}
         <div className="bg-gradient-to-br from-slate-800/40 to-slate-700/20 backdrop-blur-sm border-x border-slate-700/50 p-8">
+          {/* Información Laboral */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-emerald-400" />
+              Información Laboral
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Sueldo */}
+              <div>
+                <label htmlFor="sueldo" className="block text-sm font-medium text-slate-300 mb-2">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="w-4 h-4" />
+                    Sueldo (S/) <span className="text-red-400">*</span>
+                  </div>
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    id="sueldo"
+                    name="sueldo"
+                    value={formData.sueldo || ''}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    className={`w-full bg-slate-700/50 text-white px-4 py-3 rounded-lg border ${
+                      errors.sueldo ? 'border-red-500' : 'border-slate-600'
+                    } focus:outline-none focus:border-emerald-500 transition-colors`}
+                    placeholder="1500.00"
+                  />
+                  {errors.sueldo && (
+                    <div className="flex items-center gap-1 mt-1 text-red-400 text-xs">
+                      <AlertCircle className="w-3 h-3" />
+                      <span>{errors.sueldo}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Sucursal */}
+              <div>
+                <label htmlFor="id_sucursal" className="block text-sm font-medium text-slate-300 mb-2">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    Sucursal
+                  </div>
+                </label>
+                <SelectLocal
+                  sucursales={sucursales}
+                  onSelect={(sucursal) => setFormData({ ...formData, id_sucursal: sucursal.id })}
+                />
+              </div>
+
+              {/* Hora Inicio */}
+              <div>
+                <label htmlFor="hora_inicio_jornada" className="block text-sm font-medium text-slate-300 mb-2">
+                  Hora de inicio
+                </label>
+                <input
+                  type="time"
+                  id="hora_inicio_jornada"
+                  name="hora_inicio_jornada"
+                  value={formData.hora_inicio_jornada}
+                  onChange={handleChange}
+                  className="w-full bg-slate-700/50 text-white px-4 py-3 rounded-lg border border-slate-600 focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              {/* Hora Fin */}
+              <div>
+                <label htmlFor="hora_fin_jornada" className="block text-sm font-medium text-slate-300 mb-2">
+                  Hora de fin
+                </label>
+                <input
+                  type="time"
+                  id="hora_fin_jornada"
+                  name="hora_fin_jornada"
+                  value={formData.hora_fin_jornada}
+                  onChange={handleChange}
+                  className="w-full bg-slate-700/50 text-white px-4 py-3 rounded-lg border border-slate-600 focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Información Personal */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
@@ -214,99 +331,6 @@ export default function FormCreate({ setShowFormCreate }: FormCreateProps) {
                     </div>
                   )}
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Información Laboral */}
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-emerald-400" />
-              Información Laboral
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Hora Inicio */}
-              <div>
-                <label htmlFor="hora_inicio_jornada" className="block text-sm font-medium text-slate-300 mb-2">
-                  Hora de inicio
-                </label>
-                <input
-                  type="time"
-                  id="hora_inicio_jornada"
-                  name="hora_inicio_jornada"
-                  value={formData.hora_inicio_jornada}
-                  onChange={handleChange}
-                  className="w-full bg-slate-700/50 text-white px-4 py-3 rounded-lg border border-slate-600 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-
-              {/* Hora Fin */}
-              <div>
-                <label htmlFor="hora_fin_jornada" className="block text-sm font-medium text-slate-300 mb-2">
-                  Hora de fin
-                </label>
-                <input
-                  type="time"
-                  id="hora_fin_jornada"
-                  name="hora_fin_jornada"
-                  value={formData.hora_fin_jornada}
-                  onChange={handleChange}
-                  className="w-full bg-slate-700/50 text-white px-4 py-3 rounded-lg border border-slate-600 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-
-              {/* Sueldo */}
-              <div>
-                <label htmlFor="sueldo" className="block text-sm font-medium text-slate-300 mb-2">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4" />
-                    Sueldo (S/) <span className="text-red-400">*</span>
-                  </div>
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    id="sueldo"
-                    name="sueldo"
-                    value={formData.sueldo || ''}
-                    onChange={handleChange}
-                    min="0"
-                    step="0.01"
-                    className={`w-full bg-slate-700/50 text-white px-4 py-3 rounded-lg border ${
-                      errors.sueldo ? 'border-red-500' : 'border-slate-600'
-                    } focus:outline-none focus:border-emerald-500 transition-colors`}
-                    placeholder="1500.00"
-                  />
-                  {errors.sueldo && (
-                    <div className="flex items-center gap-1 mt-1 text-red-400 text-xs">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{errors.sueldo}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Sucursal */}
-              <div>
-                <label htmlFor="id_sucursal" className="block text-sm font-medium text-slate-300 mb-2">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4" />
-                    Sucursal
-                  </div>
-                </label>
-                <select
-                  id="id_sucursal"
-                  name="id_sucursal"
-                  value={formData.id_sucursal}
-                  onChange={handleChange}
-                  className="w-full bg-slate-700/50 text-white px-4 py-3 rounded-lg border border-slate-600 focus:outline-none focus:border-emerald-500 transition-colors"
-                >
-                  <option value={1}>Sucursal Principal</option>
-                  <option value={2}>Sucursal Norte</option>
-                  <option value={3}>Sucursal Sur</option>
-                  <option value={4}>Sucursal Este</option>
-                </select>
               </div>
             </div>
           </div>

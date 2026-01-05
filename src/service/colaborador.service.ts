@@ -1,5 +1,5 @@
 import type { PropResponse } from "../types/PropResponse";
-import type { Colaborador, DetallesColaborador, resumenColaboradores, DetallesCredencialesColaborador } from "../models/colaboradores.model.ts"
+import type { Colaborador, DetallesColaborador, resumenColaboradores, DetallesCredencialesColaborador, RegistrarColaborador } from "../models/colaboradores.model.ts"
 
 export default class ColaboradorService {
   private baseUrl: string = "http://localhost:3000/api/colaboradores";
@@ -100,6 +100,33 @@ export default class ColaboradorService {
       const response = await this.request<PropResponse<DetallesCredencialesColaborador>>(
         `${this.baseUrl}/${id_colaborador}/detallesCredenciales`,
         { method: "GET" }
+      );
+      return {
+        data: response.info,
+        isLoading: false,
+        hayError: false,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        isLoading: false,
+        hayError: true,
+      };
+    }
+  }
+
+  public async registrarColaborador(nuevoColaborador: RegistrarColaborador): Promise<{
+    data: number | null;
+    isLoading: boolean;
+    hayError: boolean;
+  }> {
+    try {
+      const response = await this.request<PropResponse<number>>(
+        `${this.baseUrl}`,
+        {
+          method: "POST",
+          body: JSON.stringify(nuevoColaborador),
+        }
       );
       return {
         data: response.info,
