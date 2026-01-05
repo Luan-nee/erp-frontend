@@ -8,6 +8,7 @@ interface CardColaboradorProps {
   estaActivo: boolean;
   celular: string;
   lugarTrabajo: string;
+  tieneCuenta: boolean;
 }
 
 type StatusConfig = {
@@ -20,12 +21,13 @@ type StatusConfig = {
   };
 };
 
-export default function CardColaborador({id, nombres, apellidos, rol, estaActivo, celular, lugarTrabajo}: CardColaboradorProps){
+export default function CardColaborador({id, nombres, apellidos, rol, estaActivo, celular, lugarTrabajo, tieneCuenta}: CardColaboradorProps){
   const statusConfig: StatusConfig = {
     'Activo': { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30', icon: CheckCircle, hover: 'hover:border-green-500/50' },
-    'Inhabilitado': { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30', icon: XCircle, hover: 'hover:border-red-500/50' }
+    'Inhabilitado': { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30', icon: XCircle, hover: 'hover:border-red-500/50' },
+    'Sin Cuenta': { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30', icon: XCircle, hover: 'hover:border-yellow-500/50' }
   };
-  const statusStyle = statusConfig[estaActivo ? 'Activo' : 'Inhabilitado'];
+  let statusStyle = statusConfig[estaActivo ? 'Activo' : (tieneCuenta ? 'Inhabilitado' : 'Sin Cuenta')];
   const StatusIcon = statusStyle.icon;
   return (
     <div key={id} className={`bg-gray-800 rounded-xl shadow-xl border border-gray-700 overflow-hidden hover:shadow-2xl ${statusStyle.hover} transition-all`}>

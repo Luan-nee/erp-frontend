@@ -166,6 +166,7 @@ export default function CondorMotorsCollaborators() {
                     estaActivo={colaborador.estaActivo}
                     celular={colaborador.celular}
                     lugarTrabajo={colaborador.lugarTrabajo}
+                    tieneCuenta={colaborador.tieneCuenta}
                   />
                 ))
               )
