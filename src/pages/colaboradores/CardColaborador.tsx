@@ -11,6 +11,7 @@ interface CardColaboradorProps {
   tieneCuenta: boolean;
   setShowDetallesColaborador: (p: boolean) => void;
   setIdColaboradorSelected: (id: number) => void;
+  setShowDetallesCredenciales: (p: boolean) => void;
 }
 
 type StatusConfig = {
@@ -23,7 +24,7 @@ type StatusConfig = {
   };
 };
 
-export default function CardColaborador({id, nombres, apellidos, rol, estaActivo, celular, lugarTrabajo, tieneCuenta, setShowDetallesColaborador, setIdColaboradorSelected}: CardColaboradorProps){
+export default function CardColaborador({id, nombres, apellidos, rol, estaActivo, celular, lugarTrabajo, tieneCuenta, setShowDetallesColaborador, setIdColaboradorSelected, setShowDetallesCredenciales}: CardColaboradorProps){
   const statusConfig: StatusConfig = {
     'Activo': { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30', icon: CheckCircle, hover: 'hover:border-green-500/50' },
     'Inhabilitado': { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30', icon: XCircle, hover: 'hover:border-red-500/50' },
@@ -89,7 +90,9 @@ export default function CardColaborador({id, nombres, apellidos, rol, estaActivo
           </button>
 
           {/* agrega un botón que diga "Acceso" */}
-          <button className="flex-1 px-2 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2">
+          <button className="flex-1 px-2 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            onClick={() => setShowDetallesCredenciales(true)}
+          >
             <CheckCircle className="w-4 h-4" />
             Acceso
           </button>

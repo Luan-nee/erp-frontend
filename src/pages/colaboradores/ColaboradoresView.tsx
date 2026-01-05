@@ -186,6 +186,7 @@ export default function CondorMotorsCollaborators() {
                     tieneCuenta={colaborador.tieneCuenta}
                     setShowDetallesColaborador={setShowDetallesColaborador}
                     setIdColaboradorSelected={setIdColaboradorSelected}
+                    setShowDetallesCredenciales={setShowDetallesCredenciales}
                   />
                 ))
               )
@@ -202,7 +203,9 @@ export default function CondorMotorsCollaborators() {
       }
 
       { showDetallesCredenciales &&
-        <WindowDetallesCredenciales />
+        <WindowDetallesCredenciales 
+          setShowDetallesCredenciales={setShowDetallesCredenciales}
+        />
       }
     </div>
   );

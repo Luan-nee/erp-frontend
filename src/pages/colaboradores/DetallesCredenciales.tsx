@@ -11,7 +11,11 @@ interface CuentaUsuario {
   usuario_apellidos: string;
 }
 
-export default function WindowDetallesCredenciales() {
+interface WindowDetallesColaboradorProps {
+  setShowDetallesCredenciales: (p: boolean) => void;
+}
+
+export default function WindowDetallesCredenciales({ setShowDetallesCredenciales }: WindowDetallesColaboradorProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [cuentaUsuario] = useState<CuentaUsuario>({
     usuario: "ldelsol",
@@ -74,7 +78,9 @@ export default function WindowDetallesCredenciales() {
                 <p className="text-slate-400 text-sm">Gestiona los accesos y permisos</p>
               </div>
             </div>
-            <button className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors">
+            <button 
+              onClick={() => setShowDetallesCredenciales(false)}
+            className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors">
               <X className="w-6 h-6 text-slate-400" />
             </button>
           </div>
@@ -207,12 +213,11 @@ export default function WindowDetallesCredenciales() {
         </div>
 
         {/* Footer Actions */}
-        <div className="bg-slate-800/50 backdrop-blur-sm rounded-b-2xl border border-slate-700/50 p-6 flex justify-between items-center">
-          <button className="px-6 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors border border-red-500/30 font-semibold">
-            Desactivar Cuenta
-          </button>
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-b-2xl border border-slate-700/50 p-6 flex justify-end items-center">
           <div className="flex gap-3">
-            <button className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors">
+            <button 
+              onClick={() => setShowDetallesCredenciales(false)}
+              className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors">
               Cancelar
             </button>
             <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-semibold">
