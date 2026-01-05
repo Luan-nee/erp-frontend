@@ -71,21 +71,6 @@ export default function FormCreate({ setShowFormCreate }: FormCreateProps) {
     }
   };
 
-  const handleReset = () => {
-    setFormData({
-      nombres: '',
-      apellidos: '',
-      dni: '',
-      estaActivo: true,
-      celular: '',
-      hora_inicio_jornada: '08:00',
-      hora_fin_jornada: '18:00',
-      sueldo: 0,
-      id_sucursal: 1
-    });
-    setErrors({});
-  };
-
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-8">
       <div className="h-full bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-4xl overflow-auto">
