@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { X, User, Lock, Shield, Eye, EyeOff, Edit2, Key, UserCheck } from 'lucide-react';
 
-interface CuentaUsuario {
+interface DetallesCredencialesColaborador {
   usuario: string;
   clave: string;
   rol_id: number;
   rol_nombre: string;
-  usuario_id: number;
   usuario_nombres: string;
   usuario_apellidos: string;
 }
@@ -17,12 +16,11 @@ interface WindowDetallesColaboradorProps {
 
 export default function WindowDetallesCredenciales({ setShowDetallesCredenciales }: WindowDetallesColaboradorProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [cuentaUsuario] = useState<CuentaUsuario>({
+  const [cuentaUsuario] = useState<DetallesCredencialesColaborador>({
     usuario: "ldelsol",
     clave: "********",
     rol_id: 1,
     rol_nombre: "Administrador del Sistema",
-    usuario_id: 1,
     usuario_nombres: "Luan Del",
     usuario_apellidos: "Sol Huilca Sanchez"
   });
@@ -102,7 +100,7 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
               <h2 className="text-2xl font-bold text-white mb-1">
                 {cuentaUsuario.usuario_nombres} {cuentaUsuario.usuario_apellidos}
               </h2>
-              <p className="text-slate-400 text-sm">ID: #{cuentaUsuario.usuario_id}</p>
+              <p className="text-slate-400 text-xl">{cuentaUsuario.rol_nombre}</p>
             </div>
           </div>
 
