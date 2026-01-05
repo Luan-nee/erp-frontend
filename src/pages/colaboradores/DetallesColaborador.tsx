@@ -16,7 +16,7 @@ function formatDateString(dateString: string | undefined): string {
   return `${day}/${month}/${year}`;
 }
 
-const WindowDetallesColaborador: React.FC<WindowDetallesColaboradorProps> = ({ setShowDetallesColaborador, idColaboradorSelected }) => {
+export default function WindowDetallesColaborador({ setShowDetallesColaborador, idColaboradorSelected }: WindowDetallesColaboradorProps) {
   
   const colaboradorService = useMemo(() => new ColaboradorService(), []);
 
@@ -208,5 +208,3 @@ const WindowDetallesColaborador: React.FC<WindowDetallesColaboradorProps> = ({ s
     </div>
   );
 };
-
-export default WindowDetallesColaborador;
