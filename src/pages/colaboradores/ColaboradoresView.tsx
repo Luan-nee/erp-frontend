@@ -9,6 +9,8 @@ import WindowDetallesColaborador from './DetallesColaborador';
 
 export default function CondorMotorsCollaborators() {
   const [showDetallesColaborador, setShowDetallesColaborador] = useState<boolean>(false);
+
+  const [idColaboradorSelected, setIdColaboradorSelected] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('Todos');
 
@@ -181,6 +183,7 @@ export default function CondorMotorsCollaborators() {
                     lugarTrabajo={colaborador.lugarTrabajo}
                     tieneCuenta={colaborador.tieneCuenta}
                     setShowDetallesColaborador={setShowDetallesColaborador}
+                    setIdColaboradorSelected={setIdColaboradorSelected}
                   />
                 ))
               )
@@ -192,6 +195,7 @@ export default function CondorMotorsCollaborators() {
       { showDetallesColaborador &&
         <WindowDetallesColaborador
           setShowDetallesColaborador={setShowDetallesColaborador}
+          idColaboradorSelected={idColaboradorSelected!}
         />
       }
     </div>

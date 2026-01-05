@@ -1,29 +1,41 @@
-import React, { useState } from 'react';
-import { X, Phone, MapPin, Calendar, DollarSign, Clock, User, Edit2 } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { X, Phone, MapPin, Calendar, DollarSign, Clock, User} from 'lucide-react';
 import type { DetallesColaborador } from '../../models/colaboradores.model';
+import ColaboradorService from '../../service/colaborador.service';
 
 interface WindowDetallesColaboradorProps {
   setShowDetallesColaborador: (p: boolean) => void;
+  idColaboradorSelected: number;
 }
 
-const WindowDetallesColaborador: React.FC<WindowDetallesColaboradorProps> = ({ setShowDetallesColaborador }) => {
-  const [selectedColaborador] = useState<DetallesColaborador>({
-    id: 1,
-    nombres: "Luan Del",
-    apellidos: "Sol Huilca Sanchez",
-    dni: "72345678",
-    estaActivo: true,
-    celular: "987654321",
-    hora_inicio_jornada: "08:00:00",
-    hora_fin_jornada: "18:00:00",
-    sueldo: 1500.00,
-    id_sucursal: 1,
-    lugarTrabajo: "Av. Principal #123, Ciudad A",
-    fecha_contratacion: new Date("2023-01-15"),
-    fecha_actualizacion: new Date("2024-12-20"),
-    tieneCuenta: true,
-    rol: "Administrador del Sistema"
-  });
+function formatDateString(dateString: string | undefined): string {
+  const date = new Date(dateString ?? '');
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); 
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${day}/${month}/${year}`;
+}
+
+const WindowDetallesColaborador: React.FC<WindowDetallesColaboradorProps> = ({ setShowDetallesColaborador, idColaboradorSelected }) => {
+  
+  const colaboradorService = useMemo(() => new ColaboradorService(), []);
+
+  const [selectedColaborador, setSelectedColaborador] = useState<DetallesColaborador | null>(null);
+  const [isLoadingDetalles, setIsLoadingDetalles] = useState<boolean>(true);
+  const [isErrorDetalles, setIsErrorDetalles] = useState<boolean>(false);
+
+  const refreshDetallesColaborador = async (id_colaborador: number) => {
+    setIsLoadingDetalles(true);
+    setIsErrorDetalles(false);
+    const {data, isLoading, hayError} = await colaboradorService.getDetallesColaborador(id_colaborador);
+    setSelectedColaborador(data);
+    setIsLoadingDetalles(isLoading);
+    setIsErrorDetalles(hayError);
+  }
+
+  useEffect(() => {
+    refreshDetallesColaborador(idColaboradorSelected);
+  }, [colaboradorService, idColaboradorSelected]);
 
   const getRolColor = (rol: string) => {
     switch(rol.toLowerCase()) {
@@ -37,14 +49,6 @@ const WindowDetallesColaborador: React.FC<WindowDetallesColaboradorProps> = ({ s
       default:
         return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
     }
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }).format(date);
   };
 
   const formatCurrency = (amount: number) => {
@@ -79,13 +83,13 @@ const WindowDetallesColaborador: React.FC<WindowDetallesColaboradorProps> = ({ s
               </div>
               <div>
                 <h2 className="text-3xl font-bold text-white mb-2">
-                  {selectedColaborador.nombres} {selectedColaborador.apellidos}
+                  {selectedColaborador?.nombres} {selectedColaborador?.apellidos}
                 </h2>
                 <div className="flex items-center gap-3">
-                  <span className={`px-4 py-1.5 rounded-full text-sm font-semibold border ${getRolColor(selectedColaborador.rol)}`}>
-                    {selectedColaborador.rol}
+                  <span className={`px-4 py-1.5 rounded-full text-sm font-semibold border ${getRolColor(selectedColaborador ? selectedColaborador.rol : '')}`}>
+                    {selectedColaborador?.rol}
                   </span>
-                  {selectedColaborador.estaActivo ? (
+                  {selectedColaborador?.estaActivo ? (
                     <span className="flex items-center gap-2 px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm border border-emerald-500/30">
                       <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                       Activo
@@ -114,21 +118,21 @@ const WindowDetallesColaborador: React.FC<WindowDetallesColaboradorProps> = ({ s
                   <Phone className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Celular</p>
-                    <p className="text-white font-medium">{selectedColaborador.celular}</p>
+                    <p className="text-white font-medium">{selectedColaborador?.celular}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <User className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">DNI</p>
-                    <p className="text-white font-medium">{selectedColaborador.dni}</p>
+                    <p className="text-white font-medium">{selectedColaborador?.dni}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <MapPin className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Lugar de trabajo</p>
-                    <p className="text-white font-medium">{selectedColaborador.lugarTrabajo}</p>
+                    <p className="text-white font-medium">{selectedColaborador?.lugarTrabajo}</p>
                   </div>
                 </div>
               </div>
@@ -145,21 +149,21 @@ const WindowDetallesColaborador: React.FC<WindowDetallesColaboradorProps> = ({ s
                   <Clock className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Hora de inicio</p>
-                    <p className="text-white font-medium">{selectedColaborador.hora_inicio_jornada}</p>
+                    <p className="text-white font-medium">{selectedColaborador?.hora_inicio_jornada}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Clock className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Hora de fin</p>
-                    <p className="text-white font-medium">{selectedColaborador.hora_fin_jornada}</p>
+                    <p className="text-white font-medium">{selectedColaborador?.hora_fin_jornada}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <DollarSign className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Sueldo</p>
-                    <p className="text-emerald-400 font-bold text-lg">{formatCurrency(selectedColaborador.sueldo)}</p>
+                    <p className="text-emerald-400 font-bold text-lg">{formatCurrency(selectedColaborador ? selectedColaborador.sueldo : 0)}</p>
                   </div>
                 </div>
               </div>
@@ -176,14 +180,14 @@ const WindowDetallesColaborador: React.FC<WindowDetallesColaboradorProps> = ({ s
                   <Calendar className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Fecha de contratación</p>
-                    <p className="text-white font-medium">{formatDate(selectedColaborador.fecha_contratacion)}</p>
+                    <p className="text-white font-medium">{formatDateString(selectedColaborador?.fecha_contratacion.toString())}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Calendar className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Última actualización</p>
-                    <p className="text-white font-medium">{formatDate(selectedColaborador.fecha_actualizacion)}</p>
+                    <p className="text-white font-medium">{formatDateString(selectedColaborador?.fecha_actualizacion.toString())}</p>
                   </div>
                 </div>
               </div>
