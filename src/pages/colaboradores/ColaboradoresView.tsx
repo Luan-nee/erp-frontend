@@ -6,9 +6,11 @@ import MetricCard from '../../components/MetricCard';
 import CardColaborador from './CardColaborador';
 import ColaboradorService from '../../service/colaborador.service';
 import WindowDetallesColaborador from './DetallesColaborador';
+import WindowDetallesCredenciales from './DetallesCredenciales';
 
 export default function CondorMotorsCollaborators() {
   const [showDetallesColaborador, setShowDetallesColaborador] = useState<boolean>(false);
+  const [showDetallesCredenciales, setShowDetallesCredenciales] = useState<boolean>(true);
 
   const [idColaboradorSelected, setIdColaboradorSelected] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -197,6 +199,10 @@ export default function CondorMotorsCollaborators() {
           setShowDetallesColaborador={setShowDetallesColaborador}
           idColaboradorSelected={idColaboradorSelected!}
         />
+      }
+
+      { showDetallesCredenciales &&
+        <WindowDetallesCredenciales />
       }
     </div>
   );

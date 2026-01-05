@@ -11,7 +11,7 @@ interface CuentaUsuario {
   usuario_apellidos: string;
 }
 
-const CuentaUsuarioDetail: React.FC = () => {
+export default function WindowDetallesCredenciales() {
   const [showPassword, setShowPassword] = useState(false);
   const [cuentaUsuario] = useState<CuentaUsuario>({
     usuario: "ldelsol",
@@ -60,8 +60,8 @@ const CuentaUsuarioDetail: React.FC = () => {
   const rolColors = getRolColor(cuentaUsuario.rol_nombre);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
-      <div className="max-w-3xl mx-auto">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-8">
+      <div className="h-full bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-4xl overflow-auto">
         {/* Header */}
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-t-2xl border border-slate-700/50 p-6">
           <div className="flex items-center justify-between">
@@ -224,5 +224,3 @@ const CuentaUsuarioDetail: React.FC = () => {
     </div>
   );
 };
-
-export default CuentaUsuarioDetail;
