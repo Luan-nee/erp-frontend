@@ -127,6 +127,7 @@ export default function CondorMotorsCollaborators() {
               <option value="Todos">Todos los estados</option>
               <option value="Activo">Activo</option>
               <option value="Inhabilitado">Inhabilitado</option>
+              <option value="Sin Cuenta">Sin Cuenta</option>
             </select>
           </div>
         </div>
