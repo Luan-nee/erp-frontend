@@ -5,8 +5,10 @@ import type { Colaborador, resumenColaboradores} from '../../models/colaboradore
 import MetricCard from '../../components/MetricCard';
 import CardColaborador from './CardColaborador';
 import ColaboradorService from '../../service/colaborador.service';
+import DetallesColaborador from './DetallesColaborador';
 
 export default function CondorMotorsCollaborators() {
+  const [showDetallesColaborador, setShowDetallesColaborador] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('Todos');
 
@@ -186,6 +188,9 @@ export default function CondorMotorsCollaborators() {
           </div>
         </div>
       </div>
+      { showDetallesColaborador &&
+        <DetallesColaborador />
+      }
     </div>
   );
 }

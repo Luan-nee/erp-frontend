@@ -68,8 +68,8 @@ const DetallesColaborador: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-8">
+      <div className="h-full bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-4xl overflow-auto">
         {/* Header */}
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-t-2xl border border-slate-700/50 p-6">
           <div className="flex items-center justify-between mb-4">
@@ -83,7 +83,7 @@ const DetallesColaborador: React.FC = () => {
         {/* Main Content */}
         <div className="bg-gradient-to-br from-emerald-900/30 to-emerald-800/20 backdrop-blur-sm border-x border-slate-700/50 p-8">
           {/* Header Section with Avatar and Status */}
-          <div className="flex items-start justify-between mb-8">
+          <div className="flex items-start justify-between gap-8 mb-8">
             <div className="flex items-center gap-6">
               <div className="w-24 h-24 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
                 <User className="w-12 h-12 text-white" />
@@ -119,7 +119,7 @@ const DetallesColaborador: React.FC = () => {
           {/* Information Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Contact Information */}
-            <div className="bg-slate-800/40 rounded-xl p-6 border border-slate-700/30">
+            <div className="bg-slate-800/40 rounded-xl p-6 border border-slate-700/30 col-span-2">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                 <Phone className="w-5 h-5 text-emerald-400" />
                 Información de Contacto
@@ -204,27 +204,6 @@ const DetallesColaborador: React.FC = () => {
               </div>
             </div>
 
-            {/* Account Status */}
-            <div className="bg-slate-800/40 rounded-xl p-6 border border-slate-700/30">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-emerald-400" />
-                Estado de Cuenta
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
-                  <span className="text-slate-300">Tiene cuenta de acceso</span>
-                  {selectedColaborador.tieneCuenta ? (
-                    <CheckCircle className="w-5 h-5 text-emerald-400" />
-                  ) : (
-                    <XCircle className="w-5 h-5 text-red-400" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
-                  <span className="text-slate-300">ID Sucursal</span>
-                  <span className="text-white font-semibold">{selectedColaborador.id_sucursal}</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
