@@ -19,9 +19,9 @@ const boderColor: PropBorderColor = {
 
 export default function Loading({ w, h, color }: LoadingProps): React.ReactNode {
   let borderColorClass = boderColor[color] || '';
-  
+  // cambia por otro elemento similar 
   return (
-    <div className={`
+    <span className={`
       animate-spin 
       h-${h} 
       w-${w} 
@@ -31,6 +31,6 @@ export default function Loading({ w, h, color }: LoadingProps): React.ReactNode 
       border-t-transparent 
       rounded-full
     `}
-    ></div>
+    ></span>
   );
 }
