@@ -38,43 +38,6 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
     refreshDetallesColaborador(idColaboradorSelected!);
   }, [colaboradorService, idColaboradorSelected]);
 
-
-  const getRolColor = (rolNombre: string) => {
-    switch(rolNombre.toLowerCase()) {
-      case 'administrador del sistema':
-      case 'admin':
-        return {
-          bg: 'bg-red-500/20',
-          text: 'text-red-300',
-          border: 'border-red-500/30',
-          icon: 'text-red-400'
-        };
-      case 'vendedor':
-        return {
-          bg: 'bg-blue-500/20',
-          text: 'text-blue-300',
-          border: 'border-blue-500/30',
-          icon: 'text-blue-400'
-        };
-      case 'cajero':
-        return {
-          bg: 'bg-green-500/20',
-          text: 'text-green-300',
-          border: 'border-green-500/30',
-          icon: 'text-green-400'
-        };
-      default:
-        return {
-          bg: 'bg-gray-500/20',
-          text: 'text-gray-300',
-          border: 'border-gray-500/30',
-          icon: 'text-gray-400'
-        };
-    }
-  };
-
-  const rolColors = getRolColor(cuentaUsuario?.rol_nombre || '');
-
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-8">
       <div className="h-full bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-4xl overflow-auto">
@@ -218,9 +181,9 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
                         <Eye className="w-5 h-5 text-slate-400" />
                       )}
                     </button>
-                    <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-semibold">
+                    {/* <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-semibold">
                       Cambiar
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
@@ -230,7 +193,7 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
             <div className="bg-slate-800/40 rounded-xl p-6 border border-slate-700/30">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                 <Shield className="w-5 h-5 text-blue-400" />
-                Rol y Permisos
+                Rol
               </h3>
               
               <div className="space-y-4">
@@ -241,37 +204,17 @@ export default function WindowDetallesCredenciales({ setShowDetallesCredenciales
                       <Shield className="w-5 h-5 text-slate-300" />
                     </div>
                     <div>
-                      <p className="text-xs text-slate-400">ID del Rol</p>
+                      <p className="text-xs text-slate-400">Rol del colaborador</p>
                       <p className="text-white font-semibold text-lg">
                         {isLoadingDetalles ? (
                           <Loading w={4} h={4} color="blue" />
                         ) : isErrorDetalles ? (
                           <span className="text-red-300 text-sm">No se pudo cargar</span>
                         ) : (
-                          <>#{cuentaUsuario?.rol_id}</>
+                          <>{cuentaUsuario?.rol_nombre}</>
                         )}
                       </p>
                     </div>
-                  </div>
-                </div>
-
-                {/* Role Name */}
-                <div className="p-4 bg-slate-700/30 rounded-lg">
-                  <label className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-                    <Shield className="w-4 h-4" />
-                    Nombre del rol
-                  </label>
-                  <div className={`flex items-center gap-3 p-4 ${rolColors.bg} rounded-lg border ${rolColors.border}`}>
-                    <Shield className={`w-6 h-6 ${rolColors.icon}`} />
-                    <span className={`text-lg font-bold ${rolColors.text}`}>
-                      {isLoadingDetalles ? (
-                        <Loading w={4} h={4} color="blue" />
-                      ) : isErrorDetalles ? (
-                        <span className="text-red-300 text-sm">No se pudo cargar</span>
-                      ) : (
-                        cuentaUsuario?.rol_nombre
-                      )}
-                    </span>
                   </div>
                 </div>
 

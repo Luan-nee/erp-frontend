@@ -7,10 +7,12 @@ import CardColaborador from './CardColaborador';
 import ColaboradorService from '../../service/colaborador.service';
 import WindowDetallesColaborador from './DetallesColaborador';
 import WindowDetallesCredenciales from './DetallesCredenciales';
+import FormCreate from './FormCreate';
 
 export default function CondorMotorsCollaborators() {
   const [showDetallesColaborador, setShowDetallesColaborador] = useState<boolean>(false);
   const [showDetallesCredenciales, setShowDetallesCredenciales] = useState<boolean>(false);
+  const [showFormCreate, setShowFormCreate] = useState<boolean>(false);
 
   const [idColaboradorSelected, setIdColaboradorSelected] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -60,7 +62,9 @@ export default function CondorMotorsCollaborators() {
               <h2 className="text-3xl font-bold text-white mb-1">COLABORADORES</h2>
               <p className="text-gray-400">Gestiona tu equipo de trabajo</p>
             </div>
-            <button className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg text-white font-medium transition-all shadow-lg flex items-center gap-2">
+            <button 
+              onClick={() => setShowFormCreate(true)}
+            className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg text-white font-medium transition-all shadow-lg flex items-center gap-2">
               <UserPlus className="w-5 h-5" />
               Nuevo Colaborador
             </button>
@@ -142,7 +146,9 @@ export default function CondorMotorsCollaborators() {
         <div className="flex-1 overflow-auto p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Add Collaborator Card */}
-            <button className="bg-gray-800 border-2 border-dashed border-gray-600 rounded-xl p-8 hover:border-red-500 hover:bg-gray-750 transition-all group flex items-center justify-center">
+            <button
+              onClick={() => setShowFormCreate(true)}
+              className="bg-gray-800 border-2 border-dashed border-gray-600 rounded-xl p-8 hover:border-red-500 hover:bg-gray-750 transition-all group flex items-center justify-center">
               <div className="flex flex-col items-center justify-center text-gray-400 group-hover:text-red-400 transition-colors">
                 <UserPlus className="w-12 h-12 mb-3" />
                 <p className="font-semibold">Agregar Colaborador</p>
@@ -206,6 +212,12 @@ export default function CondorMotorsCollaborators() {
         <WindowDetallesCredenciales 
           setShowDetallesCredenciales={setShowDetallesCredenciales}
           idColaboradorSelected={idColaboradorSelected}
+        />
+      }
+
+      { showFormCreate &&
+        <FormCreate 
+          setShowFormCreate={setShowFormCreate}
         />
       }
     </div>

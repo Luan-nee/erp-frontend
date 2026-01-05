@@ -84,7 +84,8 @@ export default function CardColaborador({id, nombres, apellidos, rol, estaActivo
             <Eye className="w-4 h-4" />
             Más información
           </button>
-          <button className="flex-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2">
+          <button className="flex-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
+          >
             <Edit3 className="w-4 h-4" />
             Editar
           </button>
