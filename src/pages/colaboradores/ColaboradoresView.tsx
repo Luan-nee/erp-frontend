@@ -63,11 +63,21 @@ export default function CondorMotorsCollaborators() {
 
         {/* Stats Cards */}
         <div className="bg-gray-800 border-b border-gray-700 p-8">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-4 gap-6">
             <MetricCard
               name="Total Colaboradores"
               value={resumen ? resumen.total_colaboradores : 0}
               color="blue"
+              isLoading={isLoadingResumen}
+              isError={isErrorResumen}
+            >
+              <Users className="w-6 h-6 text-white" />
+            </MetricCard>
+
+            <MetricCard
+              name="Sin cuenta de acceso"
+              value={resumen ? resumen.sin_cuenta : 0}
+              color="orange"
               isLoading={isLoadingResumen}
               isError={isErrorResumen}
             >
