@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { X, Phone, MapPin, Calendar, DollarSign, Clock, User} from 'lucide-react';
+import Loading from '../../animation/Loading';
 import type { DetallesColaborador } from '../../models/colaboradores.model';
 import ColaboradorService from '../../service/colaborador.service';
 
@@ -73,6 +74,18 @@ export default function WindowDetallesColaborador({ setShowDetallesColaborador, 
           </div>
         </div>
 
+        {isErrorDetalles ? (
+          <div className="mx-8 mt-4 rounded-lg border border-red-500/30 bg-red-500/10 text-red-200 px-4 py-3 flex items-center justify-between">
+            <span>Ocurrió un error al cargar los detalles del colaborador.</span>
+            <button
+              className="px-3 py-1 text-sm font-semibold rounded-md bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 transition-colors"
+              onClick={() => refreshDetallesColaborador(idColaboradorSelected)}
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : null}
+
         {/* Main Content */}
         <div className="bg-gradient-to-br from-emerald-900/30 to-emerald-800/20 backdrop-blur-sm border-x border-slate-700/50 p-8">
           {/* Header Section with Avatar and Status */}
@@ -83,13 +96,36 @@ export default function WindowDetallesColaborador({ setShowDetallesColaborador, 
               </div>
               <div>
                 <h2 className="text-3xl font-bold text-white mb-2">
-                  {selectedColaborador?.nombres} {selectedColaborador?.apellidos}
+                  {isLoadingDetalles ? (
+                    <Loading w={6} h={6} color="green" />
+                  ) : isErrorDetalles ? (
+                    <span className="text-red-300 text-sm">No se pudo cargar</span>
+                  ) : (
+                    <>
+                      {selectedColaborador?.nombres} {selectedColaborador?.apellidos}
+                    </>
+                  )}
                 </h2>
                 <div className="flex items-center gap-3">
                   <span className={`px-4 py-1.5 rounded-full text-sm font-semibold border ${getRolColor(selectedColaborador ? selectedColaborador.rol : '')}`}>
-                    {selectedColaborador?.rol}
+                    {isLoadingDetalles ? (
+                      <Loading w={4} h={4} color="green" />
+                    ) : isErrorDetalles ? (
+                      <span className="text-red-300 text-sm">No se pudo cargar</span>
+                    ) : (
+                      selectedColaborador?.rol
+                    )}
                   </span>
-                  {selectedColaborador?.estaActivo ? (
+                  {isLoadingDetalles ? (
+                    <span className="flex items-center gap-2 px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm border border-emerald-500/30">
+                      <Loading w={4} h={4} color="green" />
+                      Cargando
+                    </span>
+                  ) : isErrorDetalles ? (
+                    <span className="flex items-center gap-2 px-3 py-1 bg-red-500/20 text-red-200 rounded-full text-sm border border-red-500/30">
+                      Error
+                    </span>
+                  ) : selectedColaborador?.estaActivo ? (
                     <span className="flex items-center gap-2 px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm border border-emerald-500/30">
                       <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                       Activo
@@ -118,21 +154,45 @@ export default function WindowDetallesColaborador({ setShowDetallesColaborador, 
                   <Phone className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Celular</p>
-                    <p className="text-white font-medium">{selectedColaborador?.celular}</p>
+                    <p className="text-white font-medium">
+                      {isLoadingDetalles ? (
+                        <Loading w={5} h={5} color="green" />
+                      ) : isErrorDetalles ? (
+                        <span className="text-red-300 text-sm">No se pudo cargar</span>
+                      ) : (
+                        selectedColaborador?.celular
+                      )}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <User className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">DNI</p>
-                    <p className="text-white font-medium">{selectedColaborador?.dni}</p>
+                    <p className="text-white font-medium">
+                      {isLoadingDetalles ? (
+                        <Loading w={5} h={5} color="green" />
+                      ) : isErrorDetalles ? (
+                        <span className="text-red-300 text-sm">No se pudo cargar</span>
+                      ) : (
+                        selectedColaborador?.dni
+                      )}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <MapPin className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Lugar de trabajo</p>
-                    <p className="text-white font-medium">{selectedColaborador?.lugarTrabajo}</p>
+                    <p className="text-white font-medium">
+                      {isLoadingDetalles ? (
+                        <Loading w={5} h={5} color="green" />
+                      ) : isErrorDetalles ? (
+                        <span className="text-red-300 text-sm">No se pudo cargar</span>
+                      ) : (
+                        selectedColaborador?.lugarTrabajo
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -149,21 +209,45 @@ export default function WindowDetallesColaborador({ setShowDetallesColaborador, 
                   <Clock className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Hora de inicio</p>
-                    <p className="text-white font-medium">{selectedColaborador?.hora_inicio_jornada}</p>
+                    <p className="text-white font-medium">
+                      {isLoadingDetalles ? (
+                        <Loading w={5} h={5} color="green" />
+                      ) : isErrorDetalles ? (
+                        <span className="text-red-300 text-sm">No se pudo cargar</span>
+                      ) : (
+                        selectedColaborador?.hora_inicio_jornada
+                      )}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Clock className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Hora de fin</p>
-                    <p className="text-white font-medium">{selectedColaborador?.hora_fin_jornada}</p>
+                    <p className="text-white font-medium">
+                      {isLoadingDetalles ? (
+                        <Loading w={5} h={5} color="green" />
+                      ) : isErrorDetalles ? (
+                        <span className="text-red-300 text-sm">No se pudo cargar</span>
+                      ) : (
+                        selectedColaborador?.hora_fin_jornada
+                      )}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <DollarSign className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Sueldo</p>
-                    <p className="text-emerald-400 font-bold text-lg">{formatCurrency(selectedColaborador ? selectedColaborador.sueldo : 0)}</p>
+                    <p className="text-emerald-400 font-bold text-lg">
+                      {isLoadingDetalles ? (
+                        <Loading w={5} h={5} color="green" />
+                      ) : isErrorDetalles ? (
+                        <span className="text-red-300 text-sm">No se pudo cargar</span>
+                      ) : (
+                        formatCurrency(selectedColaborador ? selectedColaborador.sueldo : 0)
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -180,14 +264,30 @@ export default function WindowDetallesColaborador({ setShowDetallesColaborador, 
                   <Calendar className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Fecha de contratación</p>
-                    <p className="text-white font-medium">{formatDateString(selectedColaborador?.fecha_contratacion.toString())}</p>
+                    <p className="text-white font-medium">
+                      {isLoadingDetalles ? (
+                        <Loading w={5} h={5} color="green" />
+                      ) : isErrorDetalles ? (
+                        <span className="text-red-300 text-sm">No se pudo cargar</span>
+                      ) : (
+                        formatDateString(selectedColaborador?.fecha_actualizacion.toString())
+                      )}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Calendar className="w-4 h-4 text-slate-400" />
                   <div>
                     <p className="text-xs text-slate-400">Última actualización</p>
-                    <p className="text-white font-medium">{formatDateString(selectedColaborador?.fecha_actualizacion.toString())}</p>
+                    <p className="text-white font-medium">
+                      {isLoadingDetalles ? (
+                        <Loading w={5} h={5} color="green" />
+                      ) : isErrorDetalles ? (
+                        <span className="text-red-300 text-sm">No se pudo cargar</span>
+                      ) : (
+                        formatDateString(selectedColaborador?.fecha_actualizacion.toString())
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>

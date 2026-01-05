@@ -74,7 +74,7 @@ export default function CardColaborador({id, nombres, apellidos, rol, estaActivo
 
         {/* BOTONES */}
         <div className="pt-4 border-t border-gray-700 flex gap-2">
-          <button className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
+          <button className="flex-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
             onClick={() => {
               setShowDetallesColaborador(true);
               setIdColaboradorSelected(id);
@@ -83,9 +83,15 @@ export default function CardColaborador({id, nombres, apellidos, rol, estaActivo
             <Eye className="w-4 h-4" />
             Más información
           </button>
-          <button className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2">
+          <button className="flex-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2">
             <Edit3 className="w-4 h-4" />
             Editar
+          </button>
+
+          {/* agrega un botón que diga "Acceso" */}
+          <button className="flex-1 px-2 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2">
+            <CheckCircle className="w-4 h-4" />
+            Acceso
           </button>
         </div>
       </div>
