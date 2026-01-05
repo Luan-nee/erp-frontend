@@ -1,26 +1,13 @@
 import React, { useState } from 'react';
-import { X, Phone, MapPin, Calendar, DollarSign, Clock, User, CheckCircle, XCircle, Edit2 } from 'lucide-react';
+import { X, Phone, MapPin, Calendar, DollarSign, Clock, User, Edit2 } from 'lucide-react';
+import type { DetallesColaborador } from '../../models/colaboradores.model';
 
-interface Colaborador {
-  id: number;
-  nombres: string;
-  apellidos: string;
-  dni: string;
-  estaActivo: boolean;
-  celular: string;
-  hora_inicio_jornada: string;
-  hora_fin_jornada: string;
-  sueldo: number;
-  id_sucursal: number;
-  lugarTrabajo: string;
-  fecha_contratacion: Date;
-  fecha_actualizacion: Date;
-  tieneCuenta: boolean;
-  rol: string;
+interface WindowDetallesColaboradorProps {
+  setShowDetallesColaborador: (p: boolean) => void;
 }
 
-const DetallesColaborador: React.FC = () => {
-  const [selectedColaborador] = useState<Colaborador>({
+const WindowDetallesColaborador: React.FC<WindowDetallesColaboradorProps> = ({ setShowDetallesColaborador }) => {
+  const [selectedColaborador] = useState<DetallesColaborador>({
     id: 1,
     nombres: "Luan Del",
     apellidos: "Sol Huilca Sanchez",
@@ -74,7 +61,9 @@ const DetallesColaborador: React.FC = () => {
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-t-2xl border border-slate-700/50 p-6">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold text-white">Información del Colaborador</h1>
-            <button className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors">
+            <button className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors"
+              onClick={() => setShowDetallesColaborador(false)}
+            >
               <X className="w-6 h-6 text-slate-400" />
             </button>
           </div>
@@ -83,7 +72,7 @@ const DetallesColaborador: React.FC = () => {
         {/* Main Content */}
         <div className="bg-gradient-to-br from-emerald-900/30 to-emerald-800/20 backdrop-blur-sm border-x border-slate-700/50 p-8">
           {/* Header Section with Avatar and Status */}
-          <div className="flex items-start justify-between gap-8 mb-8">
+          <div className="flex items-start justify-between mb-8">
             <div className="flex items-center gap-6">
               <div className="w-24 h-24 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
                 <User className="w-12 h-12 text-white" />
@@ -110,10 +99,6 @@ const DetallesColaborador: React.FC = () => {
                 </div>
               </div>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600/50 text-white rounded-lg transition-colors border border-slate-600">
-              <Edit2 className="w-4 h-4" />
-              Editar
-            </button>
           </div>
 
           {/* Information Grid */}
@@ -209,11 +194,10 @@ const DetallesColaborador: React.FC = () => {
 
         {/* Footer Actions */}
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-b-2xl border border-slate-700/50 p-6 flex justify-end gap-3">
-          <button className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors">
-            Cancelar
-          </button>
-          <button className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-semibold">
-            Guardar Cambios
+          <button className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+            onClick={() => setShowDetallesColaborador(false)}
+          >
+            Salir
           </button>
         </div>
       </div>
@@ -221,4 +205,4 @@ const DetallesColaborador: React.FC = () => {
   );
 };
 
-export default DetallesColaborador;
+export default WindowDetallesColaborador;

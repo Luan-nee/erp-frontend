@@ -9,6 +9,7 @@ interface CardColaboradorProps {
   celular: string;
   lugarTrabajo: string;
   tieneCuenta: boolean;
+  setShowDetallesColaborador: (p: boolean) => void;
 }
 
 type StatusConfig = {
@@ -21,7 +22,7 @@ type StatusConfig = {
   };
 };
 
-export default function CardColaborador({id, nombres, apellidos, rol, estaActivo, celular, lugarTrabajo, tieneCuenta}: CardColaboradorProps){
+export default function CardColaborador({id, nombres, apellidos, rol, estaActivo, celular, lugarTrabajo, tieneCuenta, setShowDetallesColaborador}: CardColaboradorProps){
   const statusConfig: StatusConfig = {
     'Activo': { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30', icon: CheckCircle, hover: 'hover:border-green-500/50' },
     'Inhabilitado': { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30', icon: XCircle, hover: 'hover:border-red-500/50' },
@@ -72,7 +73,9 @@ export default function CardColaborador({id, nombres, apellidos, rol, estaActivo
 
         {/* BOTONES */}
         <div className="pt-4 border-t border-gray-700 flex gap-2">
-          <button className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2">
+          <button className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            onClick={() => setShowDetallesColaborador(true)}
+          >
             <Eye className="w-4 h-4" />
             Más información
           </button>
